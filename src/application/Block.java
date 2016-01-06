@@ -3,19 +3,20 @@ package application;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 public class Block {
-	private static final int PAINT_IMAGE_SIZE = 250, 
-			STAGNANT_POWER = 2;
+	private static final int STAGNANT_POWER = 2;
 	private static final double TOTAL_STAGNANT_POWER = Math.pow(10, STAGNANT_POWER);
-	private static final int MAX_TRAINGLES = 2;
+	private static int maxTriangles;
 	private BufferedImage originalImg,
 			lastBestImg;
 	private TrianglesFile bestTriFile;
 	private double maxScore,
 			score,
 			stagnantCount;
+	private Point pos;
 	
 	private enum TriangleMode {
 		RANDOM, COLOR_10, SHAPE_FULL,
@@ -41,6 +42,7 @@ public class Block {
 	    g.dispose();
 		maxScore = bestTriFile.compare(originalImg);
 		lastBestImg = bestTriFile.getImage();
+		pos = new Point(x, y);
 	}
 	
 	public void move() {
@@ -86,7 +88,7 @@ public class Block {
 				
 				bestTriFile.addTriangle();
 				
-				while (bestTriFile.getSize() > MAX_TRAINGLES) {
+				while (bestTriFile.getSize() > maxTriangles) {
 					bestTriFile.removeBackTriangle();
 				}
 				maxScore = bestTriFile.compare(originalImg);
@@ -94,13 +96,17 @@ public class Block {
 		}
 	}
 	
-	public void paint(Graphics2D g) {
-		g.drawImage(originalImg, PAINT_IMAGE_SIZE, 0, PAINT_IMAGE_SIZE, PAINT_IMAGE_SIZE, null);
-		g.drawImage(lastBestImg, PAINT_IMAGE_SIZE * 2, 0, PAINT_IMAGE_SIZE, PAINT_IMAGE_SIZE, null);
+	public void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
+		g.drawImage(
+				lastBestImg, 
+				pos.x * windowSize.width / origW + 1,
+				pos.y * (windowSize.height - 14) / origH + 1,
+				lastBestImg.getWidth() * windowSize.width / origW,
+				lastBestImg.getHeight() * windowSize.height / origH, null);
 	}
 	
 	public boolean isDone() {
-		return ((bestTriFile.getSize() >= MAX_TRAINGLES && triangleMode == TriangleMode.REMOVE) || maxScore > 0.99) && !bestTriFile.hasAlpha();
+		return ((bestTriFile.getSize() >= maxTriangles && triangleMode == TriangleMode.REMOVE) || maxScore > 0.99) && !bestTriFile.hasAlpha();
 	}
 	
 	public Image getImage() {
@@ -110,5 +116,13 @@ public class Block {
 	@Override
 	public String toString() {
 		return bestTriFile.toString();
+	}
+	
+	public static void setMaxTriangles(int numTriangles) {
+		maxTriangles = numTriangles;
+	}
+	
+	public static int getMaxTriangles() {
+		return maxTriangles;
 	}
 }

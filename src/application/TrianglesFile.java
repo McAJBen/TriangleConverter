@@ -152,13 +152,15 @@ public class TrianglesFile {
 	}
 	@Override
 	public String toString() {
-		String s = triangles.size() + "\n";
+		String s = "";
 		for (int i = 0; i < triangles.size(); i++) {
-			s = s.concat("C|" + triangles.get(i).getRed() + "|" + triangles.get(i).getGreen() + "|" + triangles.get(i).getBlue() + "\n");
-			double[] px = triangles.get(i).getXpoints();
-			s = s.concat("X|" + px[0] + "|" + px[1] + "|" + px[2] + "\n");
-			double[] py = triangles.get(i).getYpoints();
-			s = s.concat("Y|" + py[0] + "|" + py[1] + "|" + py[2] + "\n");
+			s = s.concat(":r" + triangles.get(i).getRed() + "g" + triangles.get(i).getGreen() + "b" + triangles.get(i).getBlue());
+			
+			for (int j = 0; j < triangles.get(i).getXpoints().length; j++) {
+				s = s.concat(
+						"x" + triangles.get(i).getXpoints()[j] + 
+						"y" + triangles.get(i).getYpoints()[j]);
+			}
 		}
 		return s;
 	}

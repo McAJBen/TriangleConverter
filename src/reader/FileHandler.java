@@ -1,9 +1,7 @@
-package application;
+package reader;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
@@ -39,11 +37,7 @@ public class FileHandler {
 	}
 	
 	private static boolean isValidFile(File f) {
-		return 
-			equalsFileExtension(f.getName(), ".png") ||
-			equalsFileExtension(f.getName(), ".jpg") ||
-			equalsFileExtension(f.getName(),".jpeg") ||
-			equalsFileExtension(f.getName(), ".bmp");
+		return equalsFileExtension(f.getName(), ".trifi");
 	}
 	
 	private static boolean equalsFileExtension(String fileName, String extension) {
@@ -54,31 +48,13 @@ public class FileHandler {
 		return extension.equals(fileName.substring(lastIndex));
 	}
 	
-	public static void save(File f, BufferedImage oldImg, BufferedImage newImg) {
-		File fi = new File(f.getAbsolutePath() + "O");
+	public static void save(File f, BufferedImage newImg) {
 	    try {
-	    	ImageIO.write(oldImg, "png", fi);
-	    } catch (IOException e) {
-	        throw new RuntimeException(e);
-	    }
-		fi = new File(f.getAbsolutePath() + "N");
-	    try {
-	    	ImageIO.write(newImg, "png", fi);
+	    	ImageIO.write(newImg, "png", f);
 	    } catch (IOException e) {
 	        throw new RuntimeException(e);
 	    }
 	    f.delete();
 	}
 
-	public static void saveText(File f, String triFile) {
-		File fi = new File(f.getAbsolutePath().substring(0, f.getAbsolutePath().length() - 4) + ".trifi");
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(fi));
-			writer.write(triFile);
-			writer.close();
-		} catch (IOException e) {
-			
-		}
-		
-	}
 }

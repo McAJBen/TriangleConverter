@@ -18,17 +18,29 @@ public class MainJPanel extends JPanel {
 	private static final Dimension 
 					SCREEN_SIZE = new Dimension(500, 500),
 					SCREEN_OFFSET = new Dimension(7, 30);
-	private static final double 
+	private static final double
 					FPS = 10,
 					FPS_TIME = 1000000000 / FPS;
-	private static final int
-					BLOCK_SIZE = 50;
+	private int blockSize;
+	private long lastFrameTime = System.nanoTime();
+	
+	private Dimension blockPixelSize;
+	private File file;
+	private BufferedImage originalImg, newImg;
 	
 	private Block block;
-	private Dimension blockPixelSize;
-	private long lastFrameTime = System.nanoTime();
-	private BufferedImage originalImg, newImg;
-	private File file;
+	
+	public MainJPanel() {
+		while (blockSize < 1 || blockSize > 50) {
+			blockSize = Integer.parseInt(JOptionPane.showInputDialog("Input number of blocks wide and tall (1-50)"));
+		}
+		while (Block.getMaxTriangles() < 2 || Block.getMaxTriangles() > 10) {
+			Block.setMaxTriangles(Integer.parseInt(JOptionPane.showInputDialog("Input number of Triangles per Block (2-10)")));
+		}
+		
+		
+		
+	}
 
 	public static void main(String[] args) {
         JFrame frame = new JFrame("Triangle Converter");
@@ -53,21 +65,22 @@ public class MainJPanel extends JPanel {
     		try {
     			originalImg = ImageIO.read(file);
     		} catch (IOException e) {
-    			JOptionPane.showMessageDialog(null, "ERROR: Could not read file");
-    			System.exit(-1);
+    			JOptionPane.showMessageDialog(null, "ERROR: Could not read file" + file.getName());
     		}
     		
     		newImg = new BufferedImage(originalImg.getWidth(), originalImg.getHeight(), originalImg.getType());
     		
-    		blockPixelSize = new Dimension(originalImg.getWidth()  / BLOCK_SIZE, originalImg.getHeight() / BLOCK_SIZE);
+    		blockPixelSize = new Dimension(originalImg.getWidth()  / blockSize, originalImg.getHeight() / blockSize);
         	
-            
-            for (int i = 0; i < BLOCK_SIZE; i++) {
-    			for (int j = 0; j < BLOCK_SIZE; j++) {
+            String triFile = "v1|";
+            for (int i = 0; i < blockSize; i++) {
+    			for (int j = 0; j < blockSize; j++) {
     				paintBlock(i, j);
+    				triFile = triFile.concat(block.toString());
     	    	}
             }
     		FileHandler.save(file, originalImg, newImg);
+    		FileHandler.saveText(file, triFile);
         }
 	}
 
@@ -87,19 +100,19 @@ public class MainJPanel extends JPanel {
 	
 	private Dimension getPixels(int i, int j) {
 		Dimension d = new Dimension(
-				blockPixelSize.width + (i < (originalImg.getWidth() - BLOCK_SIZE * blockPixelSize.width) ? 1: 0),
-				blockPixelSize.height + (j < (originalImg.getHeight() - BLOCK_SIZE * blockPixelSize.height) ? 1: 0));
+				blockPixelSize.width + (i < (originalImg.getWidth() - blockSize * blockPixelSize.width) ? 1: 0),
+				blockPixelSize.height + (j < (originalImg.getHeight() - blockSize * blockPixelSize.height) ? 1: 0));
 		//System.out.println(i + " " + j + " " + d);
 		return d;
 	}
 	
 	private int getWidth(int i) {
-		int offSet = originalImg.getWidth() - BLOCK_SIZE * blockPixelSize.width;
+		int offSet = originalImg.getWidth() - blockSize * blockPixelSize.width;
 		return i * blockPixelSize.width + (i < offSet ? i : offSet);
 		
 	}
 	private int getHeight(int j) {
-		int offSet = originalImg.getHeight() - BLOCK_SIZE * blockPixelSize.height;
+		int offSet = originalImg.getHeight() - blockSize * blockPixelSize.height;
 		return j * blockPixelSize.height + (j < offSet ? j : offSet);
 	}
 	
@@ -111,8 +124,14 @@ public class MainJPanel extends JPanel {
         
 		g2d.drawImage(newImg, 0, 0, getSize().width, getSize().height - 14, null);
 		g2d.drawRect(0, 0, getSize().width - 1, getSize().height - 14);
-
-		g2d.drawString(file.getName() + "", 2, getSize().height - 2);
+		if (file != null) {
+			g2d.drawString(file.getName() + "", 2, getSize().height - 2);
+			if (block != null) {
+				block.paint(g2d, originalImg.getWidth(), originalImg.getHeight(), getSize());
+			}
+		}
+		
+		
     }
 	
 	private boolean getFrame() {
