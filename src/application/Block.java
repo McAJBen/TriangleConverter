@@ -45,6 +45,7 @@ public class Block {
 		pos = new Point(x, y);
 	}
 	
+	
 	public void move() {
 		TrianglesFile modifyTriFile = new TrianglesFile(bestTriFile);
 		
@@ -99,8 +100,8 @@ public class Block {
 	public void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
 		g.drawImage(
 				lastBestImg, 
-				pos.x * windowSize.width / origW + 1,
-				pos.y * (windowSize.height - 14) / origH + 1,
+				pos.x * windowSize.width / origW,
+				pos.y * (windowSize.height - 14) / origH,
 				lastBestImg.getWidth() * windowSize.width / origW,
 				lastBestImg.getHeight() * windowSize.height / origH, null);
 	}
@@ -112,10 +113,8 @@ public class Block {
 	public Image getImage() {
 		return lastBestImg;
 	}
-	
-	@Override
-	public String toString() {
-		return bestTriFile.toString();
+	public String getText(double x, double y, double size) {
+		return bestTriFile.getText(x, y, size);
 	}
 	
 	public static void setMaxTriangles(int numTriangles) {

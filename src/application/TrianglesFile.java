@@ -17,7 +17,6 @@ public class TrianglesFile {
 	private static Random rand = new Random();
 	private Dimension imageSize;
 	
-	
 	private ArrayList<Triangle> triangles = new ArrayList<Triangle>();
 	private BufferedImage image;
 	
@@ -31,6 +30,15 @@ public class TrianglesFile {
 		for (int i = 0; i < startingNumTriangles; i++) {
 			triangles.add(new Triangle());
 		}
+		imageSize = (Dimension) dimension.clone();
+	}
+	public TrianglesFile(ArrayList<Triangle> tris, Dimension dimension) {
+		triangles = tris;
+		/*for (int i = 0; i < triangles.size() * 10; i++) {
+			Triangle t = triangles.get(0);
+			triangles.remove(0);
+			triangles.add(rand.nextInt(triangles.size()), t);
+		}*/
 		imageSize = (Dimension) dimension.clone();
 	}
 	private void createImg() {
@@ -150,16 +158,15 @@ public class TrianglesFile {
 		}
 		return false;
 	}
-	@Override
-	public String toString() {
+	public String getText(double x, double y, double size) {
 		String s = "";
 		for (int i = 0; i < triangles.size(); i++) {
 			s = s.concat(":r" + triangles.get(i).getRed() + "g" + triangles.get(i).getGreen() + "b" + triangles.get(i).getBlue());
 			
 			for (int j = 0; j < triangles.get(i).getXpoints().length; j++) {
 				s = s.concat(
-						"x" + triangles.get(i).getXpoints()[j] + 
-						"y" + triangles.get(i).getYpoints()[j]);
+						"x" + (triangles.get(i).getXpoints()[j] * size + x) + 
+						"y" + (triangles.get(i).getYpoints()[j] * size + y));
 			}
 		}
 		return s;
@@ -180,5 +187,22 @@ public class TrianglesFile {
 		if (getSize() > 0) {
 			triangles.remove(0);
 		}
+	}
+	public double compare() {
+		createImg();
+		double score = 0;
+		for (int i = 0; i < image.getWidth(); i++) {
+			for (int j = 0; j < image.getHeight(); j++) {
+				Color b = new Color(image.getRGB(i, j), true);
+				if (b.getAlpha() != 255) {
+					score++;
+				}
+			}
+		}
+		return 1 - (score / (image.getWidth() * image.getHeight()));
+	}
+	public ArrayList<Triangle> getTriangles() {
+		return triangles;
+		
 	}
 }

@@ -1,7 +1,9 @@
 package reader;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
@@ -55,6 +57,17 @@ public class FileHandler {
 	        throw new RuntimeException(e);
 	    }
 	    f.delete();
+	}
+	
+	public static void saveText(File f, String triFile) {
+		File fi = new File(f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf(".")) + ".trifi");
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(fi));
+			writer.write(triFile);
+			writer.close();
+		} catch (IOException e) {
+			
+		}
 	}
 
 }

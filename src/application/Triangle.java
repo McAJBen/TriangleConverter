@@ -2,6 +2,7 @@ package application;
 
 import java.awt.Color;
 import java.awt.Polygon;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Triangle {
@@ -24,6 +25,17 @@ public class Triangle {
 		Xpoints = px.clone();
 		Ypoints = py.clone();
 		color = new Color(c.getRed(), c.getGreen(), c.getBlue());
+	}
+	public Triangle(ArrayList<Double> px, ArrayList<Double> py, Color c) {
+		Xpoints = new double[px.size()];
+		for (int i = 0; i < px.size(); i++) {
+			Xpoints[i] = px.get(i);
+		}
+		Ypoints = new double[py.size()];
+		for (int i = 0; i < py.size(); i++) {
+			Ypoints[i] = py.get(i);
+		}
+		color = c;
 	}
 	public void setColor(Color c) {
 		color = new Color(c.getRed(), c.getGreen(), c.getBlue());
@@ -60,4 +72,14 @@ public class Triangle {
 	public int getBlue() {
 		return color.getBlue();
 	}
+	
+	@Override
+	public String toString() {
+		String s = color.toString();
+		for (int i = 0; i < Xpoints.length; i++) {
+			s = s.concat("\t" + Xpoints[i] + "\t" + Ypoints[i]);
+		}
+		return  s;
+	}
+	
 }

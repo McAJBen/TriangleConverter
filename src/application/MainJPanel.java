@@ -61,12 +61,13 @@ public class MainJPanel extends JPanel {
         	} while (file == null);
         	
         	System.out.println("Found file: " + file);
-        	
-    		try {
-    			originalImg = ImageIO.read(file);
-    		} catch (IOException e) {
-    			JOptionPane.showMessageDialog(null, "ERROR: Could not read file" + file.getName());
-    		}
+        	do {
+	    		try {
+	    			originalImg = ImageIO.read(file);
+	    		} catch (IOException e) {
+	    			JOptionPane.showMessageDialog(null, "ERROR: Could not read file" + file.getName());
+	    		}
+        	} while (originalImg == null);
     		
     		newImg = new BufferedImage(originalImg.getWidth(), originalImg.getHeight(), originalImg.getType());
     		
@@ -76,11 +77,16 @@ public class MainJPanel extends JPanel {
             for (int i = 0; i < blockSize; i++) {
     			for (int j = 0; j < blockSize; j++) {
     				paintBlock(i, j);
-    				triFile = triFile.concat(block.toString());
+    				triFile = triFile.concat(block.getText((double)i / blockSize, (double)j / blockSize, 1.0 / blockSize));
     	    	}
             }
+            
+            
+            
+            
     		FileHandler.save(file, originalImg, newImg);
     		FileHandler.saveText(file, triFile);
+    		System.out.println("completed: " + file.getAbsolutePath());
         }
 	}
 
