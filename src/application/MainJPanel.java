@@ -3,10 +3,13 @@ package application;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.Thread.State;
+
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -18,11 +21,11 @@ public class MainJPanel extends JPanel {
 	private static final Dimension 
 					SCREEN_SIZE = new Dimension(500, 500),
 					SCREEN_OFFSET = new Dimension(7, 30);
-	private static final double
-					FPS = 10,
-					FPS_TIME = 1000000000 / FPS;
+	//private static final double
+	//				FPS = 10,
+	//				FPS_TIME = 1000000000 / FPS;
 	private int blockSize;
-	private long lastFrameTime = System.nanoTime();
+	//private long lastFrameTime = System.nanoTime();
 	
 	private Dimension blockPixelSize;
 	private File file;
@@ -31,7 +34,7 @@ public class MainJPanel extends JPanel {
 	private Block block;
 	
 	public MainJPanel() {
-		while (blockSize < 1 || blockSize > 50) {
+		while (blockSize < 1 || blockSize > 500) {
 			blockSize = Integer.parseInt(JOptionPane.showInputDialog("Input number of blocks wide and tall (1-50)"));
 		}
 		while (Block.getMaxTriangles() < 2 || Block.getMaxTriangles() > 10) {
@@ -74,12 +77,62 @@ public class MainJPanel extends JPanel {
     		blockPixelSize = new Dimension(originalImg.getWidth()  / blockSize, originalImg.getHeight() / blockSize);
         	
             String triFile = "v1|";
-            for (int i = 0; i < blockSize; i++) {
-    			for (int j = 0; j < blockSize; j++) {
-    				paintBlock(i, j);
-    				triFile = triFile.concat(block.getText((double)i / blockSize, (double)j / blockSize, 1.0 / blockSize));
-    	    	}
+            
+            BlockThread.setup(originalImg, blockSize, blockPixelSize);
+            
+            BlockThread[] btArr = new BlockThread[2];
+            for (int i = 0; i < btArr.length; i++) {
+	           	btArr[i] = new BlockThread(i);
+				btArr[i].run();
             }
+            while (true) {
+            	for (int i = 0; i < btArr.length; i++) {
+	            	if (!btArr[i].isAlive()) {
+	            		System.out.println("btArr " + i + " is done: ");
+	            		btArr[i].add(newImg);
+	            		
+	            		btArr[i].cont();
+	            		//btArr[i] = new BlockThread();
+	            		btArr[i].run();
+	            	}
+	            	repaint();
+            	}
+            	if (BlockThread.isDone()) {
+            		break;
+            	}
+            }
+            for (BlockThread bt : btArr) {
+            	try {
+					bt.join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+            
+            /*for (int i = 0; i < blockSize; i++) {
+    			for (int j = 0; j < blockSize; j++) {
+    				if (getFrame()) {
+    					repaint();
+    				}
+    				BlockThread bt = new BlockThread(new Point(i, j), blockSize, blockPixelSize, originalImg);
+    				
+    				bt.run();
+    				
+    				try {
+						bt.join();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    				
+    				
+    				bt.add(newImg);
+    				
+    				//paintBlock(i, j);
+    				//triFile = triFile.concat(block.getText((double)i / blockSize, (double)j / blockSize, 1.0 / blockSize));
+    	    	}
+            }*/
             
             
             
@@ -90,7 +143,7 @@ public class MainJPanel extends JPanel {
         }
 	}
 
-	private void paintBlock(int i, int j) {
+	/*private void paintBlock(int i, int j) {
 		block = new Block(originalImg, getPixels(i, j), getWidth(i), getHeight(j));
 		
 		while (!block.isDone()) {
@@ -102,9 +155,9 @@ public class MainJPanel extends JPanel {
 		Graphics2D g = newImg.createGraphics();
 	    g.drawImage(block.getImage(), getWidth(i), getHeight(j), null);
 	    g.dispose();
-	}
+	}*/
 	
-	private Dimension getPixels(int i, int j) {
+	/*private Dimension getPixels(int i, int j) {
 		Dimension d = new Dimension(
 				blockPixelSize.width + (i < (originalImg.getWidth() - blockSize * blockPixelSize.width) ? 1: 0),
 				blockPixelSize.height + (j < (originalImg.getHeight() - blockSize * blockPixelSize.height) ? 1: 0));
@@ -120,7 +173,7 @@ public class MainJPanel extends JPanel {
 	private int getHeight(int j) {
 		int offSet = originalImg.getHeight() - blockSize * blockPixelSize.height;
 		return j * blockPixelSize.height + (j < offSet ? j : offSet);
-	}
+	}*/
 	
 	
 	public void paint(Graphics g) {
@@ -140,11 +193,11 @@ public class MainJPanel extends JPanel {
 		
     }
 	
-	private boolean getFrame() {
+	/*private boolean getFrame() {
 		if (System.nanoTime() - FPS_TIME > lastFrameTime) {
     		lastFrameTime += FPS_TIME;
     		return true;
     	}
     	return false;
-	}
+	}*/
 }

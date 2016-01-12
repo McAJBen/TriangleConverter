@@ -110,7 +110,7 @@ public class Block {
 		return ((bestTriFile.getSize() >= maxTriangles && triangleMode == TriangleMode.REMOVE) || maxScore > 0.99) && !bestTriFile.hasAlpha();
 	}
 	
-	public Image getImage() {
+	public BufferedImage getImage() {
 		return lastBestImg;
 	}
 	public String getText(double x, double y, double size) {
