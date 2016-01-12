@@ -8,127 +8,112 @@ import java.awt.image.BufferedImage;
 public class BlockThread extends Thread {
 
 	private static BufferedImage originalImg;
-	private static Dimension blockPixelSize;
-	private static int blockSize;
+	private static Dimension
+			blockPixelSize,
+			offSet;
+	private static int 
+			samples,
+			blockSize;
 	private static Point nextPos;
 	
-	private BufferedImage newImage;
-	private Dimension size;
+	private BufferedImage solvedImage;
 	private Point position;
-	
-	
-	public BlockThread(int i) {
-		position = new Point(i, 0);
-	}
-	
-	
-	public void cont() {
-		position.x+= 2;
-		if (position.x >= blockSize) {
-			position.x -= blockSize;
-			position.y++;
-			
-		}
-		
-		if (position.x % 2 == 0) {
-			try {
-				sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+	private String solvedText = "";
 	
 	public BlockThread() {
-		//position = getPosition();
-		
-		
+		position = getPosition();
 	}
 	
 	private static Point getPosition() {
+		if (isDone()) {
+			return null;
+		}
 		Point p = (Point) nextPos.clone();
-		
 		nextPos.x++;
-		if (nextPos.x == blockSize) {
+		if (nextPos.x >= blockSize) {
 			nextPos.y++;
 			nextPos.x = 0;
-			if (nextPos.y == blockSize) {
-				// TODO out of points
-				System.out.println("OUT OF POINTS TO GIVE");
-				nextPos.y = 0;
-			}
 		}
 		
 		return p;
 	}
 	
-	public static void setup(BufferedImage originalImg, int blockSize, Dimension blockPixelSize) {
+	public static void setup(BufferedImage originalImg) {
 		BlockThread.originalImg = originalImg;
-		BlockThread.blockSize = blockSize;
-		BlockThread.blockPixelSize = blockPixelSize;
+		BlockThread.blockPixelSize = new Dimension(originalImg.getWidth()  / blockSize, originalImg.getHeight() / blockSize);
 		BlockThread.nextPos = new Point(0, 0);
+		BlockThread.offSet = new Dimension(
+				originalImg.getWidth() - blockSize * blockPixelSize.width,
+				originalImg.getHeight() - blockSize * blockPixelSize.height);
 	}
-	
 	
 	@Override
 	public void run() {
-		
-		paintBlock();
-		
-		super.run();
-		
-		
-		
-		
-	}
-	
-	
-	
-	private void paintBlock() {
-		
-		size = new Dimension(getWidth(position.x), getHeight(position.y));
-		
-		Block block = new Block(originalImg, getPixels(position.x, position.y), size.width, size.height);
-		
-		while (!block.isDone()) {
-			block.move();
-			/*if (getFrame()) {
-				repaint();
-			}*/ // TODO figure out if I need this
+		if (position == null) {
+			return;
 		}
-		newImage = block.getImage();
+		double bestScore = 0;
+		for (int i = 0; i < samples; i++) {
+			Block block = new Block(originalImg, getPixels(position.x, position.y), getWidth(position.x), getHeight(position.y));
+			while (!block.isDone()) {
+				block.move();
+			}
+			if (bestScore < block.getMaxScore()) {
+				solvedImage = block.getImage();
+				solvedText = block.getText(position.x, position.y, 1.0 / blockSize);
+				bestScore = block.getMaxScore();
+			}
+		}
 	}
-	
 	
 	public void add(BufferedImage newImg) {
+		if (position == null) {
+			return;
+		}
 		Graphics2D g = newImg.createGraphics();
-	    g.drawImage(newImage, size.width, size.height, null);
+	    g.drawImage(solvedImage, getWidth(position.x), getHeight(position.y), null);
 	    g.dispose();
 	}
 	
+	public String getText() {
+		return solvedText;
+	}
+	
 	private Dimension getPixels(int i, int j) {
-		Dimension d = new Dimension(
+		return new Dimension(
 				blockPixelSize.width + (i < (originalImg.getWidth() - blockSize * blockPixelSize.width) ? 1: 0),
 				blockPixelSize.height + (j < (originalImg.getHeight() - blockSize * blockPixelSize.height) ? 1: 0));
-		return d;
 	}
 	
 	private int getWidth(int i) {
-		int offSet = originalImg.getWidth() - blockSize * blockPixelSize.width;
-		return i * blockPixelSize.width + (i < offSet ? i : offSet);
-		
+		return i * blockPixelSize.width + (i < offSet.width ? i : offSet.width);
 	}
+	
 	private int getHeight(int j) {
-		int offSet = originalImg.getHeight() - blockSize * blockPixelSize.height;
-		return j * blockPixelSize.height + (j < offSet ? j : offSet);
+		return j * blockPixelSize.height + (j < offSet.height ? j : offSet.height);
 	}
 	
 	public static boolean isDone() {
-		if (nextPos.y == blockSize) {
+		if (nextPos.y >= blockSize) {
 			return true;
 		}
 		return false;
+	}
+	
+	public static void setSamples(int samp) {
+		samples = samp;
+	}
+	
+	public static int getSamples() {
+		return samples;
+	}
+	
+	public static void setBlockSize(int blksize) {
+		blockSize = blksize;
+	}
+	
+	public static int getBlockSize() {
+		return blockSize;
 	}
 }
 

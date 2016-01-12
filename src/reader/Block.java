@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 
 import application.Triangle;
-import application.TrianglesFile;
 
 public class Block {
 	private TrianglesFile bestTriFile;
@@ -16,14 +15,11 @@ public class Block {
 		bestTriFile = new TrianglesFile(triangles, size);
 		maxScore = bestTriFile.compare();
 	}
-	public void move() {
+	public void move(int blockSize) {
 		TrianglesFile modifyTriFile = new TrianglesFile(bestTriFile);
 		
-		for (int i = 0; i < 10; i++) {
-			modifyTriFile.modifyShape();
-		}
+		modifyTriFile.modifyShape(blockSize);
 		score = modifyTriFile.compare();
-		
 		if (score >= maxScore) {
 			if (score > maxScore) {
 				maxScore = score;

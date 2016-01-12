@@ -2,7 +2,6 @@ package application;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
@@ -123,5 +122,9 @@ public class Block {
 	
 	public static int getMaxTriangles() {
 		return maxTriangles;
+	}
+	
+	public double getMaxScore() {
+		return maxScore;
 	}
 }
