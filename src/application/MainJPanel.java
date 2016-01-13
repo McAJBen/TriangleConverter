@@ -34,8 +34,8 @@ public class MainJPanel extends JPanel {
 		while (BlockThread.getBlockSize() < 1 || BlockThread.getBlockSize() > 1000) {
 			BlockThread.setBlockSize(Integer.parseInt(JOptionPane.showInputDialog("Input number of blocks wide and tall (1-50-1000)\nmore blocks takes less time")));
 		}
-		while (Block.getMaxTriangles() < 2 || Block.getMaxTriangles() > 10) {
-			Block.setMaxTriangles(Integer.parseInt(JOptionPane.showInputDialog("Input number of Triangles per Block (2-10)\nmore triangles takes more time")));
+		while (Block.getMaxTriangles() < 2 || Block.getMaxTriangles() > 50) {
+			Block.setMaxTriangles(Integer.parseInt(JOptionPane.showInputDialog("Input number of Triangles per Block (2-50)\nmore triangles takes more time")));
 		}
 		while (BlockThread.getSamples() < 1 || BlockThread.getSamples() > 10) {
 			BlockThread.setSamples(Integer.parseInt(JOptionPane.showInputDialog("Input number of Samples per Block (1-10)\nmore samples takes more time")));
@@ -79,7 +79,7 @@ public class MainJPanel extends JPanel {
             
             BlockThread.setup(originalImg);
             
-            Thread t = new Thread() {
+            /*Thread t = new Thread() {
             	@Override
             	public void run() {
             		while (true) {
@@ -92,48 +92,69 @@ public class MainJPanel extends JPanel {
             		}
             	}
 			};
-			t.start();
+			t.start();*/
 			
-			System.out.println("paint thread started");
 			
-			BlockThread[] btArr = new BlockThread[threadCount];
-            for (int i = 0; i < btArr.length; i++) {
-	           	btArr[i] = new BlockThread();
-	           	
-				btArr[i].start();
+			
+			ArrayList<BlockThread> btArr = new ArrayList<BlockThread>();
+            for (int i = 0; i < threadCount; i++) {
+	           	btArr.add(new BlockThread());
+            }
+            
+            System.out.println("block threads created");
+            
+            for (BlockThread b: btArr) {
+            	b.start();
             }
             
             System.out.println("block threads started");
             
             while (true) {
-            	for (int i = 0; i < btArr.length; i++) {
-	            	if (!btArr[i].isAlive()) {
-	            		btArr[i].add(newImg);
-	            		strings.add(new StringBuffer(btArr[i].getText(), btArr[i].getPosition()));
-	            		btArr[i] = new BlockThread();
-	            		btArr[i].start();
+            	for (int i = 0; i < btArr.size(); i++) {
+	            	if (!btArr.get(i).isAlive()) {
+	            		btArr.get(i).add(newImg);
+	            		
+	            		
+	            		strings.add(new StringBuffer(btArr.get(i).getText(), btArr.get(i).getPosition()));
+	            		
+	            		btArr.remove(i);
+	            		
+	            		btArr.add(new BlockThread());
+	            		btArr.get(btArr.size() - 1).start();
+	            		repaint();
+	            		break;
 	            	}
             	}
             	if (BlockThread.isDone()) {
             		break;
             	}
             }
-            for (int i = 0; i < btArr.length; i++) {
-            	try {
-					btArr[i].join();
-					btArr[i].add(newImg);
-					strings.add(new StringBuffer(btArr[i].getText(), btArr[i].getPosition()));
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-            }
+            
+            do {
+	            for (int i = 0; i < btArr.size(); i++) {
+	            	if (!btArr.get(i).isAlive()) {
+						btArr.get(i).add(newImg);
+						strings.add(new StringBuffer(btArr.get(i).getText(), btArr.get(i).getPosition()));
+						btArr.remove(i);
+						repaint();
+						System.out.println("threads left:" + btArr.size());
+						break;
+					}
+	            }
+            } while (btArr.size() > 0);
+            
     		FileHandler.save(file, originalImg, newImg);
     		
     		FileHandler.saveText(file, 
     				"b" + BlockThread.getBlockSize() + 
     				"t" + Block.getMaxTriangles() + 
     				"|" + StringBuffer.combineStrings(strings, BlockThread.getBlockSize()));
+    		
+    		repaint();
+    		
     		System.out.println("completed: " + file.getAbsolutePath());
+    		
+    		
         }
 	}
 	
