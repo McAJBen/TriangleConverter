@@ -85,7 +85,7 @@ public class MainJPanel extends JPanel {
             		while (true) {
             			repaint();
             			try {
-							sleep(10);
+							sleep(1000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}

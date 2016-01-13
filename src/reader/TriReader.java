@@ -123,11 +123,11 @@ public class TriReader {
 						
 						triangles.remove(0);
 					}
-					Block block = new Block(pixelSize, tr);
+					//Block block = new Block(pixelSize, tr);
 					
-					while (!block.isDone()) {
+					/*while (!block.isDone()) {
 						block.move(blockSize);
-					}
+					}*/
 					
 					for (int k = 0; k < tr.size(); k++) {
 						g.setColor(tr.get(k).getColor());
