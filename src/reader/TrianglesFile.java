@@ -26,11 +26,6 @@ public class TrianglesFile {
 	}
 	public TrianglesFile(ArrayList<Triangle> tris, Dimension dimension) {
 		triangles = tris;
-		/*for (int i = 0; i < triangles.size() * 10; i++) {
-			Triangle t = triangles.get(0);
-			triangles.remove(0);
-			triangles.add(rand.nextInt(triangles.size()), t);
-		}*/
 		imageSize = (Dimension) dimension.clone();
 	}
 	private void createImg() {
@@ -66,15 +61,13 @@ public class TrianglesFile {
 		}
 		triangles.set(i, new Triangle(xp, yp, triangles.get(i).getColor()));
 	}
+	
 	private double change(double val, int blockSize) {
-		double blockSizeInv = 1.0 / blockSize;
-		int xpos = (int) (val / blockSizeInv);
-		double xdif = val % blockSizeInv;
-		xdif *= blockSize;
-		xdif += rand.nextDouble() - 0.5;
-		xdif = checkBounds(xdif, 1);
-		xdif /= blockSize;
-		return xdif + blockSizeInv * xpos;
+		
+		val += rand.nextDouble() / 10 - 0.05;
+		
+		val = checkBounds(val, 1);
+		return val;
 	}
 	
 	private double checkBounds(double n, int max) {

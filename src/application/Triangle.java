@@ -57,6 +57,17 @@ public class Triangle {
 		}
 		return new Polygon(xp, yp, SIDES);
 	}
+	public Polygon getPolygon(int width, int height, int widthOffset, int heightOffset) {
+		width++;
+		height++;
+		int[] xp = new int[SIDES];
+		int[] yp = new int[SIDES];
+		for (int i = 0; i < SIDES; i++) {
+			xp[i] = (int) (Xpoints[i] * width + widthOffset);
+			yp[i] = (int) (Ypoints[i] * height + heightOffset);
+		}
+		return new Polygon(xp, yp, SIDES);
+	}
 	public double[] getXpoints() {
 		return Xpoints.clone();
 	}

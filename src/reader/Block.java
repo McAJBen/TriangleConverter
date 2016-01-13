@@ -7,7 +7,8 @@ import application.Triangle;
 
 public class Block {
 	private TrianglesFile bestTriFile;
-	private double maxScore,
+	private double 
+			maxScore,
 			score;
 	
 	
@@ -23,7 +24,7 @@ public class Block {
 		if (score >= maxScore) {
 			if (score > maxScore) {
 				maxScore = score;
-				System.out.println(maxScore);
+				//System.out.println(maxScore);
 			}
 			bestTriFile = modifyTriFile;
 		}
@@ -34,7 +35,7 @@ public class Block {
 	}
 	
 	public boolean isDone() {
-		return !bestTriFile.hasAlpha() || maxScore > 0.99;
+		return !bestTriFile.hasAlpha();
 	}
 	
 	public String getText(double x, double y, double size) {

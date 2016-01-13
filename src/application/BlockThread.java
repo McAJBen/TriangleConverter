@@ -21,10 +21,14 @@ public class BlockThread extends Thread {
 	private String solvedText = "";
 	
 	public BlockThread() {
-		position = getPosition();
+		position = getNextPosition();
 	}
 	
-	private static Point getPosition() {
+	public Point getPosition() {
+		return position;
+	}
+	
+	private static Point getNextPosition() {
 		if (isDone()) {
 			return null;
 		}
@@ -81,8 +85,16 @@ public class BlockThread extends Thread {
 	
 	private Dimension getPixels(int i, int j) {
 		return new Dimension(
-				blockPixelSize.width + (i < (originalImg.getWidth() - blockSize * blockPixelSize.width) ? 1: 0),
-				blockPixelSize.height + (j < (originalImg.getHeight() - blockSize * blockPixelSize.height) ? 1: 0));
+				getPixelsX(i),
+				getPixelsY(j));
+	}
+	
+	private int getPixelsX(int x) {
+		return blockPixelSize.width + (x < (originalImg.getWidth() - blockSize * blockPixelSize.width) ? 1: 0);
+	}
+	
+	private int getPixelsY(int y) {
+		return blockPixelSize.height + (y < (originalImg.getHeight() - blockSize * blockPixelSize.height) ? 1: 0);
 	}
 	
 	private int getWidth(int i) {
@@ -115,5 +127,6 @@ public class BlockThread extends Thread {
 	public static int getBlockSize() {
 		return blockSize;
 	}
+
 }
 

@@ -23,15 +23,14 @@ public class TriReader {
 	}
 	
 	public TriReader() {
-		
-		
-		int size = 	Integer.parseInt(JOptionPane.showInputDialog("Enter pixel width"));
+		int width = 	Integer.parseInt(JOptionPane.showInputDialog("Enter picture width"));
+		int height = 	Integer.parseInt(JOptionPane.showInputDialog("Enter picture height"));
 		
 		while (true) {
 			File file = null;
 			do {
 				file = FileHandler.getFile();
-				
+				 
 			} while (file == null);
 			
 			System.out.println("found file: " + file.getAbsolutePath());
@@ -45,10 +44,17 @@ public class TriReader {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+			s = s.substring(s.indexOf("b") + 1);
+			
+			int blockSize = Integer.parseInt(s.substring(0, s.indexOf("t")));
+			System.out.println("blksize " + blockSize);
+			s = s.substring(s.indexOf("t") + 1);
+			
+			int trianglesPerBlock = Integer.parseInt(s.substring(0, s.indexOf("|:r")));
+			System.out.println("trianglesPerBlock " + trianglesPerBlock);
 			s = s.substring(s.indexOf(":r") + 2);
 			ArrayList<Triangle> triangles = new ArrayList<Triangle>();
-			
-			int blockSize = 0;
 			
 			do {
 				int r = Integer.parseInt(s.substring(0, s.indexOf("g")));
@@ -87,45 +93,50 @@ public class TriReader {
 				}
 				triangles.add(new Triangle(xs, ys, c));
 			} while (s.length() > 0);
-			
 			System.out.println("sorted: " + file.getAbsolutePath());
 			
-			blockSize = triangles.size();
 			
-			blockSize /= 2;
+			Dimension pixelSize = new Dimension(width / blockSize, height / blockSize);
+			BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = img.createGraphics();
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 			
-			{
-				int square = (int) Math.pow(blockSize, 0.5);
-				if (Math.pow(square, 2) != blockSize) {
-					System.out.println("CAUTION - cannot divide evenly");
+			for (int j = 0; j < blockSize; j++) {
+				for (int i = 0; i < blockSize; i++) {
+					System.out.println("Solving block " + i + ", " + j);
+					ArrayList<Triangle> tr = new ArrayList<Triangle>();
+					for (int k = 0; k < trianglesPerBlock; k++) {
+						
+						double[] xs = new double[3];
+						double[] ys = new double[3];
+						for (int l = 0; l < xs.length; l++) {
+							xs[l] = triangles.get(0).getXpoints()[l];
+							ys[l] = triangles.get(0).getYpoints()[l];
+							
+							xs[l] *= blockSize;
+							ys[l] *= blockSize;
+							
+							xs[l] -= i;
+							ys[l] -= j;
+						}
+						tr.add(new Triangle(xs, ys, triangles.get(0).getColor()));
+						
+						triangles.remove(0);
+					}
+					Block block = new Block(pixelSize, tr);
+					
+					while (!block.isDone()) {
+						block.move(blockSize);
+					}
+					
+					for (int k = 0; k < tr.size(); k++) {
+						g.setColor(tr.get(k).getColor());
+						g.fillPolygon(tr.get(k).getPolygon(pixelSize.width, pixelSize.height, i * pixelSize.width, j * pixelSize.height));
+					}
 				}
-				
-			}
-			
-			blockSize = (int) Math.pow(blockSize, 0.5);
-			
-			Block block = new Block(new Dimension(size, size), triangles);
-			
-			
-			System.out.println(blockSize);
-			System.out.println(block.getMaxScore());
-			
-			while (!block.isDone()) {
-				block.move(blockSize);
-			}
-			
-			triangles = block.getTriangleFile().getTriangles();
-			
-			BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-		    Graphics2D g = img.createGraphics();
-		    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			for (int i = 0; i < triangles.size(); i++) {
-				g.setColor(triangles.get(i).getColor());
-				g.fillPolygon(triangles.get(i).getPolygon(size, size));
 			}
 		    g.dispose();
 		    
-			
 			File fi = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(".")) + ".png");
 		    try {
 		    	ImageIO.write(img, "png", fi);
@@ -133,7 +144,6 @@ public class TriReader {
 		        throw new RuntimeException(e);
 		    }
 			System.out.println("created picture " + fi.getAbsolutePath());
-			
 			//FileHandler.saveText(file, block.getTriangleFile().getText(0.0, 0.0, size));
 		}
 	}

@@ -7,6 +7,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -74,7 +75,7 @@ public class MainJPanel extends JPanel {
     		
     		newImg = new BufferedImage(originalImg.getWidth(), originalImg.getHeight(), originalImg.getType());
     		
-            String triFileText = "v1|";
+            ArrayList<StringBuffer> strings = new ArrayList<StringBuffer>();
             
             BlockThread.setup(originalImg);
             
@@ -98,6 +99,7 @@ public class MainJPanel extends JPanel {
 			BlockThread[] btArr = new BlockThread[threadCount];
             for (int i = 0; i < btArr.length; i++) {
 	           	btArr[i] = new BlockThread();
+	           	
 				btArr[i].start();
             }
             
@@ -107,7 +109,7 @@ public class MainJPanel extends JPanel {
             	for (int i = 0; i < btArr.length; i++) {
 	            	if (!btArr[i].isAlive()) {
 	            		btArr[i].add(newImg);
-	            		triFileText = triFileText.concat(btArr[i].getText());
+	            		strings.add(new StringBuffer(btArr[i].getText(), btArr[i].getPosition()));
 	            		btArr[i] = new BlockThread();
 	            		btArr[i].start();
 	            	}
@@ -120,13 +122,17 @@ public class MainJPanel extends JPanel {
             	try {
 					btArr[i].join();
 					btArr[i].add(newImg);
-            		triFileText = triFileText.concat(btArr[i].getText());
+					strings.add(new StringBuffer(btArr[i].getText(), btArr[i].getPosition()));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
             }
     		FileHandler.save(file, originalImg, newImg);
-    		FileHandler.saveText(file, triFileText);
+    		
+    		FileHandler.saveText(file, 
+    				"b" + BlockThread.getBlockSize() + 
+    				"t" + Block.getMaxTriangles() + 
+    				"|" + StringBuffer.combineStrings(strings, BlockThread.getBlockSize()));
     		System.out.println("completed: " + file.getAbsolutePath());
         }
 	}
