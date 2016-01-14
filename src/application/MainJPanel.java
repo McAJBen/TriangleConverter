@@ -81,9 +81,7 @@ public class MainJPanel extends JPanel {
         		}
         		try {
 					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					//e.printStackTrace();
-				}
+				} catch (InterruptedException e) { }
         	}
         	System.out.println("Found file: " + file);
         	startConversion();
@@ -114,8 +112,6 @@ public class MainJPanel extends JPanel {
         for (BlockThread b: btArr) {
         	b.start();
         }
-        
-        System.out.println("block threads started");
         
         while (!BlockThread.isDone()) {
         	for (int i = 0; i < btArr.size(); i++) {
@@ -149,11 +145,11 @@ public class MainJPanel extends JPanel {
 				"b" + BlockThread.getBlockSize() + 
 				"t" + Block.getMaxTriangles() + 
 				"|" + StringBuffer.combineStrings(strings, BlockThread.getBlockSize()));
+		
+		file.delete();
 		repaint();
 		
 		System.out.println("completed: " + file.getAbsolutePath());
-		
-		System.out.println(System.currentTimeMillis());
 		
 		newImg = null;
 		

@@ -72,11 +72,14 @@ public class FileHandler {
 	}
 
 	public static void saveText(File f, String triFile) {
-		File fi = new File(f.getParent() + "\\TriFi\\" + f.getName().substring(0, f.getName().length() - 4) + ".trifi");
+		
+		File fi = new File(f.getParent() + "\\TriFi");
+		if (!fi.exists()) {
+			fi.mkdirs();
+		}
+		
+		fi = new File(f.getParent() + "\\TriFi\\" + f.getName().substring(0, f.getName().length() - 4) + ".trifi");
 		try {
-			if (!fi.exists()) {
-				fi.mkdirs();
-			}
 			BufferedWriter writer = new BufferedWriter(new FileWriter(fi));
 			writer.write(triFile);
 			writer.close();
