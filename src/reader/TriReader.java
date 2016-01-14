@@ -162,6 +162,12 @@ public class TriReader {
 					}
 				}
 			}
+			else {
+				for (Triangle t: triangles) {
+					g.setColor(t.getColor());
+					g.fillPolygon(t.getPolygon(width, height));
+				}
+			}
 			
 		    g.dispose();
 		    
@@ -171,12 +177,10 @@ public class TriReader {
 		    } catch (IOException e) {
 		        throw new RuntimeException(e);
 		    }
+			
+			FileHandler.saveText(file, "b" + blockSize + "t" + trianglesPerBlock + "|", triangles);
+			
 			System.out.println("created picture " + fi.getAbsolutePath());
-			
-			// TODO return new sizes for triangles in file
-			
-			//FileHandler.saveText(file, block.getTriangleFile().getText(0.0, 0.0, size));
-			
 			
 			return;
 		}

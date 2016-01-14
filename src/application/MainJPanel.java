@@ -134,9 +134,8 @@ public class MainJPanel extends JPanel {
 		FileHandler.save(file, originalImg, newImg);
 		
 		FileHandler.saveText(file, 
-				"b" + BlockThread.getBlockSize() + 
-				"t" + Block.getMaxTriangles() + 
-				"|", strings, BlockThread.getBlockSize());
+				"b" + BlockThread.getBlockSize() + "t" + Block.getMaxTriangles() + "|",
+				strings, BlockThread.getBlockSize());
 		
 		file.delete();
 		repaint();

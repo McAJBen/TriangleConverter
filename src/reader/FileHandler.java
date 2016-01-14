@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
+import application.Triangle;
+
 public class FileHandler {
 	
 	private static ArrayList<File> files = new ArrayList<File>();
@@ -51,19 +53,35 @@ public class FileHandler {
 	}
 	
 	public static void save(File f, BufferedImage newImg) {
+		
+		File fi = new File(f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf(".")) + ".png");
 	    try {
-	    	ImageIO.write(newImg, "png", f);
+	    	ImageIO.write(newImg, "png", fi);
 	    } catch (IOException e) {
 	        throw new RuntimeException(e);
 	    }
-	    f.delete();
 	}
 	
-	public static void saveText(File f, String triFile) {
-		File fi = new File(f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf(".")) + ".trifi");
+	public static void saveText(File f, String header, ArrayList<Triangle> triangles) {
+		File fi = new File(f.getParent() + "\\TriFi");
+		if (!fi.exists()) {
+			fi.mkdirs();
+		}
+		fi = new File(f.getParent() + "\\TriFi\\" + f.getName().substring(0, f.getName().length() - 6) + ".trifi");
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(fi));
-			writer.write(triFile);
+			writer.write(header + "\n");
+			for (int i = 0; i < triangles.size(); i++) {
+				String s = ":r" + triangles.get(i).getRed() + "g" + triangles.get(i).getGreen() + "b" + triangles.get(i).getBlue();
+				
+				for (int j = 0; j < triangles.get(i).getXpoints().length; j++) {
+					s = s.concat(
+							"x" + (triangles.get(i).getXpoints()[j]) + 
+							"y" + (triangles.get(i).getYpoints()[j]));
+				}
+				s = s.concat("\n");
+				writer.write(s);
+			}
 			writer.close();
 		} catch (IOException e) {
 			

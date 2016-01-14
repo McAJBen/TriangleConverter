@@ -44,7 +44,6 @@ public class Block {
 		pos = new Point(x, y);
 	}
 	
-	
 	public void move() {
 		TrianglesFile modifyTriFile = new TrianglesFile(bestTriFile);
 		
