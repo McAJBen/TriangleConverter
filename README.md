@@ -1,8 +1,8 @@
 # TriangleConverter
 This program will convert .png and .jpg images into a version of the image drawn only using triangles.
-![Earth](Examples/earth.png?raw=true "Earth")
-![Hue](Examples/hue.png?raw=true "Hue")
-![StarryNight](Examples/starrynight.png?raw=true "Starry Night")
+<img src="Examples/earth.png" alt="Earth" width="200" height="200">
+<img src="Examples/hue.png" alt="Hue" width="200" height="200">
+<img src="Examples/starrynight.png" alt="StarryNight" width="320" height="200">
 
 ##How it works:
 
