@@ -10,8 +10,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
 import application.Triangle;
@@ -171,16 +169,12 @@ public class TriReader {
 			
 		    g.dispose();
 		    
-			File fi = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(".")) + ".png");
-		    try {
-		    	ImageIO.write(img, "png", fi);
-		    } catch (IOException e) {
-		        throw new RuntimeException(e);
-		    }
-			
+		    
+		    FileHandler.save(file, img);
+		    
 			FileHandler.saveText(file, "b" + blockSize + "t" + trianglesPerBlock + "|", triangles);
 			
-			System.out.println("Solved " + fi.getAbsolutePath());
+			System.out.println("Solved " + file.getAbsolutePath());
 			
 			return;
 		}
