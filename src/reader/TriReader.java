@@ -111,7 +111,6 @@ public class TriReader {
 			
 			if (upscaling) {
 				for (int j = 0; j < blockSize; j++) {
-					System.out.println("Solving blocks " + j + "%");
 					for (int i = 0; i < blockSize; i++) {
 						
 						ArrayList<Triangle> tr = new ArrayList<Triangle>();
@@ -160,6 +159,7 @@ public class TriReader {
 							tr.remove(0);
 						}
 					}
+					System.out.println("Solving blocks " + (j+1) + "/" + blockSize);
 				}
 			}
 			else {
@@ -180,7 +180,7 @@ public class TriReader {
 			
 			FileHandler.saveText(file, "b" + blockSize + "t" + trianglesPerBlock + "|", triangles);
 			
-			System.out.println("created picture " + fi.getAbsolutePath());
+			System.out.println("Solved " + fi.getAbsolutePath());
 			
 			return;
 		}
