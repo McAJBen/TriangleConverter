@@ -55,24 +55,28 @@ public class FileHandler {
 	}
 	
 	public static void save(File f, BufferedImage oldImg, BufferedImage newImg) {
-		File fi = new File(f.getAbsolutePath() + "O");
+		putImageInFile(f, "Original", oldImg);
+		putImageInFile(f, "New", newImg);
+	}
+	
+	private static void putImageInFile(File f, String folder, BufferedImage b) {
+		File fi = new File(f.getParent() + "\\" + folder + "\\" + f.getName());
 	    try {
-	    	ImageIO.write(oldImg, "png", fi);
+	    	if (!fi.exists()) {
+	    		fi.mkdirs();
+	    	}
+	    	ImageIO.write(b, "png", fi);
 	    } catch (IOException e) {
 	        throw new RuntimeException(e);
 	    }
-		fi = new File(f.getAbsolutePath() + "N");
-	    try {
-	    	ImageIO.write(newImg, "png", fi);
-	    } catch (IOException e) {
-	        throw new RuntimeException(e);
-	    }
-	    f.delete();
 	}
 
 	public static void saveText(File f, String triFile) {
-		File fi = new File(f.getAbsolutePath().substring(0, f.getAbsolutePath().length() - 4) + ".trifi");
+		File fi = new File(f.getParent() + "\\TriFi\\" + f.getName().substring(0, f.getName().length() - 4) + ".trifi");
 		try {
+			if (!fi.exists()) {
+				fi.mkdirs();
+			}
 			BufferedWriter writer = new BufferedWriter(new FileWriter(fi));
 			writer.write(triFile);
 			writer.close();

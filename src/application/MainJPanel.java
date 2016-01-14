@@ -59,6 +59,20 @@ public class MainJPanel extends JPanel {
     }
 	
 	private void start() {
+        Thread repaintThread = new Thread() {
+			@Override
+			public void run() {
+				while (!isInterrupted()) {
+    				repaint();
+    				try {
+						sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+    			}
+			}
+		};
+		repaintThread.start();
         while (true) {
         	while (true) {
         		file = FileHandler.getFile();
@@ -100,20 +114,6 @@ public class MainJPanel extends JPanel {
         for (BlockThread b: btArr) {
         	b.start();
         }
-        Thread repaintThread = new Thread() {
-			@Override
-			public void run() {
-				while (!isInterrupted()) {
-    				repaint();
-    				try {
-						sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-    			}
-			}
-		};
-		repaintThread.start();
         
         System.out.println("block threads started");
         
@@ -149,7 +149,6 @@ public class MainJPanel extends JPanel {
 				"b" + BlockThread.getBlockSize() + 
 				"t" + Block.getMaxTriangles() + 
 				"|" + StringBuffer.combineStrings(strings, BlockThread.getBlockSize()));
-		repaintThread.interrupt();
 		repaint();
 		
 		System.out.println("completed: " + file.getAbsolutePath());
