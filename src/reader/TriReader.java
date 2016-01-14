@@ -117,24 +117,27 @@ public class TriReader {
 						double[] xs = new double[3];
 						double[] ys = new double[3];
 						for (int l = 0; l < xs.length; l++) {
+							
 							xs[l] = triangles.get(0).getXpoints()[l];
 							ys[l] = triangles.get(0).getYpoints()[l];
 							
+							xs[l] -= (double)i / blockSize;
+							ys[l] -= (double)j / blockSize;
+					
 							xs[l] *= blockSize;
 							ys[l] *= blockSize;
-							
-							xs[l] -= i;
-							ys[l] -= j;
 						}
 						tr.add(new Triangle(xs, ys, triangles.get(0).getColor()));
 						
 						triangles.remove(0);
 					}
-					//Block block = new Block(pixelSize, tr);
+					Block block = new Block(pixelSize, tr);
 					
-					/*while (!block.isDone()) {
-						block.move(blockSize);
-					}*/
+					while (!block.isDone()) {
+						block.move();
+					}
+					
+					tr = block.getTriangleFile().getTriangles();
 					
 					for (int k = 0; k < tr.size(); k++) {
 						g.setColor(tr.get(k).getColor());
@@ -151,7 +154,9 @@ public class TriReader {
 		        throw new RuntimeException(e);
 		    }
 			System.out.println("created picture " + fi.getAbsolutePath());
+			// TODO return new sizes for triangles
 			//FileHandler.saveText(file, block.getTriangleFile().getText(0.0, 0.0, size));
+			return;
 		}
 	}
 }

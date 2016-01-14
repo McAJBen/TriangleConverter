@@ -16,10 +16,10 @@ public class Block {
 		bestTriFile = new TrianglesFile(triangles, size);
 		maxScore = bestTriFile.compare();
 	}
-	public void move(int blockSize) {
+	public void move() {
 		TrianglesFile modifyTriFile = new TrianglesFile(bestTriFile);
 		
-		modifyTriFile.modifyShape(blockSize);
+		modifyTriFile.modifyShape();
 		score = modifyTriFile.compare();
 		if (score >= maxScore) {
 			if (score > maxScore) {

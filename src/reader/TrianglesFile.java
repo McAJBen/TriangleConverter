@@ -22,6 +22,7 @@ public class TrianglesFile {
 		for (int i = 0; i < tf.triangles.size(); i++) {
 			this.triangles.add(tf.triangles.get(i));
 		}
+		// TODO check if needs to be cloned or not
 		imageSize = (Dimension) tf.imageSize.clone();
 	}
 	public TrianglesFile(ArrayList<Triangle> tris, Dimension dimension) {
@@ -42,9 +43,8 @@ public class TrianglesFile {
 	    g.dispose();
 	    return img;
 	}
-	public void modifyShape(int blockSize) {
+	public void modifyShape() {
 		
-		// TODO use blockSize to keep the squares in bounds
 		if (triangles.size() <= 0) {
 			return;
 		}
@@ -54,15 +54,15 @@ public class TrianglesFile {
 		double yp[] = triangles.get(i).getYpoints();
 		
 		if (rand.nextBoolean()) {
-			xp[j] = change(xp[j], blockSize);
+			xp[j] = change(xp[j]);
 		}
 		else {
-			yp[j] = change(yp[j], blockSize);
+			yp[j] = change(yp[j]);
 		}
 		triangles.set(i, new Triangle(xp, yp, triangles.get(i).getColor()));
 	}
 	
-	private double change(double val, int blockSize) {
+	private double change(double val) {
 		
 		val += rand.nextDouble() / 10 - 0.05;
 		

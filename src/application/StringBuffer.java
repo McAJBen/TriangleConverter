@@ -28,8 +28,8 @@ public class StringBuffer {
 	public static String combineStrings(ArrayList<StringBuffer> sb, int blockSize) {
 		ArrayList<StringBuffer> newsb = new ArrayList<StringBuffer>();
 		
-		for (int i = 0; i < blockSize; i++) {
-			for (int j = 0; j < blockSize; j++) {
+		for (int j = 0; j < blockSize; j++) {
+			for (int i = 0; i < blockSize; i++) {
 				for (int k = 0; k < sb.size(); k++) {
 					
 					// TODO case where a stringbuffer in the array has been set to null instead of aguments
