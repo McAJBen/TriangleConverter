@@ -128,5 +128,13 @@ public class BlockThread extends Thread {
 		return blockSize;
 	}
 
+	public BufferedImage getImage() {
+		return solvedImage;
+	}
+
+	public Point getWH() {
+		return new Point(getWidth(position.x), getHeight(position.y));
+	}
+
 }
 

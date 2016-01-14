@@ -26,9 +26,13 @@ public class StringBuffer {
 		for (int i = 0; i < blockSize; i++) {
 			for (int j = 0; j < blockSize; j++) {
 				for (int k = 0; k < sb.size(); k++) {
+					
+					// TODO once case where a stringbuffer in the array has been set to null instead of aguments
+					
 					if (sb.get(k).getPoint().equals(new Point(i, j))) {
 						newsb.add(sb.get(k));
 						sb.remove(k);
+						sb.trimToSize();
 						break;
 					}
 				}
