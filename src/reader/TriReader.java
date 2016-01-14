@@ -22,6 +22,7 @@ public class TriReader {
 		new TriReader();
 	}
 	
+	@SuppressWarnings("resource")
 	public TriReader() {
 		int width = 	Integer.parseInt(JOptionPane.showInputDialog("Enter picture width"));
 		int height = 	Integer.parseInt(JOptionPane.showInputDialog("Enter picture height"));
@@ -64,7 +65,6 @@ public class TriReader {
 				try {
 					line = br.readLine();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				if (line == null) {
@@ -131,6 +131,9 @@ public class TriReader {
 						
 						triangles.remove(0);
 					}
+					
+					// TODO allow user to pick to change or not
+					
 					Block block = new Block(pixelSize, tr);
 					
 					while (!block.isDone()) {
@@ -154,7 +157,7 @@ public class TriReader {
 		        throw new RuntimeException(e);
 		    }
 			System.out.println("created picture " + fi.getAbsolutePath());
-			// TODO return new sizes for triangles
+			// TODO return new sizes for triangles in file
 			//FileHandler.saveText(file, block.getTriangleFile().getText(0.0, 0.0, size));
 			return;
 		}

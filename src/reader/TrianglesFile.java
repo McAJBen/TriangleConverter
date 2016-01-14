@@ -22,12 +22,11 @@ public class TrianglesFile {
 		for (int i = 0; i < tf.triangles.size(); i++) {
 			this.triangles.add(tf.triangles.get(i));
 		}
-		// TODO check if needs to be cloned or not
-		imageSize = (Dimension) tf.imageSize.clone();
+		imageSize = tf.imageSize;
 	}
 	public TrianglesFile(ArrayList<Triangle> tris, Dimension dimension) {
 		triangles = tris;
-		imageSize = (Dimension) dimension.clone();
+		imageSize = dimension;
 	}
 	private void createImg() {
 		image = makeImg(imageSize.width, imageSize.height);
