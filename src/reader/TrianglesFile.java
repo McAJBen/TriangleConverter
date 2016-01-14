@@ -31,6 +31,12 @@ public class TrianglesFile {
 	private void createImg() {
 		image = makeImg(imageSize.width, imageSize.height);
 	}
+	public BufferedImage getImage() {
+		if (image == null) {
+			createImg();
+		}
+		return image;
+	}
 	private BufferedImage makeImg(int width, int height) {
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 	    Graphics2D g = img.createGraphics();

@@ -1,6 +1,7 @@
 package reader;
 
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import application.Triangle;
@@ -28,6 +29,10 @@ public class Block {
 			}
 			bestTriFile = modifyTriFile;
 		}
+	}
+
+	public BufferedImage getImage() {
+		return bestTriFile.getImage();
 	}
 	
 	public TrianglesFile getTriangleFile() {

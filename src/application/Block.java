@@ -9,7 +9,7 @@ public class Block {
 	private static final int STAGNANT_POWER = 2;
 	private static final double TOTAL_STAGNANT_POWER = Math.pow(10, STAGNANT_POWER);
 	private static int maxTriangles;
-	private BufferedImage originalImg,
+	private BufferedImage originalImgChunk,
 			lastBestImg;
 	private TrianglesFile bestTriFile;
 	private double maxScore,
@@ -32,14 +32,14 @@ public class Block {
 	
 	private TriangleMode triangleMode = TriangleMode.RANDOM;
 	
-	public Block(BufferedImage origImg, Dimension size, int x, int y) {
+	public Block(BufferedImage originalImg, Dimension size, int x, int y) {
 		bestTriFile = new TrianglesFile(0, size);
 		maxScore = 0;
-		originalImg = new BufferedImage(size.width, size.height, origImg.getType());
-	    Graphics2D g = originalImg.createGraphics();
-	    g.drawImage(origImg, -x, -y, null);
+		originalImgChunk = new BufferedImage(size.width, size.height, originalImg.getType());
+	    Graphics2D g = originalImgChunk.createGraphics();
+	    g.drawImage(originalImg, -x, -y, null);
 	    g.dispose();
-		maxScore = bestTriFile.compare(originalImg);
+		maxScore = bestTriFile.compare(originalImgChunk);
 		lastBestImg = bestTriFile.getImage();
 		pos = new Point(x, y);
 	}
@@ -65,7 +65,7 @@ public class Block {
 				modifyTriFile.modifyRemove();
 				break;
 		}
-		score = modifyTriFile.compare(originalImg);
+		score = modifyTriFile.compare(originalImgChunk);
 		
 		if (score >= maxScore) {
 			if (score > maxScore) {
@@ -91,7 +91,7 @@ public class Block {
 				while (bestTriFile.getSize() > maxTriangles) {
 					bestTriFile.removeBackTriangle();
 				}
-				maxScore = bestTriFile.compare(originalImg);
+				maxScore = bestTriFile.compare(originalImgChunk);
 			}
 		}
 	}

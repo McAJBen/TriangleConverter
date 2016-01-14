@@ -25,26 +25,21 @@ public class StringBuffer {
 		return p.x + ", " + p.y + ", " + s;
 	}
 	
-	public static String combineStrings(ArrayList<StringBuffer> sb, int blockSize) {
-		ArrayList<StringBuffer> newsb = new ArrayList<StringBuffer>();
+	public static ArrayList<String> combineStrings(ArrayList<StringBuffer> sb, int blockSize) {
+		ArrayList<String> newsb = new ArrayList<String>();
 		
 		for (int j = 0; j < blockSize; j++) {
 			for (int i = 0; i < blockSize; i++) {
 				for (int k = 0; k < sb.size(); k++) {
 					if (sb.get(k).getPoint().equals(new Point(i, j))) {
-						newsb.add(sb.get(k));
+						newsb.add(sb.get(k).getString());
 						sb.remove(k);
 						break;
 					}
 				}
 			}
 		}
-		String s = "\n";
-		for (StringBuffer b: newsb) {
-			s = s.concat(b.getString());
-		}
-		
-		return s;
+		return newsb;
 	}
 	
 	

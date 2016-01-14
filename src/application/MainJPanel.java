@@ -20,10 +20,9 @@ public class MainJPanel extends JPanel {
 	private static final Dimension 
 					SCREEN_SIZE = new Dimension(500, 500),
 					SCREEN_OFFSET = new Dimension(7, 30);
-	
+	private BufferedImage newImg;
 	private int threadCount;
 	private File file;
-	private BufferedImage newImg;
 	
 	public MainJPanel(int tc) {
 		threadCount = tc;
@@ -73,14 +72,12 @@ public class MainJPanel extends JPanel {
 		};
 		repaintThread.start();
         while (true) {
-        	while (true) {
-        		file = FileHandler.getFile();
-        		if (file != null) {
-        			break;
-        		}
+        	file = FileHandler.getFile();
+        	while (file == null) {
         		try {
 					Thread.sleep(10000);
 				} catch (InterruptedException e) { }
+        		file = FileHandler.getFile();
         	}
         	System.out.println("Found file: " + file);
         	startConversion();
@@ -139,7 +136,7 @@ public class MainJPanel extends JPanel {
 		FileHandler.saveText(file, 
 				"b" + BlockThread.getBlockSize() + 
 				"t" + Block.getMaxTriangles() + 
-				"|" + StringBuffer.combineStrings(strings, BlockThread.getBlockSize()));
+				"|", strings, BlockThread.getBlockSize());
 		
 		file.delete();
 		repaint();
@@ -147,6 +144,7 @@ public class MainJPanel extends JPanel {
 		System.out.println("completed: " + file.getAbsolutePath());
 		
 		newImg = null;
+		BlockThread.clear();
 		
 	}
 	

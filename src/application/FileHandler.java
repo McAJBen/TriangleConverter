@@ -71,7 +71,7 @@ public class FileHandler {
 	    }
 	}
 
-	public static void saveText(File f, String triFile) {
+	public static void saveText(File f, String header, ArrayList<StringBuffer> strings, int blockSize) {
 		
 		File fi = new File(f.getParent() + "\\TriFi");
 		if (!fi.exists()) {
@@ -81,7 +81,14 @@ public class FileHandler {
 		fi = new File(f.getParent() + "\\TriFi\\" + f.getName().substring(0, f.getName().length() - 4) + ".trifi");
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(fi));
-			writer.write(triFile);
+			writer.write(header + "\n");
+			// TODO write rest of triangles
+			ArrayList<String> triStrings = StringBuffer.combineStrings(strings, blockSize);
+			
+			for (String s: triStrings) {
+				writer.write(s);
+			}
+			
 			writer.close();
 		} catch (IOException e) {
 			

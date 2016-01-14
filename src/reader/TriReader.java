@@ -26,7 +26,8 @@ public class TriReader {
 	public TriReader() {
 		int width = 	Integer.parseInt(JOptionPane.showInputDialog("Enter picture width"));
 		int height = 	Integer.parseInt(JOptionPane.showInputDialog("Enter picture height"));
-		
+		boolean upscaling =  JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "Do you want to upscale?", "Tri File Reader", JOptionPane.YES_NO_OPTION);
+	    
 		while (true) {
 			File file = null;
 			do {
@@ -102,52 +103,66 @@ public class TriReader {
 			}
 			System.out.println("sorted: " + file.getAbsolutePath());
 			
-			
 			Dimension pixelSize = new Dimension(width / blockSize, height / blockSize);
+
 			BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g = img.createGraphics();
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 			
-			for (int j = 0; j < blockSize; j++) {
-				for (int i = 0; i < blockSize; i++) {
-					System.out.println("Solving block " + i + ", " + j);
-					ArrayList<Triangle> tr = new ArrayList<Triangle>();
-					for (int k = 0; k < trianglesPerBlock; k++) {
+			if (upscaling) {
+				for (int j = 0; j < blockSize; j++) {
+					System.out.println("Solving blocks " + j + "%");
+					for (int i = 0; i < blockSize; i++) {
 						
-						double[] xs = new double[3];
-						double[] ys = new double[3];
-						for (int l = 0; l < xs.length; l++) {
+						ArrayList<Triangle> tr = new ArrayList<Triangle>();
+						for (int k = 0; k < trianglesPerBlock; k++) {
+							double[] xs = new double[triangles.get(0).getXpoints().length];
+							double[] ys = new double[xs.length];
+							for (int l = 0; l < xs.length; l++) {
+								
+								xs[l] = triangles.get(0).getXpoints()[l];
+								ys[l] = triangles.get(0).getYpoints()[l];
+								
+								xs[l] -= (double)i / blockSize;
+								ys[l] -= (double)j / blockSize;
+						
+								xs[l] *= blockSize;
+								ys[l] *= blockSize;
+							}
+							tr.add(new Triangle(xs, ys, triangles.get(0).getColor()));
 							
-							xs[l] = triangles.get(0).getXpoints()[l];
-							ys[l] = triangles.get(0).getYpoints()[l];
-							
-							xs[l] -= (double)i / blockSize;
-							ys[l] -= (double)j / blockSize;
-					
-							xs[l] *= blockSize;
-							ys[l] *= blockSize;
+							triangles.remove(0);
 						}
-						tr.add(new Triangle(xs, ys, triangles.get(0).getColor()));
-						
-						triangles.remove(0);
-					}
-					
-					// TODO allow user to pick to change or not
-					
-					Block block = new Block(pixelSize, tr);
-					
-					while (!block.isDone()) {
-						block.move();
-					}
-					
-					tr = block.getTriangleFile().getTriangles();
-					
-					for (int k = 0; k < tr.size(); k++) {
-						g.setColor(tr.get(k).getColor());
-						g.fillPolygon(tr.get(k).getPolygon(pixelSize.width, pixelSize.height, i * pixelSize.width, j * pixelSize.height));
+						{
+							Block block = new Block(pixelSize, tr);
+							while (!block.isDone()) {
+								block.move();
+							}
+							g.drawImage(block.getImage(), pixelSize.width * i, pixelSize.height * j, null);
+							tr = block.getTriangleFile().getTriangles();
+						}
+						for (int k = 0; k < trianglesPerBlock; k++) {
+							
+							double[] xs = new double[tr.get(0).getXpoints().length];
+							double[] ys = new double[xs.length];
+							for (int l = 0; l < xs.length; l++) {
+								
+								xs[l] = tr.get(0).getXpoints()[l];
+								ys[l] = tr.get(0).getYpoints()[l];
+								
+								xs[l] += i;
+								ys[l] += j;
+								
+								xs[l] /= blockSize;
+								ys[l] /= blockSize;
+							}
+							triangles.add(new Triangle(xs, ys, tr.get(0).getColor()));
+							tr.remove(0);
+						}
 					}
 				}
 			}
+			
 		    g.dispose();
 		    
 			File fi = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf(".")) + ".png");
@@ -157,8 +172,12 @@ public class TriReader {
 		        throw new RuntimeException(e);
 		    }
 			System.out.println("created picture " + fi.getAbsolutePath());
+			
 			// TODO return new sizes for triangles in file
+			
 			//FileHandler.saveText(file, block.getTriangleFile().getText(0.0, 0.0, size));
+			
+			
 			return;
 		}
 	}

@@ -41,6 +41,13 @@ public class BlockThread extends Thread {
 		
 		return p;
 	}
+
+	public StringBuffer getStringBuffer() {
+		if (getPosition() == null) {
+			System.out.println("POSITION IS NULL - BLOCK THREAD");
+		}
+		return new StringBuffer(getText(), getPosition());
+	}
 	
 	public static void setup(BufferedImage originalImg) {
 		BlockThread.originalImg = originalImg;
@@ -136,12 +143,11 @@ public class BlockThread extends Thread {
 		return new Point(getWidth(position.x), getHeight(position.y));
 	}
 
-	public StringBuffer getStringBuffer() {
-		if (getPosition() == null) {
-			System.out.println("POSITION IS NULL - BLOCK THREAD");
-		}
-		
-		return new StringBuffer(getText(), getPosition());
+	public static void clear() {
+		originalImg = null;
+		blockPixelSize = null;
+		nextPos = null;
+		offSet = null;
 	}
 
 }

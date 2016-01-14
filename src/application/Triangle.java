@@ -7,8 +7,9 @@ import java.util.Random;
 
 public class Triangle {
 	
-	private static Random rand = new Random();
 	private final static int SIDES = 3;
+	
+	private static Random rand = new Random();
 	
 	private double[] Xpoints = new double[SIDES];
 	private double[] Ypoints = new double[SIDES];
