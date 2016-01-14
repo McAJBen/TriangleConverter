@@ -30,69 +30,76 @@ public class TriReader {
 			File file = null;
 			do {
 				file = FileHandler.getFile();
-				 
 			} while (file == null);
 			
 			System.out.println("found file: " + file.getAbsolutePath());
 			
 			BufferedReader br = null;
-			String s = null;
 			
+			String header = null;
 			try {
 				br = new BufferedReader(new FileReader(file));
-				s = br.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
+				header = br.readLine();
+				
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
 			
-			s = s.substring(s.indexOf("b") + 1);
+			header = header.substring(header.indexOf("b") + 1);
 			
-			int blockSize = Integer.parseInt(s.substring(0, s.indexOf("t")));
+			int blockSize = Integer.parseInt(header.substring(0, header.indexOf("t")));
 			System.out.println("blksize " + blockSize);
-			s = s.substring(s.indexOf("t") + 1);
+			header = header.substring(header.indexOf("t") + 1);
 			
-			int trianglesPerBlock = Integer.parseInt(s.substring(0, s.indexOf("|:r")));
+			int trianglesPerBlock = Integer.parseInt(header.substring(0, header.indexOf("|")));
 			System.out.println("trianglesPerBlock " + trianglesPerBlock);
-			s = s.substring(s.indexOf(":r") + 2);
+			
+			
 			ArrayList<Triangle> triangles = new ArrayList<Triangle>();
 			
-			do {
-				int r = Integer.parseInt(s.substring(0, s.indexOf("g")));
-				s = s.substring(s.indexOf("g") + 1);
-				int g = Integer.parseInt(s.substring(0, s.indexOf("b")));
-				s = s.substring(s.indexOf("b") + 1);
-				int b = Integer.parseInt(s.substring(0, s.indexOf("x")));
-				s = s.substring(s.indexOf("x") + 1);
-				Color c = new Color(r, g, b);
+			
+			
+			while (true) {
+				String line = null;
+				try {
+					line = br.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (line == null) {
+					break;
+				}
+				line = line.substring(2); // removes ":r"
+				Color c; // gets the Color from line
+				{
+					int r = Integer.parseInt(line.substring(0, line.indexOf("g")));
+					line = line.substring(line.indexOf("g") + 1);
+					int g = Integer.parseInt(line.substring(0, line.indexOf("b")));
+					line = line.substring(line.indexOf("b") + 1);
+					int b = Integer.parseInt(line.substring(0, line.indexOf("x")));
+					line = line.substring(line.indexOf("x") + 1);
+					c = new Color(r, g, b);
+				}
 				ArrayList<Double> xs = new ArrayList<Double>();
 				ArrayList<Double> ys = new ArrayList<Double>();
-				boolean contin = true;
-				while (contin) {
-					xs.add(Double.parseDouble(s.substring(0, s.indexOf("y"))));
-					s = s.substring(s.indexOf("y") + 1);
+				
+				while (line != null) {
+					xs.add(Double.parseDouble(line.substring(0, line.indexOf("y"))));
+					line = line.substring(line.indexOf("y") + 1);
 					
-					if (s.indexOf("x") < s.indexOf(":")) {
-						ys.add(Double.parseDouble(s.substring(0, s.indexOf("x"))));
-						s = s.substring(s.indexOf("x") + 1);
-					}
-					else if (s.indexOf(":r") != -1) {
-						contin = false;
-						ys.add(Double.parseDouble(s.substring(0, s.indexOf(":r"))));
-						s = s.substring(s.indexOf(":r") + 2);
-					}
-					else if (s.indexOf("x") == -1) {
-						contin = false;
-						ys.add(Double.parseDouble(s));
-						s = "";
+					
+					if (line.indexOf("x") == -1) { // no more points after this one
+						ys.add(Double.parseDouble(line));
+						line = null;
 					}
 					else {
-						ys.add(Double.parseDouble(s.substring(0, s.indexOf("x"))));
-						s = s.substring(s.indexOf("x") + 1);
+						ys.add(Double.parseDouble(line.substring(0, line.indexOf("x"))));
+						line = line.substring(line.indexOf("x") + 1);
 					}
-					
 				}
 				triangles.add(new Triangle(xs, ys, c));
-			} while (s.length() > 0);
+			}
 			System.out.println("sorted: " + file.getAbsolutePath());
 			
 			
