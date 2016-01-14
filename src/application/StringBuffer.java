@@ -20,6 +20,11 @@ public class StringBuffer {
 		return s;
 	}
 	
+	@Override
+	public String toString() {
+		return p.x + ", " + p.y + ", " + s;
+	}
+	
 	public static String combineStrings(ArrayList<StringBuffer> sb, int blockSize) {
 		ArrayList<StringBuffer> newsb = new ArrayList<StringBuffer>();
 		
@@ -27,18 +32,17 @@ public class StringBuffer {
 			for (int j = 0; j < blockSize; j++) {
 				for (int k = 0; k < sb.size(); k++) {
 					
-					// TODO once case where a stringbuffer in the array has been set to null instead of aguments
+					// TODO case where a stringbuffer in the array has been set to null instead of aguments
 					
 					if (sb.get(k).getPoint().equals(new Point(i, j))) {
 						newsb.add(sb.get(k));
 						sb.remove(k);
-						sb.trimToSize();
 						break;
 					}
 				}
 			}
 		}
-		String s = "";
+		String s = "\n";
 		for (StringBuffer b: newsb) {
 			s = s.concat(b.getString());
 		}

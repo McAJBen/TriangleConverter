@@ -25,7 +25,6 @@ public class MainJPanel extends JPanel {
 	private File file;
 	private BufferedImage newImg;
 	
-	
 	public MainJPanel(int tc) {
 		threadCount = tc;
 	}
@@ -116,28 +115,24 @@ public class MainJPanel extends JPanel {
         while (!BlockThread.isDone()) {
         	for (int i = 0; i < btArr.size(); i++) {
             	if (!btArr.get(i).isAlive()) {
-            		
             		btArr.get(i).add(newImg);
-            		
-            		strings.add(new StringBuffer(btArr.get(i).getText(), btArr.get(i).getPosition()));
-            		
+            		strings.add(btArr.get(i).getStringBuffer());
             		btArr.set(i, new BlockThread());
             		btArr.get(i).start();
             		
             	}
         	}
         }
-        
-        do {
+        while (btArr.size() > 0) {
             for (int i = 0; i < btArr.size(); i++) {
             	if (!btArr.get(i).isAlive()) {
 					btArr.get(i).add(newImg);
-					strings.add(new StringBuffer(btArr.get(i).getText(), btArr.get(i).getPosition()));
+					strings.add(btArr.get(i).getStringBuffer());
 					btArr.remove(i);
 					break;
 				}
             }
-        } while (btArr.size() > 0);
+        }
         
 		FileHandler.save(file, originalImg, newImg);
 		

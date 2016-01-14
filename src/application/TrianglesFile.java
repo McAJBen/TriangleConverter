@@ -169,11 +169,10 @@ public class TrianglesFile {
 			
 			for (int j = 0; j < triangles.get(i).getXpoints().length; j++) {
 				s = s.concat(
-						//"x" + (triangles.get(i).getXpoints()[j] * size + x) + 
-						//"y" + (triangles.get(i).getYpoints()[j] * size + y));
 						"x" + (triangles.get(i).getXpoints()[j] * size + x * size) + 
 						"y" + (triangles.get(i).getYpoints()[j] * size + y * size));
 			}
+			s = s.concat("\n");
 		}
 		return s;
 	}

@@ -136,5 +136,13 @@ public class BlockThread extends Thread {
 		return new Point(getWidth(position.x), getHeight(position.y));
 	}
 
+	public StringBuffer getStringBuffer() {
+		if (getPosition() == null) {
+			System.out.println("POSITION IS NULL - BLOCK THREAD");
+		}
+		
+		return new StringBuffer(getText(), getPosition());
+	}
+
 }
 
