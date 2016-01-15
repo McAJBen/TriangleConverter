@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
@@ -87,7 +86,7 @@ public class MainJPanel extends JPanel {
     		try {
     			originalImg = ImageIO.read(file);
     		} catch (IOException e) {
-    			JOptionPane.showMessageDialog(null, "ERROR: Could not read file" + file.getName());
+    			System.out.println("ERROR: Could not read file" + file.getName());
     		}
     	} while (originalImg == null);
 		
