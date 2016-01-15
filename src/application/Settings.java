@@ -96,9 +96,9 @@ public class Settings {
 
 	private void createSettingsFile() {
 		String settingsString = 
-				IDENTIFIER + "This is the Settings File" +
-				IDENTIFIER + "All Comments must begin with " + IDENTIFIER +
-				IDENTIFIER + "All variables must be written just like the ones following" +
+				IDENTIFIER + "This is the Settings File\n" +
+				IDENTIFIER + "All Comments must begin with " + IDENTIFIER + "\n" +
+				IDENTIFIER + "All variables must be written just like the ones following\n" +
 				BLOCK_SIZE_ID + 	IDENTIFIER + blockSize + 	"\n" +
 				MAX_TRIANGLES_ID + 	IDENTIFIER + maxTriangles + "\n" +
 				SAMPLES_ID + 		IDENTIFIER + samples + 		"\n" +		
