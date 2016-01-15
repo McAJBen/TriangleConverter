@@ -29,25 +29,22 @@ public class MainJPanel extends JPanel {
 	}
 
 	public static void main(String[] args) {
-		while (BlockThread.getBlockSize() < 1 || BlockThread.getBlockSize() > 1000) {
-			BlockThread.setBlockSize(Integer.parseInt(JOptionPane.showInputDialog("Input number of blocks wide and tall (1-50-1000)\nmore blocks takes less time")));
-		}
-		while (Block.getMaxTriangles() < 2 || Block.getMaxTriangles() > 50) {
-			Block.setMaxTriangles(Integer.parseInt(JOptionPane.showInputDialog("Input number of Triangles per Block (2-50)\nmore triangles takes more time")));
-		}
-		while (BlockThread.getSamples() < 1 || BlockThread.getSamples() > 10) {
-			BlockThread.setSamples(Integer.parseInt(JOptionPane.showInputDialog("Input number of Samples per Block (1-10)\nmore samples takes more time")));
-		}
-		int threadCount = 0;
-		while (threadCount < 1 || threadCount > 100) {
-			threadCount = Integer.parseInt(JOptionPane.showInputDialog("Input number of Threads (2)\nmore threads make for faster work"));
-		}
+		
+		Settings settings = new Settings();
+		
+		BlockThread.setBlockSize(settings.getBlockSize());
+		Block.setMaxTriangles(settings.getMaxTriangles());
+		BlockThread.setSamples(settings.getSamples());
+		
         JFrame frame = new JFrame("Triangle Converter" +
         		" W:" + BlockThread.getBlockSize() + 
         		" Tr:" + Block.getMaxTriangles() + 
         		" S:" + BlockThread.getSamples() + 
-        		" Th:" + threadCount);
-        MainJPanel imageEvolutionJPanel = new MainJPanel(threadCount);
+        		" Th:" + settings.getThreadCount());
+        
+        
+        
+        MainJPanel imageEvolutionJPanel = new MainJPanel(settings.getThreadCount());
         frame.add(imageEvolutionJPanel);
         frame.setSize(SCREEN_SIZE.width + SCREEN_OFFSET.width, SCREEN_SIZE.height + SCREEN_OFFSET.height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
