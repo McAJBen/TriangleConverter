@@ -181,7 +181,7 @@ public class Settings {
 	
 	public double getScaleDown() {
 		getSettings();
-		if (scaleDown <= 0 || scaleDown > 1) {
+		if (scaleDown <= 0) {
 			System.out.println(SCALE_DOWN_ID + "ERROR");
 			return DEFAULT_SCALE_DOWN;
 		}
