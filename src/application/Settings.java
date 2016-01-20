@@ -19,7 +19,8 @@ public class Settings {
 		MAX_TRIANGLES_ID = "MAX_TRIANGLES",
 		SAMPLES_ID = "SAMPLES",
 		THREAD_COUNT_ID = "THREAD_COUNT",
-		IDENTIFIER = ":";
+		IDENTIFIER_SYMBOL = ":",
+		COMMENT_SYMBOL = "#";
 	
 	
 	private int 
@@ -53,24 +54,26 @@ public class Settings {
 		
 		
 		do {
-			switch (settingsString.substring(0, settingsString.indexOf(IDENTIFIER))) {
-				case BLOCK_SIZE_ID:
-					blockSize = Integer.parseInt(settingsString.substring(settingsString.indexOf(IDENTIFIER) + 1));
-					break;
-				case MAX_TRIANGLES_ID:
-					maxTriangles = Integer.parseInt(settingsString.substring(settingsString.indexOf(IDENTIFIER) + 1));
-					break;
-				case SAMPLES_ID:
-					samples = Integer.parseInt(settingsString.substring(settingsString.indexOf(IDENTIFIER) + 1));
-					break;
-				case THREAD_COUNT_ID:
-					threadCount = Integer.parseInt(settingsString.substring(settingsString.indexOf(IDENTIFIER) + 1));
-					break;
-				case "": // comment out
-					break;
-				default:
-					System.out.println("Unknown settings being loaded");
-					break;
+			if (!settingsString.startsWith(COMMENT_SYMBOL)) {
+				switch (settingsString.substring(0, settingsString.indexOf(IDENTIFIER_SYMBOL))) {
+					case BLOCK_SIZE_ID:
+						blockSize = Integer.parseInt(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
+						break;
+					case MAX_TRIANGLES_ID:
+						maxTriangles = Integer.parseInt(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
+						break;
+					case SAMPLES_ID:
+						samples = Integer.parseInt(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
+						break;
+					case THREAD_COUNT_ID:
+						threadCount = Integer.parseInt(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
+						break;
+					case "": // comment out
+						break;
+					default:
+						System.out.println("Unknown settings being loaded");
+						break;
+				}
 			}
 			try {
 				settingsString = br.readLine();
@@ -96,13 +99,13 @@ public class Settings {
 
 	private void createSettingsFile() {
 		String settingsString = 
-				IDENTIFIER + "This is the Settings File\n" +
-				IDENTIFIER + "All Comments must begin with " + IDENTIFIER + "\n" +
-				IDENTIFIER + "All variables must be written just like the ones following\n" +
-				BLOCK_SIZE_ID + 	IDENTIFIER + blockSize + 	"\n" +
-				MAX_TRIANGLES_ID + 	IDENTIFIER + maxTriangles + "\n" +
-				SAMPLES_ID + 		IDENTIFIER + samples + 		"\n" +		
-				THREAD_COUNT_ID + 	IDENTIFIER + threadCount + 	"\n";
+				COMMENT_SYMBOL + "This is the Settings File\n" +
+				COMMENT_SYMBOL + "All Comments must begin with " + COMMENT_SYMBOL + "\n" +
+				COMMENT_SYMBOL + "All variables must be written just like the ones following\n" +
+				BLOCK_SIZE_ID + 	IDENTIFIER_SYMBOL + blockSize + 	"\n" +
+				MAX_TRIANGLES_ID + 	IDENTIFIER_SYMBOL + maxTriangles + "\n" +
+				SAMPLES_ID + 		IDENTIFIER_SYMBOL + samples + 		"\n" +		
+				THREAD_COUNT_ID + 	IDENTIFIER_SYMBOL + threadCount + 	"\n";
 		try {
 			File settingsFile = new File(
 					System.getProperty("user.dir") + "\\TriangleConverter.settings");
