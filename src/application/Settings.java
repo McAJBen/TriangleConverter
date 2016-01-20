@@ -9,11 +9,14 @@ import java.io.IOException;
 
 public class Settings {
 	
+	private static final boolean
+		DEFAULT_PRE_DRAW = true;
 	private static final int
 		DEFAULT_BLOCK_SIZE = 10,
 		DEFAULT_MAX_TRIANGLES = 2,
 		DEFAULT_SAMPLES = 1,
-		DEFAULT_THREAD_COUNT = 1;
+		DEFAULT_THREAD_COUNT = 1,
+		DEFAULT_REPAINT_WAIT = 500;
 	private static final double
 		DEFAULT_SCALE_DOWN = 1.0;
 	private static final String
@@ -22,15 +25,19 @@ public class Settings {
 		SAMPLES_ID = "SAMPLES",
 		THREAD_COUNT_ID = "THREAD_COUNT",
 		SCALE_DOWN_ID = "SCALE_DOWN",
+		REPAINT_WAIT_ID = "REAPINT_WAIT_MS",
+		PREDRAW_ID = "PREDRAW",
 		IDENTIFIER_SYMBOL = ":",
 		COMMENT_SYMBOL = "#";
 	
-	
+	private boolean
+		predraw;
 	private int 
 		blockSize,
 		maxTriangles,
 		samples,
-		threadCount;
+		threadCount,
+		repaintWait;
 	private double 
 		scaleDown;
 	private boolean hasSettings;
@@ -76,6 +83,12 @@ public class Settings {
 					case SCALE_DOWN_ID:
 						scaleDown = Double.parseDouble(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
 						break;
+					case REPAINT_WAIT_ID:
+						repaintWait = Integer.parseInt(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
+						break;
+					case PREDRAW_ID:
+						predraw = Boolean.parseBoolean(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
+						break;
 					case "": // comment out
 						break;
 					default:
@@ -99,6 +112,8 @@ public class Settings {
 		samples = DEFAULT_SAMPLES;
 		threadCount = DEFAULT_THREAD_COUNT;
 		scaleDown = DEFAULT_SCALE_DOWN;
+		repaintWait = DEFAULT_REPAINT_WAIT;
+		predraw = DEFAULT_PRE_DRAW;
 		System.out.println("Default settings have been set");
 		createSettingsFile();
 	}
@@ -112,7 +127,9 @@ public class Settings {
 				MAX_TRIANGLES_ID + 	IDENTIFIER_SYMBOL + maxTriangles + 	"\n" +
 				SAMPLES_ID + 		IDENTIFIER_SYMBOL + samples + 		"\n" +		
 				THREAD_COUNT_ID + 	IDENTIFIER_SYMBOL + threadCount + 	"\n" + 
-				SCALE_DOWN_ID + 	IDENTIFIER_SYMBOL + scaleDown + 	"\n";
+				SCALE_DOWN_ID + 	IDENTIFIER_SYMBOL + scaleDown + 	"\n" +
+				REPAINT_WAIT_ID + 	IDENTIFIER_SYMBOL + repaintWait + 	"\n" + 
+				PREDRAW_ID + 		IDENTIFIER_SYMBOL + predraw + 		"\n";
 		try {
 			File settingsFile = new File(
 					System.getProperty("user.dir") + "\\TriangleConverter.settings");
@@ -169,5 +186,19 @@ public class Settings {
 			return DEFAULT_SCALE_DOWN;
 		}
 		return scaleDown;
+	}
+	
+	public int getRepaintWait() {
+		getSettings();
+		if (repaintWait < 0) {
+			System.out.println(REPAINT_WAIT_ID + "ERROR");
+			return DEFAULT_REPAINT_WAIT;
+		}
+		return repaintWait;
+	}
+	
+	public boolean getPreDraw() {
+		getSettings();
+		return predraw;
 	}
 }

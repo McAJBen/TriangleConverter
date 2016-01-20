@@ -20,14 +20,19 @@ public class MainJPanel extends JPanel {
 					SCREEN_SIZE = new Dimension(500, 500),
 					SCREEN_OFFSET = new Dimension(7, 30);
 	private BufferedImage newImg;
-	private int threadCount;
+	private boolean preDraw;
+	private int 
+			threadCount,
+			repaintWait;
 	private double scaleDown;
 	private File file;
 	private ArrayList<BlockThread> blockThreadArray;
 	
-	public MainJPanel(int threadCount, double scaleDown) {
+	public MainJPanel(int threadCount, double scaleDown, int repaintWait, boolean preDraw) {
 		this.threadCount = threadCount;
 		this.scaleDown = scaleDown;
+		this.repaintWait = repaintWait;
+		this.preDraw = preDraw;
 	}
 
 	public static void main(String[] args) {
@@ -45,10 +50,11 @@ public class MainJPanel extends JPanel {
         		" Th:" + settings.getThreadCount() + 
         		" Sc:" + settings.getScaleDown());
         
-        
-        
         MainJPanel imageEvolutionJPanel = new MainJPanel(
-        		settings.getThreadCount(), settings.getScaleDown());
+        		settings.getThreadCount(),
+        		settings.getScaleDown(),
+        		settings.getRepaintWait(),
+        		settings.getPreDraw());
         frame.add(imageEvolutionJPanel);
         frame.setSize(SCREEN_SIZE.width + SCREEN_OFFSET.width, SCREEN_SIZE.height + SCREEN_OFFSET.height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,7 +70,7 @@ public class MainJPanel extends JPanel {
 				while (!isInterrupted()) {
     				repaint();
     				try {
-						sleep(500); // TODO allow user to change update timings
+						sleep(repaintWait);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -96,7 +102,7 @@ public class MainJPanel extends JPanel {
     	} while (originalImg == null);
 		
 		{
-			BufferedImage scaledImg = new BufferedImage((int)(originalImg.getWidth() * scaleDown),  (int)(originalImg.getHeight() * scaleDown), BufferedImage.TYPE_INT_RGB);
+			BufferedImage scaledImg = new BufferedImage((int)(originalImg.getWidth() * scaleDown),  (int)(originalImg.getHeight() * scaleDown), BufferedImage.TYPE_INT_ARGB);
 			scaledImg.getGraphics().drawImage(originalImg, 0, 0, scaledImg.getWidth(), scaledImg.getHeight(), null);
 			originalImg = scaledImg;
 		}
@@ -164,7 +170,7 @@ public class MainJPanel extends JPanel {
 				
 		if (file != null) {
 			g2d.drawString(file.getName() + "", 2, getSize().height - 2);
-			if (blockThreadArray != null) { // TODO allow user to change if drawing or not
+			if (preDraw && blockThreadArray != null) { // TODO allow user to change if drawing or not
 				for (BlockThread bt: blockThreadArray) {
 					bt.paint(g2d, newImg.getWidth(), newImg.getHeight(), getSize());
 				}
