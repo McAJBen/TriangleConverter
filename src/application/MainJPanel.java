@@ -22,6 +22,7 @@ public class MainJPanel extends JPanel {
 	private BufferedImage newImg;
 	private int threadCount;
 	private File file;
+	private ArrayList<BlockThread> blockThreadArray;
 	
 	public MainJPanel(int tc) {
 		threadCount = tc;
@@ -53,13 +54,13 @@ public class MainJPanel extends JPanel {
     }
 	
 	private void start() {
-        Thread repaintThread = new Thread() {
+        Thread repaintThread = new Thread("repaintThread") {
 			@Override
 			public void run() {
 				while (!isInterrupted()) {
     				repaint();
     				try {
-						sleep(500);
+						sleep(100);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -96,32 +97,32 @@ public class MainJPanel extends JPanel {
         
         BlockThread.setup(originalImg);
         			
-		ArrayList<BlockThread> btArr = new ArrayList<BlockThread>();
+		blockThreadArray = new ArrayList<BlockThread>();
         for (int i = 0; i < threadCount; i++) {
-           	btArr.add(new BlockThread());
+           	blockThreadArray.add(new BlockThread("BlockThread" + i));
         }
         
-        for (BlockThread b: btArr) {
+        for (BlockThread b: blockThreadArray) {
         	b.start();
         }
         
         while (!BlockThread.isDone()) {
-        	for (int i = 0; i < btArr.size(); i++) {
-            	if (!btArr.get(i).isAlive()) {
-            		btArr.get(i).add(newImg);
-            		strings.add(btArr.get(i).getStringBuffer());
-            		btArr.set(i, new BlockThread());
-            		btArr.get(i).start();
+        	for (int i = 0; i < blockThreadArray.size(); i++) {
+            	if (!blockThreadArray.get(i).isAlive()) {
+            		blockThreadArray.get(i).add(newImg);
+            		strings.add(blockThreadArray.get(i).getStringBuffer());
+            		blockThreadArray.set(i, new BlockThread("BlockThread" + i));
+            		blockThreadArray.get(i).start();
             		
             	}
         	}
         }
-        while (btArr.size() > 0) {
-            for (int i = 0; i < btArr.size(); i++) {
-            	if (!btArr.get(i).isAlive()) {
-					btArr.get(i).add(newImg);
-					strings.add(btArr.get(i).getStringBuffer());
-					btArr.remove(i);
+        while (blockThreadArray.size() > 0) {
+            for (int i = 0; i < blockThreadArray.size(); i++) {
+            	if (!blockThreadArray.get(i).isAlive()) {
+					blockThreadArray.get(i).add(newImg);
+					strings.add(blockThreadArray.get(i).getStringBuffer());
+					blockThreadArray.remove(i);
 					break;
 				}
             }
@@ -151,8 +152,14 @@ public class MainJPanel extends JPanel {
 		g2d.drawImage(newImg, 0, 0, getSize().width, getSize().height - 14, null);
 		
 		g2d.drawRect(0, 0, getSize().width - 1, getSize().height - 14);
+				
 		if (file != null) {
 			g2d.drawString(file.getName() + "", 2, getSize().height - 2);
+			if (blockThreadArray != null) {
+				for (BlockThread bt: blockThreadArray) {
+					bt.paint(g2d, newImg.getWidth(), newImg.getHeight(), getSize());
+				}
+			}
 		}
     }
 }
