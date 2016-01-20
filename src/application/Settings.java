@@ -14,11 +14,14 @@ public class Settings {
 		DEFAULT_MAX_TRIANGLES = 2,
 		DEFAULT_SAMPLES = 1,
 		DEFAULT_THREAD_COUNT = 1;
+	private static final double
+		DEFAULT_SCALE_DOWN = 1.0;
 	private static final String
 		BLOCK_SIZE_ID = "BLOCK_SIZE",
 		MAX_TRIANGLES_ID = "MAX_TRIANGLES",
 		SAMPLES_ID = "SAMPLES",
 		THREAD_COUNT_ID = "THREAD_COUNT",
+		SCALE_DOWN_ID = "SCALE_DOWN",
 		IDENTIFIER_SYMBOL = ":",
 		COMMENT_SYMBOL = "#";
 	
@@ -28,6 +31,8 @@ public class Settings {
 		maxTriangles,
 		samples,
 		threadCount;
+	private double 
+		scaleDown;
 	private boolean hasSettings;
 	
 	public Settings() {
@@ -68,6 +73,9 @@ public class Settings {
 					case THREAD_COUNT_ID:
 						threadCount = Integer.parseInt(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
 						break;
+					case SCALE_DOWN_ID:
+						scaleDown = Double.parseDouble(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
+						break;
 					case "": // comment out
 						break;
 					default:
@@ -78,12 +86,9 @@ public class Settings {
 			try {
 				settingsString = br.readLine();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} while (settingsString != null);
-		
-		// TODO obtain settings
 		hasSettings = true;
 	}
 
@@ -93,6 +98,7 @@ public class Settings {
 		maxTriangles = DEFAULT_MAX_TRIANGLES;
 		samples = DEFAULT_SAMPLES;
 		threadCount = DEFAULT_THREAD_COUNT;
+		scaleDown = DEFAULT_SCALE_DOWN;
 		System.out.println("Default settings have been set");
 		createSettingsFile();
 	}
@@ -103,9 +109,10 @@ public class Settings {
 				COMMENT_SYMBOL + "All Comments must begin with " + COMMENT_SYMBOL + "\n" +
 				COMMENT_SYMBOL + "All variables must be written just like the ones following\n" +
 				BLOCK_SIZE_ID + 	IDENTIFIER_SYMBOL + blockSize + 	"\n" +
-				MAX_TRIANGLES_ID + 	IDENTIFIER_SYMBOL + maxTriangles + "\n" +
+				MAX_TRIANGLES_ID + 	IDENTIFIER_SYMBOL + maxTriangles + 	"\n" +
 				SAMPLES_ID + 		IDENTIFIER_SYMBOL + samples + 		"\n" +		
-				THREAD_COUNT_ID + 	IDENTIFIER_SYMBOL + threadCount + 	"\n";
+				THREAD_COUNT_ID + 	IDENTIFIER_SYMBOL + threadCount + 	"\n" + 
+				SCALE_DOWN_ID + 	IDENTIFIER_SYMBOL + scaleDown + 	"\n";
 		try {
 			File settingsFile = new File(
 					System.getProperty("user.dir") + "\\TriangleConverter.settings");
@@ -121,21 +128,46 @@ public class Settings {
 
 	public int getBlockSize() {
 		getSettings();
+		if (blockSize <= 0) {
+			System.out.println(BLOCK_SIZE_ID + "ERROR");
+			return DEFAULT_BLOCK_SIZE;
+		}
 		return blockSize;
 	}
 
 	public int getMaxTriangles() {
 		getSettings();
+		if (maxTriangles <= 0) {
+			System.out.println(MAX_TRIANGLES_ID + "ERROR");
+			return DEFAULT_MAX_TRIANGLES;
+		}
 		return maxTriangles;
 	}
 
 	public int getSamples() {
 		getSettings();
+		if (samples <= 0) {
+			System.out.println(SAMPLES_ID + "ERROR");
+			return DEFAULT_SAMPLES;
+		}
 		return samples;
 	}
 
 	public int getThreadCount() {
 		getSettings();
+		if (threadCount <= 0) {
+			System.out.println(THREAD_COUNT_ID + "ERROR");
+			return DEFAULT_THREAD_COUNT;
+		}
 		return threadCount;
+	}
+	
+	public double getScaleDown() {
+		getSettings();
+		if (scaleDown <= 0 || scaleDown > 1) {
+			System.out.println(SCALE_DOWN_ID + "ERROR");
+			return DEFAULT_SCALE_DOWN;
+		}
+		return scaleDown;
 	}
 }

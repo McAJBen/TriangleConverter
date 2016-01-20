@@ -21,11 +21,13 @@ public class MainJPanel extends JPanel {
 					SCREEN_OFFSET = new Dimension(7, 30);
 	private BufferedImage newImg;
 	private int threadCount;
+	private double scaleDown;
 	private File file;
 	private ArrayList<BlockThread> blockThreadArray;
 	
-	public MainJPanel(int tc) {
-		threadCount = tc;
+	public MainJPanel(int threadCount, double scaleDown) {
+		this.threadCount = threadCount;
+		this.scaleDown = scaleDown;
 	}
 
 	public static void main(String[] args) {
@@ -37,14 +39,16 @@ public class MainJPanel extends JPanel {
 		BlockThread.setSamples(settings.getSamples());
 		
         JFrame frame = new JFrame("Triangle Converter" +
-        		" W:" + BlockThread.getBlockSize() + 
+        		" Wi:" + BlockThread.getBlockSize() + 
         		" Tr:" + Block.getMaxTriangles() + 
-        		" S:" + BlockThread.getSamples() + 
-        		" Th:" + settings.getThreadCount());
+        		" Sa:" + BlockThread.getSamples() + 
+        		" Th:" + settings.getThreadCount() + 
+        		" Sc:" + settings.getScaleDown());
         
         
         
-        MainJPanel imageEvolutionJPanel = new MainJPanel(settings.getThreadCount());
+        MainJPanel imageEvolutionJPanel = new MainJPanel(
+        		settings.getThreadCount(), settings.getScaleDown());
         frame.add(imageEvolutionJPanel);
         frame.setSize(SCREEN_SIZE.width + SCREEN_OFFSET.width, SCREEN_SIZE.height + SCREEN_OFFSET.height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,7 +64,7 @@ public class MainJPanel extends JPanel {
 				while (!isInterrupted()) {
     				repaint();
     				try {
-						sleep(100);
+						sleep(500); // TODO allow user to change update timings
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -91,6 +95,11 @@ public class MainJPanel extends JPanel {
     		}
     	} while (originalImg == null);
 		
+		{
+			BufferedImage scaledImg = new BufferedImage((int)(originalImg.getWidth() * scaleDown),  (int)(originalImg.getHeight() * scaleDown), BufferedImage.TYPE_INT_RGB);
+			scaledImg.getGraphics().drawImage(originalImg, 0, 0, scaledImg.getWidth(), scaledImg.getHeight(), null);
+			originalImg = scaledImg;
+		}
 		newImg = new BufferedImage(originalImg.getWidth(), originalImg.getHeight(), originalImg.getType());
 		
         ArrayList<StringBuffer> strings = new ArrayList<StringBuffer>();
@@ -155,7 +164,7 @@ public class MainJPanel extends JPanel {
 				
 		if (file != null) {
 			g2d.drawString(file.getName() + "", 2, getSize().height - 2);
-			if (blockThreadArray != null) {
+			if (blockThreadArray != null) { // TODO allow user to change if drawing or not
 				for (BlockThread bt: blockThreadArray) {
 					bt.paint(g2d, newImg.getWidth(), newImg.getHeight(), getSize());
 				}

@@ -77,7 +77,7 @@ public class BlockThread extends Thread {
 		while (currentSample < samples) {
 			Block block = new Block(originalImg, getPixels(position.x, position.y), getWidth(position.x), getHeight(position.y));
 			while (!block.isDone()) {
-					block.move(); // TODO stop slowdown right here by transfering image
+				block.move(); // TODO stop slowdown right here by transfering image
 				currentTestImage = block.getImage();
 			}
 			if (bestScore < block.getMaxScore()) {
