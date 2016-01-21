@@ -9,6 +9,7 @@ public class Block {
 	private static final int STAGNANT_POWER = 2;
 	private static final double TOTAL_STAGNANT_POWER = Math.pow(10, STAGNANT_POWER);
 	private static int maxTriangles;
+	
 	private BufferedImage originalImgChunk,
 			lastBestImg;
 	private TrianglesFile bestTriFile;
@@ -16,6 +17,7 @@ public class Block {
 			score,
 			stagnantCount;
 	private Point pos;
+	private boolean isScaling = false;
 	
 	private enum TriangleMode {
 		RANDOM, COLOR_10, SHAPE_FULL,
@@ -44,6 +46,18 @@ public class Block {
 		pos = new Point(x, y);
 	}
 	
+	public Block(Block block, Dimension size, int x, int y) {
+		isScaling = true;
+		BufferedImage scaledImg = new BufferedImage(size.width, size.height, block.originalImgChunk.getType());
+		scaledImg.getGraphics().drawImage(block.originalImgChunk, 0, 0, scaledImg.getWidth(), scaledImg.getHeight(), null);
+		bestTriFile = new TrianglesFile(block.bestTriFile, new Dimension(scaledImg.getWidth(), scaledImg.getHeight()));
+		originalImgChunk = scaledImg;
+		maxScore = bestTriFile.compare(scaledImg);
+		lastBestImg = bestTriFile.getImage();
+		pos = new Point(x, y);
+		triangleMode = TriangleMode.SHAPE_10;
+	}
+
 	public void move() {
 		TrianglesFile modifyTriFile = new TrianglesFile(bestTriFile);
 		
@@ -81,16 +95,19 @@ public class Block {
 			stagnantCount++;
 		}
 		if (stagnantCount > TOTAL_STAGNANT_POWER) {
-			triangleMode = triangleMode.next();
-			stagnantCount = 0;
-			if (triangleMode == TriangleMode.RANDOM) {
-				
-				bestTriFile.addTriangle();
-				
-				while (bestTriFile.getSize() > maxTriangles) {
-					bestTriFile.removeBackTriangle();
+			if (isScaling && !bestTriFile.hasAlpha()) {
+				triangleMode = TriangleMode.REMOVE;
+			}
+			else {
+				triangleMode = triangleMode.next();
+				stagnantCount = 0;
+				if (triangleMode == TriangleMode.RANDOM) {
+					bestTriFile.addTriangle();
+					while (bestTriFile.getSize() > maxTriangles) {
+						bestTriFile.removeBackTriangle();
+					}
+					maxScore = bestTriFile.compare(originalImgChunk);
 				}
-				maxScore = bestTriFile.compare(originalImgChunk);
 			}
 		}
 	}
@@ -105,12 +122,24 @@ public class Block {
 	}
 	
 	public boolean isDone() {
-		return ((bestTriFile.getSize() >= maxTriangles && triangleMode == TriangleMode.REMOVE) || maxScore > 0.99) && !bestTriFile.hasAlpha();
+		if (bestTriFile.hasAlpha()) {
+			return false;
+		}
+		else if (maxScore > 0.99) {
+			return true;
+		}
+		else if (bestTriFile.getSize() >= maxTriangles) {
+			if (triangleMode == TriangleMode.REMOVE) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public BufferedImage getImage() {
 		return lastBestImg;
 	}
+	
 	public String getText(double x, double y, double size) {
 		return bestTriFile.getText(x, y, size);
 	}

@@ -25,7 +25,6 @@ public class Block {
 		if (score >= maxScore) {
 			if (score > maxScore) {
 				maxScore = score;
-				//System.out.println(maxScore);
 			}
 			bestTriFile = modifyTriFile;
 		}

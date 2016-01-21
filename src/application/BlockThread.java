@@ -102,17 +102,23 @@ public class BlockThread extends Thread {
 			}
 			if (bestScore < block.getMaxScore()) {
 				bestBlock = block;
-				solvedText = block.getText(position.x, position.y, 1.0 / blocksWide);
 				bestScore = block.getMaxScore();
 			}
 			currentSample++;
 			
 		}
-		
-		// TODO postProcessing
-		
-		
-		
+		if (postProcessing) {
+			
+			Block block = new Block(bestBlock, newBlockSize, newBlockPosition.width, newBlockPosition.height);
+			
+			while (!block.isDone()) {
+				block.move(); // TODO stop slow down right here by transferring image
+				currentTestImage = block.getImage();
+			}
+			bestBlock = block;
+			
+		}// TODO postProcessing
+		solvedText = bestBlock.getText(position.x, position.y, 1.0 / blocksWide);
 		solvedImage = bestBlock.getImage(newBlockPixelSize);
 	}
 	

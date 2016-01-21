@@ -15,8 +15,8 @@ public class TrianglesFile {
 			MAX_SCORE = Math.pow(195075, 0.5);
 	
 	private static Random rand = new Random();
-	private Dimension imageSize;
 	
+	private Dimension imageSize;
 	private ArrayList<Triangle> triangles = new ArrayList<Triangle>();
 	private BufferedImage image;
 	
@@ -30,6 +30,13 @@ public class TrianglesFile {
 	public TrianglesFile(int startingNumTriangles, Dimension dimension) {
 		for (int i = 0; i < startingNumTriangles; i++) {
 			triangles.add(new Triangle());
+		}
+		imageSize = (Dimension) dimension.clone();
+	}
+	
+	public TrianglesFile(TrianglesFile tf, Dimension dimension) {
+		for (int i = 0; i < tf.triangles.size(); i++) {
+			this.triangles.add(tf.triangles.get(i));
 		}
 		imageSize = (Dimension) dimension.clone();
 	}
@@ -219,5 +226,10 @@ public class TrianglesFile {
 
 	public BufferedImage getImage(Dimension newBlockPixelSize) {
 		return makeImg(newBlockPixelSize.width, newBlockPixelSize.height);
+	}
+
+	public void addTriangle(Triangle t) {
+		triangles.add(t);
+		
 	}
 }

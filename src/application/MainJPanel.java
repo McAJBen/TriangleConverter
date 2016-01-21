@@ -173,7 +173,7 @@ public class MainJPanel extends JPanel {
 				
 		if (file != null) {
 			g2d.drawString(file.getName() + "", 2, getSize().height - 2);
-			if (preDraw && blockThreadArray != null) { // TODO allow user to change if drawing or not
+			if (preDraw && blockThreadArray != null) {
 				Dimension windowSize = getSize();
 				windowSize.height -= 14;
 				for (BlockThread bt: blockThreadArray) {
