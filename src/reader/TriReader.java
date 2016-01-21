@@ -54,10 +54,7 @@ public class TriReader {
 			int trianglesPerBlock = Integer.parseInt(header.substring(0, header.indexOf("|")));
 			System.out.println("trianglesPerBlock " + trianglesPerBlock);
 			
-			
 			ArrayList<Triangle> triangles = new ArrayList<Triangle>();
-			
-			
 			
 			while (true) {
 				String line = null;

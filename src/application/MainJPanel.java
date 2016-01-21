@@ -24,15 +24,18 @@ public class MainJPanel extends JPanel {
 	private int 
 			threadCount,
 			repaintWait;
-	private double scaleDown;
+	private double 
+			scale,
+			postScale;
 	private File file;
 	private ArrayList<BlockThread> blockThreadArray;
 	
-	public MainJPanel(int threadCount, double scaleDown, int repaintWait, boolean preDraw) {
+	public MainJPanel(int threadCount, double scale, int repaintWait, boolean preDraw, double postScale) {
 		this.threadCount = threadCount;
-		this.scaleDown = scaleDown;
+		this.scale = scale;
 		this.repaintWait = repaintWait;
 		this.preDraw = preDraw;
+		this.postScale = postScale / scale;
 	}
 
 	public static void main(String[] args) {
@@ -42,19 +45,22 @@ public class MainJPanel extends JPanel {
 		BlockThread.setBlockSize(settings.getBlockSize());
 		Block.setMaxTriangles(settings.getMaxTriangles());
 		BlockThread.setSamples(settings.getSamples());
+		BlockThread.setPostProcessing(settings.getPostProcessing());
 		
         JFrame frame = new JFrame("Triangle Converter" +
         		" Wi:" + BlockThread.getBlockSize() + 
         		" Tr:" + Block.getMaxTriangles() + 
         		" Sa:" + BlockThread.getSamples() + 
         		" Th:" + settings.getThreadCount() + 
-        		" Sc:" + settings.getScaleDown());
+        		" Sc:" + settings.getScaleDown() + 
+        		" Ps:" + settings.getPostScale());
         
         MainJPanel imageEvolutionJPanel = new MainJPanel(
         		settings.getThreadCount(),
         		settings.getScaleDown(),
         		settings.getRepaintWait(),
-        		settings.getPreDraw());
+        		settings.getPreDraw(),
+        		settings.getPostScale());
         frame.add(imageEvolutionJPanel);
         frame.setSize(SCREEN_SIZE.width + SCREEN_OFFSET.width, SCREEN_SIZE.height + SCREEN_OFFSET.height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -101,16 +107,14 @@ public class MainJPanel extends JPanel {
     		}
     	} while (originalImg == null);
 		
-		{
-			BufferedImage scaledImg = new BufferedImage((int)(originalImg.getWidth() * scaleDown),  (int)(originalImg.getHeight() * scaleDown), BufferedImage.TYPE_INT_ARGB);
-			scaledImg.getGraphics().drawImage(originalImg, 0, 0, scaledImg.getWidth(), scaledImg.getHeight(), null);
-			originalImg = scaledImg;
-		}
-		newImg = new BufferedImage(originalImg.getWidth(), originalImg.getHeight(), originalImg.getType());
+		BufferedImage scaledImg = new BufferedImage((int)(originalImg.getWidth() * scale),  (int)(originalImg.getHeight() * scale), originalImg.getType());
+		scaledImg.getGraphics().drawImage(originalImg, 0, 0, scaledImg.getWidth(), scaledImg.getHeight(), null);
+		
+		newImg = new BufferedImage((int) (scaledImg.getWidth() * postScale), (int) (scaledImg.getHeight() * postScale), originalImg.getType());
 		
         ArrayList<StringBuffer> strings = new ArrayList<StringBuffer>();
         
-        BlockThread.setup(originalImg);
+        BlockThread.setup(scaledImg, newImg);
         			
 		blockThreadArray = new ArrayList<BlockThread>();
         for (int i = 0; i < threadCount; i++) {
@@ -156,7 +160,6 @@ public class MainJPanel extends JPanel {
 		
 		newImg = null;
 		BlockThread.clear();
-		
 	}
 	
 	public void paint(Graphics g) {
@@ -171,8 +174,10 @@ public class MainJPanel extends JPanel {
 		if (file != null) {
 			g2d.drawString(file.getName() + "", 2, getSize().height - 2);
 			if (preDraw && blockThreadArray != null) { // TODO allow user to change if drawing or not
+				Dimension windowSize = getSize();
+				windowSize.height -= 14;
 				for (BlockThread bt: blockThreadArray) {
-					bt.paint(g2d, newImg.getWidth(), newImg.getHeight(), getSize());
+					bt.paint(g2d, newImg.getWidth(), newImg.getHeight(), windowSize);
 				}
 			}
 		}

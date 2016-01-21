@@ -10,7 +10,8 @@ import java.io.IOException;
 public class Settings {
 	
 	private static final boolean
-		DEFAULT_PRE_DRAW = true;
+		DEFAULT_PRE_DRAW = true,
+		DEFAULT_POST_PROCESSING = true;
 	private static final int
 		DEFAULT_BLOCK_SIZE = 10,
 		DEFAULT_MAX_TRIANGLES = 2,
@@ -18,28 +19,33 @@ public class Settings {
 		DEFAULT_THREAD_COUNT = 1,
 		DEFAULT_REPAINT_WAIT = 500;
 	private static final double
-		DEFAULT_SCALE_DOWN = 1.0;
+		DEFAULT_SCALE = 1.0,
+		DEFAULT_POST_SCALE = 1.0;
 	private static final String
 		BLOCK_SIZE_ID = "BLOCK_SIZE",
 		MAX_TRIANGLES_ID = "MAX_TRIANGLES",
 		SAMPLES_ID = "SAMPLES",
 		THREAD_COUNT_ID = "THREAD_COUNT",
-		SCALE_DOWN_ID = "SCALE_DOWN",
+		SCALE_ID = "SCALE",
 		REPAINT_WAIT_ID = "REAPINT_WAIT_MS",
 		PREDRAW_ID = "PREDRAW",
+		POST_SCALE_ID = "POST_SCALE",
+		POST_PROCESSING_ID = "POST_PROCESSING",
 		IDENTIFIER_SYMBOL = ":",
 		COMMENT_SYMBOL = "#";
 	
 	private boolean
-		predraw;
+		predraw,
+		postProcessing;
 	private int 
 		blockSize,
 		maxTriangles,
 		samples,
 		threadCount,
 		repaintWait;
-	private double 
-		scaleDown;
+	private double
+		scale,
+		postScale;
 	private boolean hasSettings;
 	
 	public Settings() {
@@ -51,6 +57,7 @@ public class Settings {
 		if (hasSettings) {
 			return;
 		}
+		setDefaultSettings();
 		String settingsString = null;
 		BufferedReader br = null;
 		try {
@@ -60,10 +67,10 @@ public class Settings {
 			settingsString = br.readLine();
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			setDefaultSettings();
+			System.out.println("Default settings have been set");
+			createSettingsFile();
 			return;
 		}
-		
 		
 		do {
 			if (!settingsString.startsWith(COMMENT_SYMBOL)) {
@@ -80,14 +87,20 @@ public class Settings {
 					case THREAD_COUNT_ID:
 						threadCount = Integer.parseInt(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
 						break;
-					case SCALE_DOWN_ID:
-						scaleDown = Double.parseDouble(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
+					case SCALE_ID:
+						scale = Double.parseDouble(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
 						break;
 					case REPAINT_WAIT_ID:
 						repaintWait = Integer.parseInt(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
 						break;
 					case PREDRAW_ID:
 						predraw = Boolean.parseBoolean(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
+						break;
+					case POST_SCALE_ID:
+						postScale = Double.parseDouble(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
+						break;
+					case POST_PROCESSING_ID:
+						postProcessing = Boolean.parseBoolean(settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1));
 						break;
 					case "": // comment out
 						break;
@@ -111,11 +124,11 @@ public class Settings {
 		maxTriangles = DEFAULT_MAX_TRIANGLES;
 		samples = DEFAULT_SAMPLES;
 		threadCount = DEFAULT_THREAD_COUNT;
-		scaleDown = DEFAULT_SCALE_DOWN;
+		scale = DEFAULT_SCALE;
 		repaintWait = DEFAULT_REPAINT_WAIT;
 		predraw = DEFAULT_PRE_DRAW;
-		System.out.println("Default settings have been set");
-		createSettingsFile();
+		postScale = DEFAULT_POST_SCALE;
+		postProcessing = DEFAULT_POST_PROCESSING;
 	}
 
 	private void createSettingsFile() {
@@ -125,11 +138,13 @@ public class Settings {
 				COMMENT_SYMBOL + "All variables must be written just like the ones following\n" +
 				BLOCK_SIZE_ID + 	IDENTIFIER_SYMBOL + blockSize + 	"\n" +
 				MAX_TRIANGLES_ID + 	IDENTIFIER_SYMBOL + maxTriangles + 	"\n" +
-				SAMPLES_ID + 		IDENTIFIER_SYMBOL + samples + 		"\n" +		
-				THREAD_COUNT_ID + 	IDENTIFIER_SYMBOL + threadCount + 	"\n" + 
-				SCALE_DOWN_ID + 	IDENTIFIER_SYMBOL + scaleDown + 	"\n" +
-				REPAINT_WAIT_ID + 	IDENTIFIER_SYMBOL + repaintWait + 	"\n" + 
-				PREDRAW_ID + 		IDENTIFIER_SYMBOL + predraw + 		"\n";
+				SAMPLES_ID + 		IDENTIFIER_SYMBOL + samples + 		"\n" +
+				THREAD_COUNT_ID + 	IDENTIFIER_SYMBOL + threadCount + 	"\n" +
+				SCALE_ID + 			IDENTIFIER_SYMBOL + scale + 		"\n" +
+				REPAINT_WAIT_ID + 	IDENTIFIER_SYMBOL + repaintWait + 	"\n" +
+				PREDRAW_ID + 		IDENTIFIER_SYMBOL + predraw + 		"\n" +
+				POST_SCALE_ID + 	IDENTIFIER_SYMBOL + postScale + 	"\n" +
+				POST_PROCESSING_ID +IDENTIFIER_SYMBOL + postProcessing +"\n";
 		try {
 			File settingsFile = new File(
 					System.getProperty("user.dir") + "\\TriangleConverter.settings");
@@ -145,7 +160,7 @@ public class Settings {
 
 	public int getBlockSize() {
 		getSettings();
-		if (blockSize <= 0) {
+		if (blockSize < 1) {
 			System.out.println(BLOCK_SIZE_ID + "ERROR");
 			return DEFAULT_BLOCK_SIZE;
 		}
@@ -154,7 +169,7 @@ public class Settings {
 
 	public int getMaxTriangles() {
 		getSettings();
-		if (maxTriangles <= 0) {
+		if (maxTriangles < 2) {
 			System.out.println(MAX_TRIANGLES_ID + "ERROR");
 			return DEFAULT_MAX_TRIANGLES;
 		}
@@ -181,11 +196,11 @@ public class Settings {
 	
 	public double getScaleDown() {
 		getSettings();
-		if (scaleDown <= 0) {
-			System.out.println(SCALE_DOWN_ID + "ERROR");
-			return DEFAULT_SCALE_DOWN;
+		if (scale <= 0) {
+			System.out.println(SCALE_ID + "ERROR");
+			return DEFAULT_SCALE;
 		}
-		return scaleDown;
+		return scale;
 	}
 	
 	public int getRepaintWait() {
@@ -200,5 +215,19 @@ public class Settings {
 	public boolean getPreDraw() {
 		getSettings();
 		return predraw;
+	}
+	
+	public double getPostScale() {
+		getSettings();
+		if (postScale <= 0) {
+			System.out.println(POST_SCALE_ID + "ERROR");
+			return DEFAULT_POST_SCALE;
+		}
+		return postScale;
+	}
+	
+	public boolean getPostProcessing() {
+		getSettings();
+		return postProcessing;
 	}
 }

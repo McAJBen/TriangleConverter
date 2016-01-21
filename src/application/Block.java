@@ -126,4 +126,8 @@ public class Block {
 	public double getMaxScore() {
 		return maxScore;
 	}
+
+	public BufferedImage getImage(Dimension newBlockPixelSize) {
+		return bestTriFile.getImage(newBlockPixelSize);
+	}
 }

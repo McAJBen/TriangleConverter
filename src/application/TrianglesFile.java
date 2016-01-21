@@ -216,4 +216,8 @@ public class TrianglesFile {
 		return triangles;
 		
 	}
+
+	public BufferedImage getImage(Dimension newBlockPixelSize) {
+		return makeImg(newBlockPixelSize.width, newBlockPixelSize.height);
+	}
 }

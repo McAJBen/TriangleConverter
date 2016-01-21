@@ -42,7 +42,6 @@ public class FileHandler {
 		return 
 			equalsFileExtension(f.getName(), ".png") ||
 			equalsFileExtension(f.getName(), ".jpg") ||
-			equalsFileExtension(f.getName(),".jpeg") ||
 			equalsFileExtension(f.getName(), ".bmp");
 	}
 	
