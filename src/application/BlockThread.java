@@ -10,7 +10,7 @@ public class BlockThread extends Thread {
 
 	private static BufferedImage originalImg;
 	private static Dimension
-			blockPixelSize,
+			blockPixelSize, // PIXEL SIZE are the generic size of the block!
 			newBlockPixelSize,
 			offSet,
 			newOffSet;
@@ -117,9 +117,9 @@ public class BlockThread extends Thread {
 			}
 			bestBlock = block;
 			
-		}// TODO postProcessing
+		}// TODO postProcessing fix
 		solvedText = bestBlock.getText(position.x, position.y, 1.0 / blocksWide);
-		solvedImage = bestBlock.getImage(newBlockPixelSize);
+		solvedImage = bestBlock.getImage(newBlockSize);
 	}
 	
 	public void add(BufferedImage newImg) {

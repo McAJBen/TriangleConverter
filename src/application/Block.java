@@ -94,11 +94,8 @@ public class Block {
 		else {
 			stagnantCount++;
 		}
-		if (stagnantCount > TOTAL_STAGNANT_POWER) {
-			if (isScaling && !bestTriFile.hasAlpha()) {
-				triangleMode = TriangleMode.REMOVE;
-			}
-			else {
+		if (!isScaling) {
+			if (stagnantCount > TOTAL_STAGNANT_POWER) {
 				triangleMode = triangleMode.next();
 				stagnantCount = 0;
 				if (triangleMode == TriangleMode.RANDOM) {
@@ -108,6 +105,11 @@ public class Block {
 					}
 					maxScore = bestTriFile.compare(originalImgChunk);
 				}
+			}
+		}
+		else {
+			if (!bestTriFile.hasAlpha()) {
+				triangleMode = TriangleMode.REMOVE;
 			}
 		}
 	}
