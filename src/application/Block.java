@@ -116,7 +116,7 @@ public class Block {
 		g.drawImage(
 				lastBestImg,
 				pos.x * windowSize.width / origW,
-				pos.y * (windowSize.height - 14) / origH,
+				pos.y * windowSize.height / origH,
 				lastBestImg.getWidth() * windowSize.width / origW,
 				lastBestImg.getHeight() * windowSize.height / origH, null);
 	}

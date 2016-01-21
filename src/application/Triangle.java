@@ -6,11 +6,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Triangle {
-	
 	private final static int SIDES = 3;
-	
 	private static Random rand = new Random();
-	
 	private double[] Xpoints = new double[SIDES];
 	private double[] Ypoints = new double[SIDES];
 	private Color color;
@@ -48,8 +45,8 @@ public class Triangle {
 		return getPolygon(imageSize, imageSize);
 	}
 	public Polygon getPolygon(int width, int height) {
-		width++;
-		height++;
+		//width++;
+		//height++;
 		int[] xp = new int[SIDES];
 		int[] yp = new int[SIDES];
 		for (int i = 0; i < SIDES; i++) {
@@ -58,7 +55,7 @@ public class Triangle {
 		}
 		return new Polygon(xp, yp, SIDES);
 	}
-	public Polygon getPolygon(int width, int height, int widthOffset, int heightOffset) {
+	/*public Polygon getPolygon(int width, int height, int widthOffset, int heightOffset) {
 		width++;
 		height++;
 		int[] xp = new int[SIDES];
@@ -68,7 +65,7 @@ public class Triangle {
 			yp[i] = (int) (Ypoints[i] * height + heightOffset);
 		}
 		return new Polygon(xp, yp, SIDES);
-	}
+	}*/
 	public double[] getXpoints() {
 		return Xpoints.clone();
 	}
@@ -84,7 +81,6 @@ public class Triangle {
 	public int getBlue() {
 		return color.getBlue();
 	}
-	
 	@Override
 	public String toString() {
 		String s = color.toString();
@@ -93,5 +89,4 @@ public class Triangle {
 		}
 		return  s;
 	}
-	
 }

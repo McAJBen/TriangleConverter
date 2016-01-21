@@ -161,7 +161,7 @@ public class TrianglesFile {
 		createImg();
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
-				if (new Color(image.getRGB(i, j), true).getAlpha() == 0) {
+				if (new Color(image.getRGB(i, j), true).getAlpha() != 255) {
 					return true;
 				}
 			}

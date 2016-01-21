@@ -168,8 +168,6 @@ public class MainJPanel extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
 		g2d.drawImage(newImg, 0, 0, getSize().width, getSize().height - 14, null);
-		
-		g2d.drawRect(0, 0, getSize().width - 1, getSize().height - 14);
 				
 		if (file != null) {
 			g2d.drawString(file.getName() + "", 2, getSize().height - 2);

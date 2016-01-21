@@ -33,7 +33,6 @@ public class BlockThread extends Thread {
 	public BlockThread(String name) {
 		super(name);
 		position = getNextPosition();
-		
 	}
 
 	public Point getPosition() {
@@ -68,6 +67,8 @@ public class BlockThread extends Thread {
 		BlockThread.offSet = new Dimension(
 				originalImg.getWidth() - blocksWide * blockPixelSize.width,
 				originalImg.getHeight() - blocksWide * blockPixelSize.height);
+		
+		
 		BlockThread.newBlockPixelSize = new Dimension(newImg.getWidth()  / blocksWide, newImg.getHeight() / blocksWide);
 		BlockThread.newOffSet = new Dimension(
 				newImg.getWidth() - blocksWide * newBlockPixelSize.width,
@@ -97,7 +98,7 @@ public class BlockThread extends Thread {
 		while (currentSample < samples) {
 			Block block = new Block(originalImg, blockSize, blockPosition.width, blockPosition.height);
 			while (!block.isDone()) {
-				block.move(); // TODO stop slow down right here by transferring image
+				block.move();
 				currentTestImage = block.getImage();
 			}
 			if (bestScore < block.getMaxScore()) {
@@ -105,14 +106,13 @@ public class BlockThread extends Thread {
 				bestScore = block.getMaxScore();
 			}
 			currentSample++;
-			
 		}
 		if (postProcessing) {
 			
 			Block block = new Block(bestBlock, newBlockSize, newBlockPosition.width, newBlockPosition.height);
 			
 			while (!block.isDone()) {
-				block.move(); // TODO stop slow down right here by transferring image
+				block.move();
 				currentTestImage = block.getImage();
 			}
 			bestBlock = block;
@@ -152,7 +152,12 @@ public class BlockThread extends Thread {
 	}
 	
 	private int getPixelSize(int i, int blockPixelSize, int offSet) {
-		return blockPixelSize + (i < offSet ? 1: 0);
+		if (i < offSet) {
+			return blockPixelSize + 1;
+		}
+		else {
+			return blockPixelSize;
+		}
 	}
 	
 	private int getPixelPoint(int i, int blockPixelSize, int offSet) {
@@ -160,10 +165,7 @@ public class BlockThread extends Thread {
 	}
 	
 	public static boolean isDone() {
-		if (nextPos.y >= blocksWide) {
-			return true;
-		}
-		return false;
+		return nextPos.y >= blocksWide;
 	}
 	
 	public static void setSamples(int samp) {
@@ -192,7 +194,4 @@ public class BlockThread extends Thread {
 		nextPos = null;
 		offSet = null;
 	}
-
-
 }
-
