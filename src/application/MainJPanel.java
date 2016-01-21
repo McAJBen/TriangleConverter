@@ -20,11 +20,19 @@ public class MainJPanel extends JPanel {
 					SCREEN_SIZE = new Dimension(500, 500),
 					SCREEN_OFFSET = new Dimension(7, 30);
 	private BufferedImage newImg;
-	private int threadCount;
+	private boolean preDraw;
+	private int 
+			threadCount,
+			repaintWait;
+	private double scaleDown;
 	private File file;
+	private ArrayList<BlockThread> blockThreadArray;
 	
-	public MainJPanel(int tc) {
-		threadCount = tc;
+	public MainJPanel(int threadCount, double scaleDown, int repaintWait, boolean preDraw) {
+		this.threadCount = threadCount;
+		this.scaleDown = scaleDown;
+		this.repaintWait = repaintWait;
+		this.preDraw = preDraw;
 	}
 
 	public static void main(String[] args) {
@@ -36,14 +44,17 @@ public class MainJPanel extends JPanel {
 		BlockThread.setSamples(settings.getSamples());
 		
         JFrame frame = new JFrame("Triangle Converter" +
-        		" W:" + BlockThread.getBlockSize() + 
+        		" Wi:" + BlockThread.getBlockSize() + 
         		" Tr:" + Block.getMaxTriangles() + 
-        		" S:" + BlockThread.getSamples() + 
-        		" Th:" + settings.getThreadCount());
+        		" Sa:" + BlockThread.getSamples() + 
+        		" Th:" + settings.getThreadCount() + 
+        		" Sc:" + settings.getScaleDown());
         
-        
-        
-        MainJPanel imageEvolutionJPanel = new MainJPanel(settings.getThreadCount());
+        MainJPanel imageEvolutionJPanel = new MainJPanel(
+        		settings.getThreadCount(),
+        		settings.getScaleDown(),
+        		settings.getRepaintWait(),
+        		settings.getPreDraw());
         frame.add(imageEvolutionJPanel);
         frame.setSize(SCREEN_SIZE.width + SCREEN_OFFSET.width, SCREEN_SIZE.height + SCREEN_OFFSET.height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,13 +64,13 @@ public class MainJPanel extends JPanel {
     }
 	
 	private void start() {
-        Thread repaintThread = new Thread() {
+        Thread repaintThread = new Thread("repaintThread") {
 			@Override
 			public void run() {
 				while (!isInterrupted()) {
     				repaint();
     				try {
-						sleep(500);
+						sleep(repaintWait);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -90,38 +101,43 @@ public class MainJPanel extends JPanel {
     		}
     	} while (originalImg == null);
 		
+		{
+			BufferedImage scaledImg = new BufferedImage((int)(originalImg.getWidth() * scaleDown),  (int)(originalImg.getHeight() * scaleDown), BufferedImage.TYPE_INT_ARGB);
+			scaledImg.getGraphics().drawImage(originalImg, 0, 0, scaledImg.getWidth(), scaledImg.getHeight(), null);
+			originalImg = scaledImg;
+		}
 		newImg = new BufferedImage(originalImg.getWidth(), originalImg.getHeight(), originalImg.getType());
 		
         ArrayList<StringBuffer> strings = new ArrayList<StringBuffer>();
         
         BlockThread.setup(originalImg);
         			
-		ArrayList<BlockThread> btArr = new ArrayList<BlockThread>();
+		blockThreadArray = new ArrayList<BlockThread>();
         for (int i = 0; i < threadCount; i++) {
-           	btArr.add(new BlockThread());
+           	blockThreadArray.add(new BlockThread("BlockThread" + i));
         }
         
-        for (BlockThread b: btArr) {
+        for (BlockThread b: blockThreadArray) {
         	b.start();
         }
         
         while (!BlockThread.isDone()) {
-        	for (int i = 0; i < btArr.size(); i++) {
-            	if (!btArr.get(i).isAlive()) {
-            		btArr.get(i).add(newImg);
-            		strings.add(btArr.get(i).getStringBuffer());
-            		btArr.set(i, new BlockThread());
-            		btArr.get(i).start();
+        	for (int i = 0; i < blockThreadArray.size(); i++) {
+            	if (!blockThreadArray.get(i).isAlive()) {
+            		blockThreadArray.get(i).add(newImg);
+            		strings.add(blockThreadArray.get(i).getStringBuffer());
+            		blockThreadArray.set(i, new BlockThread("BlockThread" + i));
+            		blockThreadArray.get(i).start();
             		
             	}
         	}
         }
-        while (btArr.size() > 0) {
-            for (int i = 0; i < btArr.size(); i++) {
-            	if (!btArr.get(i).isAlive()) {
-					btArr.get(i).add(newImg);
-					strings.add(btArr.get(i).getStringBuffer());
-					btArr.remove(i);
+        while (blockThreadArray.size() > 0) {
+            for (int i = 0; i < blockThreadArray.size(); i++) {
+            	if (!blockThreadArray.get(i).isAlive()) {
+					blockThreadArray.get(i).add(newImg);
+					strings.add(blockThreadArray.get(i).getStringBuffer());
+					blockThreadArray.remove(i);
 					break;
 				}
             }
@@ -151,8 +167,14 @@ public class MainJPanel extends JPanel {
 		g2d.drawImage(newImg, 0, 0, getSize().width, getSize().height - 14, null);
 		
 		g2d.drawRect(0, 0, getSize().width - 1, getSize().height - 14);
+				
 		if (file != null) {
 			g2d.drawString(file.getName() + "", 2, getSize().height - 2);
+			if (preDraw && blockThreadArray != null) { // TODO allow user to change if drawing or not
+				for (BlockThread bt: blockThreadArray) {
+					bt.paint(g2d, newImg.getWidth(), newImg.getHeight(), getSize());
+				}
+			}
 		}
     }
 }

@@ -1,5 +1,6 @@
 package application;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -16,7 +17,10 @@ public class BlockThread extends Thread {
 			blockSize;
 	private static Point nextPos;
 	
-	private BufferedImage solvedImage;
+	private int currentSample;
+	private BufferedImage 
+			currentTestImage, 
+			solvedImage;
 	private Point position;
 	private String solvedText = "";
 	
@@ -24,6 +28,12 @@ public class BlockThread extends Thread {
 		position = getNextPosition();
 	}
 	
+	public BlockThread(String name) {
+		super(name);
+		position = getNextPosition();
+		
+	}
+
 	public Point getPosition() {
 		return position;
 	}
@@ -64,16 +74,18 @@ public class BlockThread extends Thread {
 			return;
 		}
 		double bestScore = 0;
-		for (int i = 0; i < samples; i++) {
+		while (currentSample < samples) {
 			Block block = new Block(originalImg, getPixels(position.x, position.y), getWidth(position.x), getHeight(position.y));
 			while (!block.isDone()) {
-				block.move();
+				block.move(); // TODO stop slowdown right here by transfering image
+				currentTestImage = block.getImage();
 			}
 			if (bestScore < block.getMaxScore()) {
 				solvedImage = block.getImage();
 				solvedText = block.getText(position.x, position.y, 1.0 / blockSize);
 				bestScore = block.getMaxScore();
 			}
+			currentSample++;
 		}
 	}
 	
@@ -84,6 +96,22 @@ public class BlockThread extends Thread {
 		Graphics2D g = newImg.createGraphics();
 	    g.drawImage(solvedImage, getWidth(position.x), getHeight(position.y), null);
 	    g.dispose();
+	}
+	
+	public void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
+		if (currentTestImage == null) {
+			return;
+		}
+		g.drawImage(
+				currentTestImage,
+				getWidth(position.x) * windowSize.width / origW,
+				getHeight(position.y) * (windowSize.height - 14) / origH,
+				currentTestImage.getWidth() * windowSize.width / origW,
+				currentTestImage.getHeight() * windowSize.height / origH, null);
+		g.setColor(Color.RED);
+		g.drawString(currentSample + "",
+				getWidth(position.x + 1) * windowSize.width / origW - 8, 
+				getHeight(position.y + 1) * (windowSize.height - 14) / origH);
 	}
 	
 	public String getText() {

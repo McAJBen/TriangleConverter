@@ -82,7 +82,6 @@ public class FileHandler {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(fi));
 			writer.write(header + "\n");
-			// TODO write rest of triangles
 			ArrayList<String> triStrings = StringBuffer.combineStrings(strings, blockSize);
 			
 			for (String s: triStrings) {

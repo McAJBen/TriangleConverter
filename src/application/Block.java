@@ -97,7 +97,7 @@ public class Block {
 	
 	public void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
 		g.drawImage(
-				lastBestImg, 
+				lastBestImg,
 				pos.x * windowSize.width / origW,
 				pos.y * (windowSize.height - 14) / origH,
 				lastBestImg.getWidth() * windowSize.width / origW,
