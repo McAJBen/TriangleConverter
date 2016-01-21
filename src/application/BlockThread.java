@@ -10,8 +10,8 @@ public class BlockThread extends Thread {
 
 	private static BufferedImage originalImg;
 	private static Dimension
-			blockPixelSize, // PIXEL SIZE are the generic size of the block!
-			newBlockPixelSize,
+			blockStandardSize, // Standard SIZE are the generic size of the block!
+			newBlockStandardSize,
 			offSet,
 			newOffSet;
 	private static int 
@@ -35,7 +35,7 @@ public class BlockThread extends Thread {
 		position = getNextPosition();
 	}
 
-	public Point getPosition() {
+	public Point getNextBlockPosition() {
 		return position;
 	}
 	
@@ -54,25 +54,25 @@ public class BlockThread extends Thread {
 	}
 
 	public StringBuffer getStringBuffer() {
-		if (getPosition() == null) {
+		if (getNextBlockPosition() == null) {
 			System.out.println("POSITION IS NULL - BLOCK THREAD");
 		}
-		return new StringBuffer(getText(), getPosition());
+		return new StringBuffer(getText(), getNextBlockPosition());
 	}
 	
 	public static void setup(BufferedImage originalImg, BufferedImage newImg) {
 		BlockThread.originalImg = originalImg;
-		BlockThread.blockPixelSize = new Dimension(originalImg.getWidth()  / blocksWide, originalImg.getHeight() / blocksWide);
+		BlockThread.blockStandardSize = new Dimension(originalImg.getWidth()  / blocksWide, originalImg.getHeight() / blocksWide);
 		BlockThread.nextPos = new Point(0, 0);
 		BlockThread.offSet = new Dimension(
-				originalImg.getWidth() - blocksWide * blockPixelSize.width,
-				originalImg.getHeight() - blocksWide * blockPixelSize.height);
+				originalImg.getWidth() - blocksWide * blockStandardSize.width,
+				originalImg.getHeight() - blocksWide * blockStandardSize.height);
 		
 		
-		BlockThread.newBlockPixelSize = new Dimension(newImg.getWidth()  / blocksWide, newImg.getHeight() / blocksWide);
+		BlockThread.newBlockStandardSize = new Dimension(newImg.getWidth()  / blocksWide, newImg.getHeight() / blocksWide);
 		BlockThread.newOffSet = new Dimension(
-				newImg.getWidth() - blocksWide * newBlockPixelSize.width,
-				newImg.getHeight() - blocksWide * newBlockPixelSize.height);
+				newImg.getWidth() - blocksWide * newBlockStandardSize.width,
+				newImg.getHeight() - blocksWide * newBlockStandardSize.height);
 	}
 	
 	@Override
@@ -81,17 +81,17 @@ public class BlockThread extends Thread {
 			return;
 		}
 		blockSize = new Dimension(
-				getPixelSize(position.x, blockPixelSize.width, offSet.width),
-				getPixelSize(position.y, blockPixelSize.height, offSet.height));
+				getSize(position.x, blockStandardSize.width, offSet.width),
+				getSize(position.y, blockStandardSize.height, offSet.height));
 		blockPosition = new Dimension(
-				getPixelPoint(position.x, blockPixelSize.width, offSet.width),
-				getPixelPoint(position.y, blockPixelSize.height, offSet.height));
+				getPoint(position.x, blockStandardSize.width, offSet.width),
+				getPoint(position.y, blockStandardSize.height, offSet.height));
 		newBlockSize = new Dimension(
-				getPixelSize(position.x, newBlockPixelSize.width, newOffSet.width),
-				getPixelSize(position.y, newBlockPixelSize.height, newOffSet.height));
+				getSize(position.x, newBlockStandardSize.width, newOffSet.width),
+				getSize(position.y, newBlockStandardSize.height, newOffSet.height));
 		newBlockPosition = new Dimension(
-				getPixelPoint(position.x, newBlockPixelSize.width, newOffSet.width),
-				getPixelPoint(position.y, newBlockPixelSize.height, newOffSet.height));
+				getPoint(position.x, newBlockStandardSize.width, newOffSet.width),
+				getPoint(position.y, newBlockStandardSize.height, newOffSet.height));
 		
 		double bestScore = 0;
 		Block bestBlock = null;
@@ -151,7 +151,7 @@ public class BlockThread extends Thread {
 		return solvedText;
 	}
 	
-	private int getPixelSize(int i, int blockPixelSize, int offSet) {
+	private int getSize(int i, int blockPixelSize, int offSet) {
 		if (i < offSet) {
 			return blockPixelSize + 1;
 		}
@@ -160,7 +160,7 @@ public class BlockThread extends Thread {
 		}
 	}
 	
-	private int getPixelPoint(int i, int blockPixelSize, int offSet) {
+	private int getPoint(int i, int blockPixelSize, int offSet) {
 		return i * blockPixelSize + Math.min(i, offSet);
 	}
 	
@@ -190,7 +190,7 @@ public class BlockThread extends Thread {
 
 	public static void clear() {
 		originalImg = null;
-		blockPixelSize = null;
+		blockStandardSize = null;
 		nextPos = null;
 		offSet = null;
 	}
