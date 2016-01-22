@@ -113,16 +113,11 @@ public class Block {
 				triangleMode = TriangleMode.SHAPE_FULL;
 			}
 			else if (triangleMode == TriangleMode.RANDOM) {
-				if (bestTriFile.getSize() < maxTriangles) {
-					bestTriFile.addTriangle();
-				}
-				maxScore = bestTriFile.compare(imgChunk);
-				/*
 				bestTriFile.addTriangle();
 				while (bestTriFile.getSize() > maxTriangles) {
 					bestTriFile.removeBackTriangle(); // check if i should remove the first or not
 				}
-				maxScore = bestTriFile.compare(imgChunk);*/
+				maxScore = bestTriFile.compare(imgChunk);
 			}
 		}
 	}
