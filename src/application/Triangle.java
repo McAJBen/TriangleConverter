@@ -45,8 +45,8 @@ public class Triangle {
 		return getPolygon(imageSize, imageSize);
 	}
 	public Polygon getPolygon(int width, int height) {
-		//width++;
-		//height++;
+		width++;
+		height++;
 		int[] xp = new int[SIDES];
 		int[] yp = new int[SIDES];
 		for (int i = 0; i < SIDES; i++) {
@@ -80,6 +80,10 @@ public class Triangle {
 	}
 	public int getBlue() {
 		return color.getBlue();
+	}
+	@Override
+	public Triangle clone() {
+		return new Triangle(Xpoints.clone(), Ypoints.clone(), new Color(color.getRed(), color.getGreen(), color.getBlue()));
 	}
 	@Override
 	public String toString() {

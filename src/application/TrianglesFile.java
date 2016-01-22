@@ -210,8 +210,11 @@ public class TrianglesFile {
 	}
 	
 	public ArrayList<Triangle> getTriangles() {
+		ArrayList<Triangle> tr = new ArrayList<Triangle>();
+		for (int i = 0; i < triangles.size(); i++) {
+			tr.add(triangles.get(i).clone());
+		}
 		return triangles;
-		
 	}
 
 	public BufferedImage getImage(Dimension newBlockPixelSize) {

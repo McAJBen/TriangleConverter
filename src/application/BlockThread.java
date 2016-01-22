@@ -116,16 +116,12 @@ public class BlockThread extends Thread {
 			currentSample++;
 		}
 		if (postProcessing) {
-			
-			
 			Block block = new Block(scaledUpImg, newBlockSize, newBlockPosition, bestBlock.getTriangles());
-			
 			while (!block.isDone()) {
 				block.move();
 				currentTestImage = block.getImage();
 			}
 			bestBlock = block;
-			
 		}
 		solvedText = bestBlock.getText(position.x, position.y, 1.0 / blocksWide);
 		solvedImage = bestBlock.getImage(newBlockSize);
@@ -150,6 +146,7 @@ public class BlockThread extends Thread {
 				newBlockPosition.y * windowSize.height / origH,
 				newBlockSize.width * windowSize.width / origW,
 				newBlockSize.height * windowSize.height / origH, null);
+		
 		g.setColor(Color.YELLOW);
 		
 		g.drawString(getName() + "",
