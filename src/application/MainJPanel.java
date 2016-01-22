@@ -118,7 +118,7 @@ public class MainJPanel extends JPanel {
         			
 		blockThreadArray = new ArrayList<BlockThread>();
         for (int i = 0; i < threadCount; i++) {
-           	blockThreadArray.add(new BlockThread("BlockThread" + i));
+           	blockThreadArray.add(new BlockThread("" + i));
         }
         
         for (BlockThread b: blockThreadArray) {
@@ -130,7 +130,7 @@ public class MainJPanel extends JPanel {
             	if (!blockThreadArray.get(i).isAlive()) {
             		blockThreadArray.get(i).add(newImg);
             		strings.add(blockThreadArray.get(i).getStringBuffer());
-            		blockThreadArray.set(i, new BlockThread("BlockThread" + i));
+            		blockThreadArray.set(i, new BlockThread("" + i));
             		blockThreadArray.get(i).start();
             		
             	}
