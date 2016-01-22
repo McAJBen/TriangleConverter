@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class BlockThread extends Thread {
 
@@ -104,7 +105,7 @@ public class BlockThread extends Thread {
 		double bestScore = 0;
 		Block bestBlock = null;
 		while (currentSample < samples) {
-			Block block = new Block(scaledImg, blockSize, blockPosition);
+			Block block = new Block(blockPosition, blockSize, scaledImg, new ArrayList<Triangle>());
 			while (!block.isDone()) {
 				block.move();
 				currentTestImage = block.getImage();
@@ -116,7 +117,7 @@ public class BlockThread extends Thread {
 			currentSample++;
 		}
 		if (postProcessing) {
-			Block block = new Block(scaledUpImg, newBlockSize, newBlockPosition, bestBlock.getTriangles());
+			Block block = new Block(newBlockPosition, newBlockSize, scaledUpImg, bestBlock.getTriangles());
 			while (!block.isDone()) {
 				block.move();
 				currentTestImage = block.getImage();

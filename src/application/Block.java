@@ -41,28 +41,13 @@ public class Block {
 		}
 	}
 	
-	private Block(Point position, Dimension size, BufferedImage img) {
+	// position must be pixel position of top left of chunk
+	// size = pixel size of chunk
+	public Block(Point position, Dimension size, BufferedImage img, ArrayList<Triangle> trArray) {
 		pos = position;
 		imgChunk = new BufferedImage(size.width, size.height, img.getType());
 		imgChunk.getGraphics().drawImage(img, -position.x, -position.y, null);
-		
-	}
-	
-	public Block(BufferedImage scaledDownImg, Dimension size, Point position) {
-		this(position, size, scaledDownImg);
-		
-		bestTriFile = new TrianglesFile(new ArrayList<Triangle>(), size);
-	    maxScore = bestTriFile.compare(imgChunk);
-		lastBestImgChunk = bestTriFile.getImage();
-		
-	}
-	
-	public Block(BufferedImage scaledUpImg, Dimension size, Point position, ArrayList<Triangle> trArray) {
-		this(position, size, scaledUpImg);
-
-		triangleMode = TriangleMode.COLOR_10;
-		bestTriFile = new TrianglesFile(trArray, new Dimension(imgChunk.getWidth(), imgChunk.getHeight()));
-		
+		bestTriFile = new TrianglesFile(trArray, size);
 		maxScore = bestTriFile.compare(imgChunk);
 		lastBestImgChunk = bestTriFile.getImage();
 	}
@@ -75,13 +60,13 @@ public class Block {
 				modifyTriFile.modifyRandom();
 				break;
 			case COLOR_10:
-				modifyTriFile.modifyColor();
+				modifyTriFile.modifyColor10();
 				break;
 			case SHAPE_FULL:
-				modifyTriFile.modifyShape2();
+				modifyTriFile.modifyShapeFull();
 				break;
 			case SHAPE_10:
-				modifyTriFile.modifyShape();
+				modifyTriFile.modifyShape10();
 				break;
 			case REMOVE:
 				modifyTriFile.modifyRemove();

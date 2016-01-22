@@ -12,7 +12,7 @@ public class Triangle {
 	private double[] Ypoints = new double[SIDES];
 	private Color color;
 	
-	public Triangle() {
+	Triangle() {
 		for (int i = 0; i < SIDES; i++) {
 			Xpoints[i] = rand.nextDouble();
 			Ypoints[i] = rand.nextDouble();
@@ -22,27 +22,22 @@ public class Triangle {
 	public Triangle(double[] px, double[] py, Color c) {
 		Xpoints = px.clone();
 		Ypoints = py.clone();
-		color = new Color(c.getRed(), c.getGreen(), c.getBlue());
+		setColor(c);
 	}
 	public Triangle(ArrayList<Double> px, ArrayList<Double> py, Color c) {
-		Xpoints = new double[px.size()];
-		for (int i = 0; i < px.size(); i++) {
+		Xpoints = new double[SIDES];
+		Ypoints = new double[SIDES];
+		for (int i = 0; i < SIDES; i++) {
 			Xpoints[i] = px.get(i);
-		}
-		Ypoints = new double[py.size()];
-		for (int i = 0; i < py.size(); i++) {
 			Ypoints[i] = py.get(i);
 		}
-		color = c;
+		setColor(c);
 	}
-	public void setColor(Color c) {
+	private void setColor(Color c) {
 		color = new Color(c.getRed(), c.getGreen(), c.getBlue());
 	}
 	public Color getColor() {
 		return new Color(color.getRed(), color.getGreen(), color.getBlue());
-	}
-	public Polygon getPolygon(int imageSize) {
-		return getPolygon(imageSize, imageSize);
 	}
 	public Polygon getPolygon(int width, int height) {
 		width++;
@@ -55,17 +50,6 @@ public class Triangle {
 		}
 		return new Polygon(xp, yp, SIDES);
 	}
-	/*public Polygon getPolygon(int width, int height, int widthOffset, int heightOffset) {
-		width++;
-		height++;
-		int[] xp = new int[SIDES];
-		int[] yp = new int[SIDES];
-		for (int i = 0; i < SIDES; i++) {
-			xp[i] = (int) (Xpoints[i] * width + widthOffset);
-			yp[i] = (int) (Ypoints[i] * height + heightOffset);
-		}
-		return new Polygon(xp, yp, SIDES);
-	}*/
 	public double[] getXpoints() {
 		return Xpoints.clone();
 	}
@@ -83,12 +67,12 @@ public class Triangle {
 	}
 	@Override
 	public Triangle clone() {
-		return new Triangle(Xpoints.clone(), Ypoints.clone(), new Color(color.getRed(), color.getGreen(), color.getBlue()));
+		return new Triangle(Xpoints.clone(), Ypoints.clone(), getColor());
 	}
 	@Override
 	public String toString() {
 		String s = color.toString();
-		for (int i = 0; i < Xpoints.length; i++) {
+		for (int i = 0; i < SIDES; i++) {
 			s = s.concat("\t" + Xpoints[i] + "\t" + Ypoints[i]);
 		}
 		return  s;
