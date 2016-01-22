@@ -23,6 +23,7 @@ public class BlockThread extends Thread {
 			blocksWide;
 	private static Point nextPos;
 	private static boolean postProcessing;
+	private static Graphics2D newImgGraphics;
 	
 	private int currentSample;
 	private BufferedImage 
@@ -67,21 +68,21 @@ public class BlockThread extends Thread {
 		return new StringBuffer(getText(), getNextBlockPosition());
 	}
 	
-	public static void setup(BufferedImage originalImg, BufferedImage scaledImg, BufferedImage newImg) {
-		
-		BlockThread.scaledImg = scaledImg;
-		BlockThread.scaledUpImg = new BufferedImage(newImg.getWidth(), newImg.getHeight(), newImg.getType());
+	public static void setup(BufferedImage originalImg, BufferedImage scaleImg, BufferedImage newImg) {
+		scaledImg = scaleImg;
+		scaledUpImg = new BufferedImage(newImg.getWidth(), newImg.getHeight(), newImg.getType());
 		scaledUpImg.getGraphics().drawImage(originalImg, 0, 0, scaledUpImg.getWidth(), scaledUpImg.getHeight(), null);
 		
-		BlockThread.blockStandardSize = new Dimension(scaledImg.getWidth() / blocksWide, scaledImg.getHeight() / blocksWide);
-		BlockThread.nextPos = new Point(0, 0);
-		BlockThread.offSet = new Dimension(
+		blockStandardSize = new Dimension(scaledImg.getWidth() / blocksWide, scaledImg.getHeight() / blocksWide);
+		nextPos = new Point(0, 0);
+		offSet = new Dimension(
 				scaledImg.getWidth() - blocksWide * blockStandardSize.width,
 				scaledImg.getHeight() - blocksWide * blockStandardSize.height);
-		BlockThread.newBlockStandardSize = new Dimension(newImg.getWidth() / blocksWide, newImg.getHeight() / blocksWide);
-		BlockThread.newOffSet = new Dimension(
+		newBlockStandardSize = new Dimension(newImg.getWidth() / blocksWide, newImg.getHeight() / blocksWide);
+		newOffSet = new Dimension(
 				newImg.getWidth() - blocksWide * newBlockStandardSize.width,
 				newImg.getHeight() - blocksWide * newBlockStandardSize.height);
+		newImgGraphics = newImg.createGraphics();
 		
 	}
 	
@@ -127,15 +128,8 @@ public class BlockThread extends Thread {
 		}
 		solvedText = bestBlock.getText(position.x, position.y, 1.0 / blocksWide);
 		solvedImage = bestBlock.getImage(newBlockSize);
-	}
-	
-	public void add(BufferedImage newImg) {
-		if (position == null) {
-			return;
-		}
-		Graphics2D g = newImg.createGraphics();
-	    g.drawImage(solvedImage, newBlockPosition.x, newBlockPosition.y, newBlockSize.width, newBlockSize.height, null);
-	    g.dispose();
+		
+	    newImgGraphics.drawImage(solvedImage, newBlockPosition.x, newBlockPosition.y, newBlockSize.width, newBlockSize.height, null);
 	}
 	
 	public void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
