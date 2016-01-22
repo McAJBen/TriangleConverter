@@ -19,6 +19,7 @@ public class TrianglesFile {
 	private Dimension imageSize;
 	private ArrayList<Triangle> triangles = new ArrayList<Triangle>();
 	private BufferedImage image;
+	private boolean imageMade = false;
 	
 	public TrianglesFile(TrianglesFile tf) {
 		this(tf.getTriangles(), tf.imageSize);
@@ -29,10 +30,6 @@ public class TrianglesFile {
 			this.triangles.add(trArray.get(i));
 		}
 		imageSize = (Dimension) dimension.clone();
-	}
-	
-	private void createImg() {
-		image = makeImg(imageSize.width, imageSize.height);
 	}
 	
 	private BufferedImage makeImg(int width, int height) {
@@ -47,7 +44,8 @@ public class TrianglesFile {
 	    return img;
 	}
 	
-	void modifyRandom() {
+	public void modifyRandom() {
+		imageMade = false;
 		if (triangles.size() <= 0) {
 			return;
 		}
@@ -56,7 +54,8 @@ public class TrianglesFile {
 		triangles.add(new Triangle());
 	}
 	
-	void modifyShape10() {
+	public void modifyShape10() {
+		imageMade = false;
 		if (triangles.size() <= 0) {
 			return;
 		}
@@ -73,7 +72,8 @@ public class TrianglesFile {
 		triangles.set(i, new Triangle(xp, yp, triangles.get(i).getColor()));
 	}
 	
-	void modifyShapeFull() {
+	public void modifyShapeFull() {
+		imageMade = false;
 		if (triangles.size() <= 0) {
 			return;
 		}
@@ -87,7 +87,8 @@ public class TrianglesFile {
 		triangles.set(i, new Triangle(xp, yp, triangles.get(i).getColor()));
 	}
 	
-	void modifyColor10() {
+	public void modifyColor10() {
+		imageMade = false;
 		if (triangles.size() <= 0) {
 			return;
 		}
@@ -97,17 +98,13 @@ public class TrianglesFile {
 				triangles.get(i).getBlue()};
 		for (int j = 0; j < col.length; j++) {
 			col[j] += rand.nextInt(51) - 25;
-			if (col[j] > 255) {
-				col[j] = 255;
-			}
-			else if (col[j] < 0) {
-				col[j] = 0;
-			}
+			col[j] = checkBounds(col[j], 255);
 		}
 		triangles.set(i, new Triangle(triangles.get(i).getXpoints(), triangles.get(i).getYpoints(), new Color(col[0], col[1], col[2])));
 	}
 	
-	void modifyRemove() {
+	public void modifyRemove() {
+		imageMade = false;
 		if (triangles.size() > 2) {
 			triangles.remove(rand.nextInt(triangles.size()));
 		}
@@ -127,7 +124,17 @@ public class TrianglesFile {
 		return n;
 	}
 	
-	double compare(BufferedImage img) {
+	private int checkBounds(int n, int max) {
+		if (n > max) {
+			return max;
+		}
+		else if (n < 0) {
+			return 0;
+		}
+		return n;
+	}
+	
+	public double compare(BufferedImage img) {
 		createImg();
 		double score = 0;
 		for (int i = 0; i < image.getWidth(); i++) {
@@ -147,7 +154,7 @@ public class TrianglesFile {
 		return 1-score;
 	}
 	
-	boolean hasAlpha() {
+	public boolean hasAlpha() {
 		createImg();
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
@@ -159,7 +166,7 @@ public class TrianglesFile {
 		return false;
 	}
 	
-	String getText(double x, double y, double size) {
+	public String getText(double x, double y, double size) {
 		String s = "";
 		for (int i = 0; i < triangles.size(); i++) {
 			s = s.concat(":r" + triangles.get(i).getRed() + "g" + triangles.get(i).getGreen() + "b" + triangles.get(i).getBlue());
@@ -174,28 +181,28 @@ public class TrianglesFile {
 		return s;
 	}
 	
-	BufferedImage getImage() {
-		if (image == null) {
-			createImg();
-		}
+	public BufferedImage getImage() {
+		createImg();
 		return image;
 	}
 	
-	int getSize() {
+	public int getSize() {
 		return triangles.size();
 	}
 	
-	void addTriangle() {
+	public void addTriangle() {
+		imageMade = false;
 		triangles.add(new Triangle());
 	}
 	
-	void removeBackTriangle() {
+	public void removeBackTriangle() {
+		imageMade = false;
 		if (getSize() > 0) {
 			triangles.remove(0);
 		}
 	}
 	
-	ArrayList<Triangle> getTriangles() {
+	public ArrayList<Triangle> getTriangles() {
 		ArrayList<Triangle> tr = new ArrayList<Triangle>();
 		for (int i = 0; i < triangles.size(); i++) {
 			tr.add(triangles.get(i).clone());
@@ -203,7 +210,15 @@ public class TrianglesFile {
 		return triangles;
 	}
 
-	BufferedImage getImage(Dimension newBlockPixelSize) {
+	private void createImg() {
+		if (imageMade) {
+			return;
+		}
+		image = makeImg(imageSize.width, imageSize.height);
+		imageMade = true;
+	}
+
+	public BufferedImage getImage(Dimension newBlockPixelSize) {
 		return makeImg(newBlockPixelSize.width, newBlockPixelSize.height);
 	}
 }

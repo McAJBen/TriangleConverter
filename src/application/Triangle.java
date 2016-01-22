@@ -12,7 +12,7 @@ public class Triangle {
 	private double[] Ypoints = new double[SIDES];
 	private Color color;
 	
-	Triangle() {
+	public Triangle() {
 		for (int i = 0; i < SIDES; i++) {
 			Xpoints[i] = rand.nextDouble();
 			Ypoints[i] = rand.nextDouble();
