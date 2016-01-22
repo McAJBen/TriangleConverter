@@ -155,7 +155,8 @@ public class BlockThread extends Thread {
 		g.drawString(getName() + "",
 				newBlockPosition.x * windowSize.width / origW + 1, 
 				newBlockPosition.y * windowSize.height / origH + 11);
-		g.drawRect(newBlockPosition.x * windowSize.width / origW,
+		g.drawRect(
+				newBlockPosition.x * windowSize.width / origW,
 				newBlockPosition.y * windowSize.height / origH,
 				newBlockSize.width * windowSize.width / origW,
 				newBlockSize.height * windowSize.height / origH);
