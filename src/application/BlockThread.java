@@ -212,4 +212,8 @@ public class BlockThread extends Thread {
 		nextPos = null;
 		offSet = null;
 	}
+
+	public static int getMaxTriangles() {
+		return maxTriangles;
+	}
 }

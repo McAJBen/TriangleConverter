@@ -43,13 +43,13 @@ public class MainJPanel extends JPanel {
 		Settings settings = new Settings();
 		
 		BlockThread.setBlockSize(settings.getBlockSize());
-		Block.setMaxTriangles(settings.getMaxTriangles());
+		BlockThread.setMaxTriangles(settings.getMaxTriangles());
 		BlockThread.setSamples(settings.getSamples());
 		BlockThread.setPostProcessing(settings.getPostProcessing());
 		
         JFrame frame = new JFrame("Triangle Converter" +
         		" Wi:" + BlockThread.getBlockSize() + 
-        		" Tr:" + Block.getMaxTriangles() + 
+        		" Tr:" + BlockThread.getMaxTriangles() + 
         		" Sa:" + BlockThread.getSamples() + 
         		" Th:" + settings.getThreadCount() + 
         		" Sc:" + settings.getScaleDown() + 
@@ -150,7 +150,8 @@ public class MainJPanel extends JPanel {
 		FileHandler.save(file, originalImg, newImg);
 		
 		FileHandler.saveText(file, 
-				"b" + BlockThread.getBlockSize() + "t" + Block.getMaxTriangles() + "|",
+				"b" + BlockThread.getBlockSize() + 
+				"t" + BlockThread.getMaxTriangles() + "|",
 				strings, BlockThread.getBlockSize());
 		
 		file.delete();

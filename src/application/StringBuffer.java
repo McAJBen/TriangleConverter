@@ -4,27 +4,23 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 public class StringBuffer {
-	private String s;
-	private Point p;
+	private String string;
+	private Point point;
 	
 	public StringBuffer(String s, Point p) {
-		this.s = s;
-		this.p = p;
+		this.string = s;
+		this.point = p;
 	}
-	
 	public Point getPoint() {
-		return p;
+		return point;
 	}
-	
 	public String getString() {
-		return s;
+		return string;
 	}
-	
 	@Override
 	public String toString() {
-		return p.x + ", " + p.y + ", " + s;
+		return point.x + ", " + point.y + ", " + string;
 	}
-	
 	public static ArrayList<String> combineStrings(ArrayList<StringBuffer> sb, int blockSize) {
 		ArrayList<String> newsb = new ArrayList<String>();
 		
@@ -41,7 +37,4 @@ public class StringBuffer {
 		}
 		return newsb;
 	}
-	
-	
-	
 }
