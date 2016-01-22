@@ -9,10 +9,6 @@ import java.util.ArrayList;
 public class Block {
 	private static final double MAX_STAGNANT_VAL = 100;
 	
-	// should be overwritten by setMaxTriangles, consider this a final
-	private static int maxTriangles = 2;
-	
-	
 	private BufferedImage
 			imgChunk, // Image this Block is trying to solve
 			lastBestImgChunk; // Last best solved image from this block
@@ -52,9 +48,10 @@ public class Block {
 		lastBestImgChunk = bestTriFile.getImage();
 	}
 
-	public void move() {
+	// checks triangleMode to modify bestTriFile and see if it improves
+	public void move(int maxTriangles) {
 		TrianglesFile modifyTriFile = new TrianglesFile(bestTriFile);
-		
+		// changes modifyTri based on triangleMode
 		switch (triangleMode) {
 			case RANDOM:
 				modifyTriFile.modifyRandom();
@@ -74,6 +71,7 @@ public class Block {
 		}
 		double modifyScore = modifyTriFile.compare(imgChunk);
 		
+		// checks if the modify improved
 		if (modifyScore >= maxScore) {
 			if (modifyScore > maxScore) {
 				maxScore = modifyScore;
@@ -88,19 +86,22 @@ public class Block {
 		else {
 			stagnantCount++;
 		}
+		// if modifying at the current triangleMode isn't doing enough
 		if (stagnantCount > MAX_STAGNANT_VAL) {
 			triangleMode = triangleMode.next();
 			stagnantCount = 0;
+			// if triangleMode is at the end try adding another triangle
 			if (triangleMode == TriangleMode.RANDOM) {
 				bestTriFile.addTriangle();
 				while (bestTriFile.getSize() > maxTriangles) {
-					bestTriFile.removeBackTriangle(); // check if i should remove the first or not
+					bestTriFile.removeBackTriangle();
 				}
 				maxScore = bestTriFile.compare(imgChunk);
 			}
 		}
 	}
 	
+	// paints the last best compare to screen
 	public void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
 		g.drawImage(
 				lastBestImgChunk,
@@ -110,7 +111,7 @@ public class Block {
 				lastBestImgChunk.getHeight() * windowSize.height / origH, null);
 	}
 	
-	public boolean isDone() {
+	public boolean isDone(int maxTriangles) {
 		if (bestTriFile.hasAlpha()) {
 			return false;
 		}
@@ -129,16 +130,9 @@ public class Block {
 		return lastBestImgChunk;
 	}
 	
+	// gets .trifi information
 	public String getText(double x, double y, double size) {
 		return bestTriFile.getText(x, y, size);
-	}
-	
-	public static void setMaxTriangles(int numTriangles) {
-		maxTriangles = numTriangles;
-	}
-	
-	public static int getMaxTriangles() {
-		return maxTriangles;
 	}
 	
 	public ArrayList<Triangle> getTriangles() {

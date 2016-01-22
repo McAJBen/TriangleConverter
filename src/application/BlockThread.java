@@ -13,11 +13,12 @@ public class BlockThread extends Thread {
 			scaledUpImg,
 			scaledImg;
 	private static Dimension
-			blockStandardSize, // Standard SIZE are the generic size of the block!
+			blockStandardSize, // Standard SIZE are the generic size of the block
 			newBlockStandardSize,
 			offSet,
 			newOffSet;
 	private static int 
+			maxTriangles,
 			samples,
 			blocksWide;
 	private static Point nextPos;
@@ -69,15 +70,15 @@ public class BlockThread extends Thread {
 	public static void setup(BufferedImage originalImg, BufferedImage scaledImg, BufferedImage newImg) {
 		
 		BlockThread.scaledImg = scaledImg;
-		BlockThread.scaledUpImg = new BufferedImage(newImg.getWidth(), newImg.getHeight(), newImg.getType());// TODO
+		BlockThread.scaledUpImg = new BufferedImage(newImg.getWidth(), newImg.getHeight(), newImg.getType());
 		scaledUpImg.getGraphics().drawImage(originalImg, 0, 0, scaledUpImg.getWidth(), scaledUpImg.getHeight(), null);
 		
-		BlockThread.blockStandardSize = new Dimension(scaledImg.getWidth()  / blocksWide, scaledImg.getHeight() / blocksWide);
+		BlockThread.blockStandardSize = new Dimension(scaledImg.getWidth() / blocksWide, scaledImg.getHeight() / blocksWide);
 		BlockThread.nextPos = new Point(0, 0);
 		BlockThread.offSet = new Dimension(
 				scaledImg.getWidth() - blocksWide * blockStandardSize.width,
 				scaledImg.getHeight() - blocksWide * blockStandardSize.height);
-		BlockThread.newBlockStandardSize = new Dimension(newImg.getWidth()  / blocksWide, newImg.getHeight() / blocksWide);
+		BlockThread.newBlockStandardSize = new Dimension(newImg.getWidth() / blocksWide, newImg.getHeight() / blocksWide);
 		BlockThread.newOffSet = new Dimension(
 				newImg.getWidth() - blocksWide * newBlockStandardSize.width,
 				newImg.getHeight() - blocksWide * newBlockStandardSize.height);
@@ -106,8 +107,8 @@ public class BlockThread extends Thread {
 		Block bestBlock = null;
 		while (currentSample < samples) {
 			Block block = new Block(blockPosition, blockSize, scaledImg, new ArrayList<Triangle>());
-			while (!block.isDone()) {
-				block.move();
+			while (!block.isDone(maxTriangles)) {
+				block.move(maxTriangles);
 				currentTestImage = block.getImage();
 			}
 			if (bestScore < block.getMaxScore()) {
@@ -118,8 +119,8 @@ public class BlockThread extends Thread {
 		}
 		if (postProcessing) {
 			Block block = new Block(newBlockPosition, newBlockSize, scaledUpImg, bestBlock.getTriangles());
-			while (!block.isDone()) {
-				block.move();
+			while (!block.isDone(maxTriangles)) {
+				block.move(maxTriangles);
 				currentTestImage = block.getImage();
 			}
 			bestBlock = block;
@@ -195,6 +196,10 @@ public class BlockThread extends Thread {
 
 	public static void setPostProcessing(boolean postProces) {
 		postProcessing = postProces;
+	}
+	
+	public static void setMaxTriangles(int maxTriangle) {
+		maxTriangles = maxTriangle;
 	}
 	
 	public static int getBlockSize() {
