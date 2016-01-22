@@ -39,9 +39,7 @@ public class Settings {
 		IDENTIFIER_SYMBOL = ":",
 		COMMENT_SYMBOL = "#",
 		DEFAULT_HEADER = 
-				COMMENT_SYMBOL + "This is the Settings File\n" +
-				COMMENT_SYMBOL + "All Comments must begin with " + COMMENT_SYMBOL + "\n" +
-				COMMENT_SYMBOL + "All variables must be written just like the ones following";
+				COMMENT_SYMBOL + "All Comments must begin with " + COMMENT_SYMBOL;
 	
 	private boolean
 		predraw,
@@ -77,7 +75,6 @@ public class Settings {
 			// check if settings exist and read first line
 			if (settingsFile.exists()) {
 				br = new BufferedReader(new FileReader(settingsFile));
-				settingsString = br.readLine();
 			}
 			// if the settings file does not exist, go to catch
 			else throw new IOException("Settings File does not exist");
@@ -89,11 +86,26 @@ public class Settings {
 		}
 		
 		while (true) {
+			// read a line
+			try {
+				settingsString = br.readLine();
+				if (settingsString == null) {
+					throw new IOException("No Line To Read");
+				}
+			} catch (IOException e) {
+				// can't read another line, the file must be done
+				break;
+			}
 			// if line == null continue to check if there are any more lines
 			// if line begins with comment symbol, ignore the line
 			if (settingsString != null && !settingsString.startsWith(COMMENT_SYMBOL)) {
-				String stringAfterIDSymbol = settingsString.substring(settingsString.indexOf(IDENTIFIER_SYMBOL) + 1);
-				switch (settingsString.substring(0, settingsString.indexOf(IDENTIFIER_SYMBOL))) {
+				int indexOfIdentifier = settingsString.indexOf(IDENTIFIER_SYMBOL);
+				// if line does not have identifier ignore it
+				if (indexOfIdentifier == -1) {
+					continue;
+				}
+				String stringAfterIDSymbol = settingsString.substring(indexOfIdentifier + 1);
+				switch (settingsString.substring(0, indexOfIdentifier)) {
 					// BOOLEANS
 					case PREDRAW_ID:
 						predraw = Boolean.parseBoolean(stringAfterIDSymbol);
@@ -127,15 +139,6 @@ public class Settings {
 					default: // any unknown ID is ignored
 						break;
 				}
-			}
-			// read another line
-			// if the next line exists loop back
-			
-			try {
-				settingsString = br.readLine();
-			} catch (IOException e) {
-				// can't read another line, the file must be done
-				break;
 			}
 		}
 		// Tell file it has read the settings file and changed values

@@ -114,7 +114,7 @@ public class MainJPanel extends JPanel {
 		
         ArrayList<StringBuffer> strings = new ArrayList<StringBuffer>();
         
-        BlockThread.setup(scaledImg, newImg);
+        BlockThread.setup(originalImg, scaledImg, newImg);
         			
 		blockThreadArray = new ArrayList<BlockThread>();
         for (int i = 0; i < threadCount; i++) {

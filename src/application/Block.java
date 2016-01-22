@@ -4,58 +4,68 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class Block {
-	private static final int STAGNANT_POWER = 2;
-	private static final double TOTAL_STAGNANT_POWER = Math.pow(10, STAGNANT_POWER);
-	private static int maxTriangles;
+	private static final double MAX_STAGNANT_VAL = 100;
 	
-	private BufferedImage originalImgChunk,
-			lastBestImg;
-	private TrianglesFile bestTriFile;
-	private double maxScore,
-			score,
-			stagnantCount;
-	private Point pos;
-	private boolean isScaling = false;
+	// should be overwritten by setMaxTriangles, consider this a final
+	private static int maxTriangles = 2;
 	
-	private enum TriangleMode {
-		RANDOM, COLOR_10, SHAPE_FULL,
-		SHAPE_10, REMOVE {
-			@Override
+	
+	private BufferedImage
+			imgChunk, // Image this Block is trying to solve
+			lastBestImgChunk; // Last best solved image from this block
+	private TrianglesFile 
+			bestTriFile; // Best set of triangles found so far
+	private double 
+			maxScore, // Max comparison score recorded by bestTriFile
+			stagnantCount; // moves done since last improvement
+	private Point 
+			pos; // position on greater image where this chunk is
+	private TriangleMode 
+			triangleMode = TriangleMode.RANDOM;
+	
+	// the current modify the block should make to a triangle
+	private static enum TriangleMode {
+		RANDOM, COLOR_10, SHAPE_FULL, SHAPE_10, 
+		REMOVE {
+			@Override // sets the last iterator back to the beginning
 			public TriangleMode next() {
 				return TriangleMode.RANDOM;
 			};
 		};
+		// increases to the next type of TriangleMode
 		public TriangleMode next() {
 			return values()[ordinal() + 1];
 		}
 	}
 	
-	private TriangleMode triangleMode = TriangleMode.RANDOM;
-	
-	public Block(BufferedImage originalImg, Dimension size, int x, int y) {
-		bestTriFile = new TrianglesFile(0, size);
-		maxScore = 0;
-		originalImgChunk = new BufferedImage(size.width, size.height, originalImg.getType());
-	    Graphics2D g = originalImgChunk.createGraphics();
-	    g.drawImage(originalImg, -x, -y, null);
-	    g.dispose();
-		maxScore = bestTriFile.compare(originalImgChunk);
-		lastBestImg = bestTriFile.getImage();
-		pos = new Point(x, y);
+	private Block(Point position, Dimension size, BufferedImage img) {
+		pos = position;
+		imgChunk = new BufferedImage(size.width, size.height, img.getType());
+		imgChunk.getGraphics().drawImage(img, -position.x, -position.y, null);
+		
+	}
+	// collects a chunk from a larger image at given position and size
+	// x and y are pixel positions of the starting point
+	// size is the size of the chunk for Block to take
+	public Block(BufferedImage scaledDownImg, Dimension size, Point position) {
+		this(position, size, scaledDownImg);
+		
+		bestTriFile = new TrianglesFile(new ArrayList<Triangle>(), size);
+	    maxScore = bestTriFile.compare(imgChunk);
+		lastBestImgChunk = bestTriFile.getImage();
+		
 	}
 	
-	public Block(Block block, Dimension size, int x, int y) {
-		isScaling = true;
-		BufferedImage scaledImg = new BufferedImage(size.width, size.height, block.originalImgChunk.getType());
-		scaledImg.getGraphics().drawImage(block.originalImgChunk, 0, 0, scaledImg.getWidth(), scaledImg.getHeight(), null);
-		bestTriFile = new TrianglesFile(block.bestTriFile, new Dimension(scaledImg.getWidth(), scaledImg.getHeight()));
-		originalImgChunk = scaledImg;
-		maxScore = bestTriFile.compare(scaledImg);
-		lastBestImg = bestTriFile.getImage();
-		pos = new Point(x, y);
-		triangleMode = TriangleMode.SHAPE_10;
+	public Block(BufferedImage scaledUpImg, Dimension size, Point position, ArrayList<Triangle> trArray) {
+		this(position, size, scaledUpImg);
+		
+		bestTriFile = new TrianglesFile(trArray, new Dimension(imgChunk.getWidth(), imgChunk.getHeight()));
+		
+		maxScore = bestTriFile.compare(imgChunk);
+		lastBestImgChunk = bestTriFile.getImage();
 	}
 
 	public void move() {
@@ -78,49 +88,42 @@ public class Block {
 				modifyTriFile.modifyRemove();
 				break;
 		}
-		score = modifyTriFile.compare(originalImgChunk);
+		double modifyScore = modifyTriFile.compare(imgChunk);
 		
-		if (score >= maxScore) {
-			if (score > maxScore) {
-				maxScore = score;
+		if (modifyScore >= maxScore) {
+			if (modifyScore > maxScore) {
+				maxScore = modifyScore;
 				stagnantCount = 0;
 			}
 			else {
 				stagnantCount++;
 			}
 			bestTriFile = modifyTriFile;
-			lastBestImg = bestTriFile.getImage();
+			lastBestImgChunk = bestTriFile.getImage();
 		}
 		else {
 			stagnantCount++;
 		}
-		if (!isScaling) {
-			if (stagnantCount > TOTAL_STAGNANT_POWER) {
-				triangleMode = triangleMode.next();
-				stagnantCount = 0;
-				if (triangleMode == TriangleMode.RANDOM) {
-					bestTriFile.addTriangle();
-					while (bestTriFile.getSize() > maxTriangles) {
-						bestTriFile.removeBackTriangle();
-					}
-					maxScore = bestTriFile.compare(originalImgChunk);
+		if (stagnantCount > MAX_STAGNANT_VAL) {
+			triangleMode = triangleMode.next();
+			stagnantCount = 0;
+			if (triangleMode == TriangleMode.RANDOM) {
+				bestTriFile.addTriangle();
+				while (bestTriFile.getSize() > maxTriangles) {
+					bestTriFile.removeBackTriangle();
 				}
-			}
-		}
-		else {
-			if (!bestTriFile.hasAlpha()) {
-				triangleMode = TriangleMode.REMOVE;
+				maxScore = bestTriFile.compare(imgChunk);
 			}
 		}
 	}
 	
 	public void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
 		g.drawImage(
-				lastBestImg,
+				lastBestImgChunk,
 				pos.x * windowSize.width / origW,
 				pos.y * windowSize.height / origH,
-				lastBestImg.getWidth() * windowSize.width / origW,
-				lastBestImg.getHeight() * windowSize.height / origH, null);
+				lastBestImgChunk.getWidth() * windowSize.width / origW,
+				lastBestImgChunk.getHeight() * windowSize.height / origH, null);
 	}
 	
 	public boolean isDone() {
@@ -139,7 +142,7 @@ public class Block {
 	}
 	
 	public BufferedImage getImage() {
-		return lastBestImg;
+		return lastBestImgChunk;
 	}
 	
 	public String getText(double x, double y, double size) {
@@ -152,6 +155,10 @@ public class Block {
 	
 	public static int getMaxTriangles() {
 		return maxTriangles;
+	}
+	
+	public ArrayList<Triangle> getTriangles() {
+		return bestTriFile.getTriangles();
 	}
 	
 	public double getMaxScore() {

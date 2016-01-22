@@ -21,22 +21,12 @@ public class TrianglesFile {
 	private BufferedImage image;
 	
 	public TrianglesFile(TrianglesFile tf) {
-		for (int i = 0; i < tf.triangles.size(); i++) {
-			this.triangles.add(tf.triangles.get(i));
-		}
-		imageSize = (Dimension) tf.imageSize.clone();
+		this(tf.getTriangles(), tf.imageSize);
 	}
 	
-	public TrianglesFile(int startingNumTriangles, Dimension dimension) {
-		for (int i = 0; i < startingNumTriangles; i++) {
-			triangles.add(new Triangle());
-		}
-		imageSize = (Dimension) dimension.clone();
-	}
-	
-	public TrianglesFile(TrianglesFile tf, Dimension dimension) {
-		for (int i = 0; i < tf.triangles.size(); i++) {
-			this.triangles.add(tf.triangles.get(i));
+	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension) {
+		for (int i = 0; i < trArray.size(); i++) {
+			this.triangles.add(trArray.get(i));
 		}
 		imageSize = (Dimension) dimension.clone();
 	}

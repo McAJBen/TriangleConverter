@@ -8,7 +8,9 @@ import java.awt.image.BufferedImage;
 
 public class BlockThread extends Thread {
 
-	private static BufferedImage originalImg;
+	private static BufferedImage 
+			scaledUpImg,
+			scaledImg;
 	private static Dimension
 			blockStandardSize, // Standard SIZE are the generic size of the block!
 			newBlockStandardSize,
@@ -27,8 +29,11 @@ public class BlockThread extends Thread {
 	private Point position;
 	private String solvedText = "";
 	private Dimension 
-			blockSize, blockPosition,
-			newBlockSize, newBlockPosition;
+			blockSize,
+			newBlockSize;
+	private Point
+			blockPosition,
+			newBlockPosition;
 	
 	public BlockThread(String name) {
 		super(name);
@@ -60,19 +65,22 @@ public class BlockThread extends Thread {
 		return new StringBuffer(getText(), getNextBlockPosition());
 	}
 	
-	public static void setup(BufferedImage originalImg, BufferedImage newImg) {
-		BlockThread.originalImg = originalImg;
-		BlockThread.blockStandardSize = new Dimension(originalImg.getWidth()  / blocksWide, originalImg.getHeight() / blocksWide);
+	public static void setup(BufferedImage originalImg, BufferedImage scaledImg, BufferedImage newImg) {
+		
+		BlockThread.scaledImg = scaledImg;
+		BlockThread.scaledUpImg = new BufferedImage(newImg.getWidth(), newImg.getHeight(), newImg.getType());// TODO
+		scaledUpImg.getGraphics().drawImage(originalImg, 0, 0, scaledUpImg.getWidth(), scaledUpImg.getHeight(), null);
+		
+		BlockThread.blockStandardSize = new Dimension(scaledImg.getWidth()  / blocksWide, scaledImg.getHeight() / blocksWide);
 		BlockThread.nextPos = new Point(0, 0);
 		BlockThread.offSet = new Dimension(
-				originalImg.getWidth() - blocksWide * blockStandardSize.width,
-				originalImg.getHeight() - blocksWide * blockStandardSize.height);
-		
-		
+				scaledImg.getWidth() - blocksWide * blockStandardSize.width,
+				scaledImg.getHeight() - blocksWide * blockStandardSize.height);
 		BlockThread.newBlockStandardSize = new Dimension(newImg.getWidth()  / blocksWide, newImg.getHeight() / blocksWide);
 		BlockThread.newOffSet = new Dimension(
 				newImg.getWidth() - blocksWide * newBlockStandardSize.width,
 				newImg.getHeight() - blocksWide * newBlockStandardSize.height);
+		
 	}
 	
 	@Override
@@ -83,20 +91,20 @@ public class BlockThread extends Thread {
 		blockSize = new Dimension(
 				getSize(position.x, blockStandardSize.width, offSet.width),
 				getSize(position.y, blockStandardSize.height, offSet.height));
-		blockPosition = new Dimension(
+		blockPosition = new Point(
 				getPoint(position.x, blockStandardSize.width, offSet.width),
 				getPoint(position.y, blockStandardSize.height, offSet.height));
 		newBlockSize = new Dimension(
 				getSize(position.x, newBlockStandardSize.width, newOffSet.width),
 				getSize(position.y, newBlockStandardSize.height, newOffSet.height));
-		newBlockPosition = new Dimension(
+		newBlockPosition = new Point(
 				getPoint(position.x, newBlockStandardSize.width, newOffSet.width),
 				getPoint(position.y, newBlockStandardSize.height, newOffSet.height));
 		
 		double bestScore = 0;
 		Block bestBlock = null;
 		while (currentSample < samples) {
-			Block block = new Block(originalImg, blockSize, blockPosition.width, blockPosition.height);
+			Block block = new Block(scaledImg, blockSize, blockPosition);
 			while (!block.isDone()) {
 				block.move();
 				currentTestImage = block.getImage();
@@ -109,7 +117,8 @@ public class BlockThread extends Thread {
 		}
 		if (postProcessing) {
 			
-			Block block = new Block(bestBlock, newBlockSize, newBlockPosition.width, newBlockPosition.height);
+			
+			Block block = new Block(scaledUpImg, newBlockSize, newBlockPosition, bestBlock.getTriangles());
 			
 			while (!block.isDone()) {
 				block.move();
@@ -117,7 +126,7 @@ public class BlockThread extends Thread {
 			}
 			bestBlock = block;
 			
-		}// TODO postProcessing fix
+		}
 		solvedText = bestBlock.getText(position.x, position.y, 1.0 / blocksWide);
 		solvedImage = bestBlock.getImage(newBlockSize);
 	}
@@ -127,7 +136,7 @@ public class BlockThread extends Thread {
 			return;
 		}
 		Graphics2D g = newImg.createGraphics();
-	    g.drawImage(solvedImage, newBlockPosition.width, newBlockPosition.height, newBlockSize.width, newBlockSize.height, null);
+	    g.drawImage(solvedImage, newBlockPosition.x, newBlockPosition.y, newBlockSize.width, newBlockSize.height, null);
 	    g.dispose();
 	}
 	
@@ -137,14 +146,14 @@ public class BlockThread extends Thread {
 		}
 		g.drawImage(
 				currentTestImage,
-				newBlockPosition.width * windowSize.width / origW,
-				newBlockPosition.height * windowSize.height / origH,
+				newBlockPosition.x * windowSize.width / origW,
+				newBlockPosition.y * windowSize.height / origH,
 				newBlockSize.width * windowSize.width / origW,
 				newBlockSize.height * windowSize.height / origH, null);
 		g.setColor(Color.RED);
 		g.drawString(currentSample + "",
-				newBlockPosition.width * windowSize.width / origW, 
-				newBlockPosition.height * windowSize.height / origH + 10);
+				newBlockPosition.x * windowSize.width / origW, 
+				newBlockPosition.y * windowSize.height / origH + 10);
 	}
 	
 	public String getText() {
@@ -189,7 +198,7 @@ public class BlockThread extends Thread {
 	}
 
 	public static void clear() {
-		originalImg = null;
+		scaledImg = null;
 		blockStandardSize = null;
 		nextPos = null;
 		offSet = null;
