@@ -25,6 +25,8 @@ public class Block {
 			pos; // position on greater image where this chunk is
 	private TriangleMode 
 			triangleMode = TriangleMode.RANDOM;
+	private boolean
+			isScaling;
 	
 	// the current modify the block should make to a triangle
 	private static enum TriangleMode {
@@ -47,9 +49,7 @@ public class Block {
 		imgChunk.getGraphics().drawImage(img, -position.x, -position.y, null);
 		
 	}
-	// collects a chunk from a larger image at given position and size
-	// x and y are pixel positions of the starting point
-	// size is the size of the chunk for Block to take
+	
 	public Block(BufferedImage scaledDownImg, Dimension size, Point position) {
 		this(position, size, scaledDownImg);
 		
@@ -61,7 +61,9 @@ public class Block {
 	
 	public Block(BufferedImage scaledUpImg, Dimension size, Point position, ArrayList<Triangle> trArray) {
 		this(position, size, scaledUpImg);
-		
+
+		isScaling = true;
+		triangleMode = TriangleMode.COLOR_10;
 		bestTriFile = new TrianglesFile(trArray, new Dimension(imgChunk.getWidth(), imgChunk.getHeight()));
 		
 		maxScore = bestTriFile.compare(imgChunk);
@@ -107,12 +109,20 @@ public class Block {
 		if (stagnantCount > MAX_STAGNANT_VAL) {
 			triangleMode = triangleMode.next();
 			stagnantCount = 0;
-			if (triangleMode == TriangleMode.RANDOM) {
-				bestTriFile.addTriangle();
-				while (bestTriFile.getSize() > maxTriangles) {
-					bestTriFile.removeBackTriangle();
+			if (isScaling && triangleMode == TriangleMode.REMOVE) {
+				triangleMode = TriangleMode.SHAPE_FULL;
+			}
+			else if (triangleMode == TriangleMode.RANDOM) {
+				if (bestTriFile.getSize() < maxTriangles) {
+					bestTriFile.addTriangle();
 				}
 				maxScore = bestTriFile.compare(imgChunk);
+				/*
+				bestTriFile.addTriangle();
+				while (bestTriFile.getSize() > maxTriangles) {
+					bestTriFile.removeBackTriangle(); // check if i should remove the first or not
+				}
+				maxScore = bestTriFile.compare(imgChunk);*/
 			}
 		}
 	}
@@ -133,8 +143,8 @@ public class Block {
 		else if (maxScore > 0.99) {
 			return true;
 		}
-		else if (bestTriFile.getSize() >= maxTriangles) {
-			if (triangleMode == TriangleMode.REMOVE) {
+		if (bestTriFile.getSize() == maxTriangles) {
+			if (triangleMode == TriangleMode.REMOVE || isScaling) {
 				return true;
 			}
 		}

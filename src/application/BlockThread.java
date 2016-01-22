@@ -150,10 +150,15 @@ public class BlockThread extends Thread {
 				newBlockPosition.y * windowSize.height / origH,
 				newBlockSize.width * windowSize.width / origW,
 				newBlockSize.height * windowSize.height / origH, null);
-		g.setColor(Color.RED);
-		g.drawString(currentSample + "",
-				newBlockPosition.x * windowSize.width / origW, 
-				newBlockPosition.y * windowSize.height / origH + 10);
+		g.setColor(Color.YELLOW);
+		
+		g.drawString(getName() + "",
+				newBlockPosition.x * windowSize.width / origW + 1, 
+				newBlockPosition.y * windowSize.height / origH + 11);
+		g.drawRect(newBlockPosition.x * windowSize.width / origW,
+				newBlockPosition.y * windowSize.height / origH,
+				newBlockSize.width * windowSize.width / origW,
+				newBlockSize.height * windowSize.height / origH);
 	}
 	
 	public String getText() {
