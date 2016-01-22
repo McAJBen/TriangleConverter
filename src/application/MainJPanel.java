@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -173,8 +174,13 @@ public class MainJPanel extends JPanel {
 			if (preDraw && blockThreadArray != null) {
 				Dimension windowSize = getSize();
 				windowSize.height -= 14;
-				for (BlockThread bt: blockThreadArray) {
-					bt.paint(g2d, newImg.getWidth(), newImg.getHeight(), windowSize);
+				try {
+					for (BlockThread bt: blockThreadArray) {
+						bt.paint(g2d, newImg.getWidth(), newImg.getHeight(), windowSize);
+					}
+				}
+				catch (ConcurrentModificationException ce) {
+					
 				}
 			}
 		}
