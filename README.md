@@ -3,6 +3,7 @@ This program will convert .png and .jpg images into a version of the image drawn
 <img src="Examples/earth.png" alt="Earth" width="200" height="200">
 <img src="Examples/hue.png" alt="Hue" width="200" height="200">
 <img src="Examples/starrynight.png" alt="StarryNight" width="320" height="200">
+<img src="Examples/mona-Lisa.gif" alt="MonaLisa" width="100" height="100">
 
 ##How it works:
 
