@@ -130,11 +130,6 @@ public class Block {
 		return lastBestImgChunk;
 	}
 	
-	// gets .trifi information
-	public String getText(double x, double y, double size) {
-		return bestTriFile.getText(x, y, size);
-	}
-	
 	public ArrayList<Triangle> getTriangles() {
 		return bestTriFile.getTriangles();
 	}

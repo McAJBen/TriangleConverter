@@ -86,7 +86,12 @@ public class Settings {
 						G.samples = Integer.parseInt(split[1]);
 						break;
 					case THREAD_COUNT_ID:
-						G.threadCount = Integer.parseInt(split[1]);
+						if (split[1].equalsIgnoreCase("AUTO")) {
+							G.threadCount = Runtime.getRuntime().availableProcessors();
+						}
+						else {
+							G.threadCount = Integer.parseInt(split[1]);
+						}
 						break;
 					case REPAINT_WAIT_ID:
 						G.repaintWait = Integer.parseInt(split[1]);

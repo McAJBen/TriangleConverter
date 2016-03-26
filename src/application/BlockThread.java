@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class BlockThread extends Thread {
 
+	private static Thread mainThread;
 	private static BufferedImage 
 			scaledUpImg,
 			scaledImg;
@@ -19,13 +20,12 @@ public class BlockThread extends Thread {
 			newOffSet;
 	private static Point nextPos;
 	private static Graphics2D newImgGraphics;
+	private static boolean calledInterrupt;
 	
 	private int currentSample;
 	private BufferedImage 
-			currentTestImage, 
-			solvedImage;
+			currentTestImage;
 	private Point position;
-	private String solvedText = "";
 	private Dimension 
 			blockSize,
 			newBlockSize;
@@ -42,8 +42,9 @@ public class BlockThread extends Thread {
 		return position;
 	}
 	
-	private static Point getNextPosition() {
+	private static synchronized Point getNextPosition() {
 		if (isDone()) {
+			callInterrupt();
 			return null;
 		}
 		Point p = (Point) nextPos.clone();
@@ -52,18 +53,19 @@ public class BlockThread extends Thread {
 			nextPos.y++;
 			nextPos.x = 0;
 		}
-		
 		return p;
 	}
-
-	public StringBuffer getStringBuffer() {
-		if (getNextBlockPosition() == null) {
-			System.out.println("POSITION IS NULL - BLOCK THREAD");
-		}
-		return new StringBuffer(getText(), getNextBlockPosition());
-	}
 	
-	public static void setup(BufferedImage originalImg, BufferedImage scaleImg, BufferedImage newImg) {
+	private static synchronized void callInterrupt() {
+		if (!calledInterrupt) {
+			mainThread.interrupt();
+			calledInterrupt = true;
+		}
+	}
+
+	public static void setup(BufferedImage originalImg, BufferedImage scaleImg, BufferedImage newImg, Thread mainThread) {
+		calledInterrupt = false;
+		BlockThread.mainThread = mainThread;
 		scaledImg = scaleImg;
 		scaledUpImg = new BufferedImage(newImg.getWidth(), newImg.getHeight(), newImg.getType());
 		scaledUpImg.getGraphics().drawImage(originalImg, 0, 0, scaledUpImg.getWidth(), scaledUpImg.getHeight(), null);
@@ -83,50 +85,64 @@ public class BlockThread extends Thread {
 	
 	@Override
 	public void run() {
-		if (position == null) {
-			return;
-		}
-		blockSize = new Dimension(
-				getSize(position.x, blockStandardSize.width, offSet.width),
-				getSize(position.y, blockStandardSize.height, offSet.height));
-		blockPosition = new Point(
-				getPoint(position.x, blockStandardSize.width, offSet.width),
-				getPoint(position.y, blockStandardSize.height, offSet.height));
-		newBlockSize = new Dimension(
-				getSize(position.x, newBlockStandardSize.width, newOffSet.width),
-				getSize(position.y, newBlockStandardSize.height, newOffSet.height));
-		newBlockPosition = new Point(
-				getPoint(position.x, newBlockStandardSize.width, newOffSet.width),
-				getPoint(position.y, newBlockStandardSize.height, newOffSet.height));
-		
-		double bestScore = 0;
-		Block bestBlock = null;
-		while (currentSample < G.samples) {
-			Block block = new Block(blockPosition, blockSize, scaledImg, new ArrayList<Triangle>());
-			while (!block.isDone()) {
-				block.move();
+		while (position != null) {
+			blockSize = new Dimension(
+					getSize(position.x, blockStandardSize.width, offSet.width),
+					getSize(position.y, blockStandardSize.height, offSet.height));
+			blockPosition = new Point(
+					getPoint(position.x, blockStandardSize.width, offSet.width),
+					getPoint(position.y, blockStandardSize.height, offSet.height));
+			newBlockSize = new Dimension(
+					getSize(position.x, newBlockStandardSize.width, newOffSet.width),
+					getSize(position.y, newBlockStandardSize.height, newOffSet.height));
+			newBlockPosition = new Point(
+					getPoint(position.x, newBlockStandardSize.width, newOffSet.width),
+					getPoint(position.y, newBlockStandardSize.height, newOffSet.height));
+			
+			double bestScore = 0;
+			Block bestBlock = null;
+			while (currentSample < G.samples) {
+				Block block = new Block(blockPosition, blockSize, scaledImg, new ArrayList<Triangle>());
+				while (!block.isDone()) {
+					block.move();
+					if (G.preDraw) {
+						currentTestImage = block.getImage();
+					}
+				}
 				currentTestImage = block.getImage();
+				if (bestScore < block.getMaxScore()) {
+					bestBlock = block;
+					bestScore = block.getMaxScore();
+				}
+				currentSample++;
 			}
-			if (bestScore < block.getMaxScore()) {
+			if (G.postProcessing) {
+				Block block = new Block(newBlockPosition, newBlockSize, scaledUpImg, bestBlock.getTriangles());
+				while (!block.isDone()) {
+					block.move();
+					if (G.preDraw) {
+						currentTestImage = block.getImage();
+					}
+				}
+				currentTestImage = block.getImage();
 				bestBlock = block;
-				bestScore = block.getMaxScore();
 			}
-			currentSample++;
+			
+			paintTo(bestBlock.getImage(newBlockSize), newBlockPosition, newBlockSize);
+		    
+		    reset();
 		}
-		if (G.postProcessing) {
-			Block block = new Block(newBlockPosition, newBlockSize, scaledUpImg, bestBlock.getTriangles());
-			while (!block.isDone()) {
-				block.move();
-				currentTestImage = block.getImage();
-			}
-			bestBlock = block;
-		}
-		solvedText = bestBlock.getText(position.x, position.y, 1.0 / G.blocksWide);
-		solvedImage = bestBlock.getImage(newBlockSize);
-		
-	    newImgGraphics.drawImage(solvedImage, newBlockPosition.x, newBlockPosition.y, newBlockSize.width, newBlockSize.height, null);
 	}
 	
+	private static synchronized void paintTo(BufferedImage b, Point p, Dimension size) {
+		newImgGraphics.drawImage(b, p.x, p.y, size.width, size.height, null);
+	}
+	
+	private void reset() {
+		position = getNextPosition();
+		currentSample = 0;
+	}
+
 	public void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
 		if (currentTestImage == null) {
 			return;
@@ -148,10 +164,6 @@ public class BlockThread extends Thread {
 				newBlockPosition.y * windowSize.height / origH,
 				newBlockSize.width * windowSize.width / origW,
 				newBlockSize.height * windowSize.height / origH);
-	}
-	
-	public String getText() {
-		return solvedText;
 	}
 	
 	private int getSize(int i, int blockPixelSize, int offSet) {

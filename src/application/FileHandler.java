@@ -1,9 +1,7 @@
 package application;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
@@ -68,28 +66,5 @@ public class FileHandler {
 	    } catch (IOException e) {
 	        throw new RuntimeException(e);
 	    }
-	}
-
-	public static void saveText(File f, ArrayList<StringBuffer> strings) {
-		
-		File fi = new File(f.getParent() + "\\TriFi");
-		if (!fi.exists()) {
-			fi.mkdirs();
-		}
-		
-		fi = new File(f.getParent() + "\\TriFi\\" + f.getName().substring(0, f.getName().length() - 4) + ".trifi");
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(fi));
-			writer.write("b" + G.blocksWide + "t" + G.maxTriangles + "|" + "\n");
-			ArrayList<String> triStrings = StringBuffer.combineStrings(strings, G.blocksWide);
-			
-			for (String s: triStrings) {
-				writer.write(s);
-			}
-			
-			writer.close();
-		} catch (IOException e) {
-			
-		}
 	}
 }

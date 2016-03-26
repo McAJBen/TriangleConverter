@@ -166,21 +166,6 @@ public class TrianglesFile {
 		return false;
 	}
 	
-	public String getText(double x, double y, double size) {
-		String s = "";
-		for (int i = 0; i < triangles.size(); i++) {
-			s = s.concat(":r" + triangles.get(i).getRed() + "g" + triangles.get(i).getGreen() + "b" + triangles.get(i).getBlue());
-			
-			for (int j = 0; j < triangles.get(i).getXpoints().length; j++) {
-				s = s.concat(
-						"x" + (triangles.get(i).getXpoints()[j] * size + x * size) + 
-						"y" + (triangles.get(i).getYpoints()[j] * size + y * size));
-			}
-			s = s.concat("\n");
-		}
-		return s;
-	}
-	
 	public BufferedImage getImage() {
 		createImg();
 		return image;

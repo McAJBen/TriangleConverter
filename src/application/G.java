@@ -8,7 +8,7 @@ public class G {
 		blocksWide = 10,
 		maxTriangles = 2,
 		samples = 1,
-		threadCount = 1,
+		threadCount = Runtime.getRuntime().availableProcessors(),
 		repaintWait = 500;
 	static double
 		scale = 1.0,
