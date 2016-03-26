@@ -21,47 +21,22 @@ public class MainJPanel extends JPanel {
 					SCREEN_SIZE = new Dimension(500, 500),
 					SCREEN_OFFSET = new Dimension(7, 30);
 	private BufferedImage newImg;
-	private boolean preDraw;
-	private int 
-			threadCount,
-			repaintWait;
-	private double 
-			scale,
-			postScale;
 	private File file;
 	private ArrayList<BlockThread> blockThreadArray;
-	
-	public MainJPanel(int threadCount, double scale, int repaintWait, boolean preDraw, double postScale) {
-		this.threadCount = threadCount;
-		this.scale = scale;
-		this.repaintWait = repaintWait;
-		this.preDraw = preDraw;
-		this.postScale = postScale / scale;
-	}
 
 	public static void main(String[] args) {
 		
-		Settings settings = new Settings();
-		
-		BlockThread.setBlockSize(settings.getBlockSize());
-		BlockThread.setMaxTriangles(settings.getMaxTriangles());
-		BlockThread.setSamples(settings.getSamples());
-		BlockThread.setPostProcessing(settings.getPostProcessing());
+		Settings.load();
 		
         JFrame frame = new JFrame("Triangle Converter" +
-        		" Wi:" + BlockThread.getBlockSize() + 
-        		" Tr:" + BlockThread.getMaxTriangles() + 
-        		" Sa:" + BlockThread.getSamples() + 
-        		" Th:" + settings.getThreadCount() + 
-        		" Sc:" + settings.getScaleDown() + 
-        		" Ps:" + settings.getPostScale());
+        		" Wi:" + G.blocksWide + 
+        		" Tr:" + G.maxTriangles + 
+        		" Sa:" + G.samples + 
+        		" Th:" + G.threadCount + 
+        		" Sc:" + G.scale + 
+        		" Ps:" + G.postScale);
         
-        MainJPanel imageEvolutionJPanel = new MainJPanel(
-        		settings.getThreadCount(),
-        		settings.getScaleDown(),
-        		settings.getRepaintWait(),
-        		settings.getPreDraw(),
-        		settings.getPostScale());
+        MainJPanel imageEvolutionJPanel = new MainJPanel();
         frame.add(imageEvolutionJPanel);
         frame.setSize(SCREEN_SIZE.width + SCREEN_OFFSET.width, SCREEN_SIZE.height + SCREEN_OFFSET.height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -77,7 +52,7 @@ public class MainJPanel extends JPanel {
 				while (!isInterrupted()) {
     				repaint();
     				try {
-						sleep(repaintWait);
+						sleep(G.repaintWait);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -108,17 +83,17 @@ public class MainJPanel extends JPanel {
     		}
     	} while (originalImg == null);
 		
-		BufferedImage scaledImg = new BufferedImage((int)(originalImg.getWidth() * scale),  (int)(originalImg.getHeight() * scale), originalImg.getType());
+		BufferedImage scaledImg = new BufferedImage((int)(originalImg.getWidth() * G.scale),  (int)(originalImg.getHeight() * G.scale), originalImg.getType());
 		scaledImg.getGraphics().drawImage(originalImg, 0, 0, scaledImg.getWidth(), scaledImg.getHeight(), null);
 		
-		newImg = new BufferedImage((int) (scaledImg.getWidth() * postScale), (int) (scaledImg.getHeight() * postScale), originalImg.getType());
+		newImg = new BufferedImage((int) (scaledImg.getWidth() * G.postScale), (int) (scaledImg.getHeight() * G.postScale), originalImg.getType());
 		
         ArrayList<StringBuffer> strings = new ArrayList<StringBuffer>();
         
         BlockThread.setup(originalImg, scaledImg, newImg);
         
 		blockThreadArray = new ArrayList<BlockThread>();
-        for (int i = 0; i < threadCount; i++) {
+        for (int i = 0; i < G.threadCount; i++) {
            	blockThreadArray.add(new BlockThread("" + i));
         }
         
@@ -148,10 +123,7 @@ public class MainJPanel extends JPanel {
         
 		FileHandler.save(file, originalImg, newImg);
 		
-		FileHandler.saveText(file, 
-				"b" + BlockThread.getBlockSize() + 
-				"t" + BlockThread.getMaxTriangles() + "|",
-				strings, BlockThread.getBlockSize());
+		FileHandler.saveText(file, strings);
 		
 		file.delete();
 		repaint();
@@ -171,7 +143,7 @@ public class MainJPanel extends JPanel {
 				
 		if (file != null) {
 			g2d.drawString(file.getName() + "", 2, getSize().height - 2);
-			if (preDraw && blockThreadArray != null) {
+			if (G.preDraw && blockThreadArray != null) {
 				Dimension windowSize = getSize();
 				windowSize.height -= 14;
 				try {

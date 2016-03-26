@@ -17,12 +17,7 @@ public class BlockThread extends Thread {
 			newBlockStandardSize,
 			offSet,
 			newOffSet;
-	private static int 
-			maxTriangles,
-			samples,
-			blocksWide;
 	private static Point nextPos;
-	private static boolean postProcessing;
 	private static Graphics2D newImgGraphics;
 	
 	private int currentSample;
@@ -53,7 +48,7 @@ public class BlockThread extends Thread {
 		}
 		Point p = (Point) nextPos.clone();
 		nextPos.x++;
-		if (nextPos.x >= blocksWide) {
+		if (nextPos.x >= G.blocksWide) {
 			nextPos.y++;
 			nextPos.x = 0;
 		}
@@ -73,15 +68,15 @@ public class BlockThread extends Thread {
 		scaledUpImg = new BufferedImage(newImg.getWidth(), newImg.getHeight(), newImg.getType());
 		scaledUpImg.getGraphics().drawImage(originalImg, 0, 0, scaledUpImg.getWidth(), scaledUpImg.getHeight(), null);
 		
-		blockStandardSize = new Dimension(scaledImg.getWidth() / blocksWide, scaledImg.getHeight() / blocksWide);
+		blockStandardSize = new Dimension(scaledImg.getWidth() / G.blocksWide, scaledImg.getHeight() / G.blocksWide);
 		nextPos = new Point(0, 0);
 		offSet = new Dimension(
-				scaledImg.getWidth() - blocksWide * blockStandardSize.width,
-				scaledImg.getHeight() - blocksWide * blockStandardSize.height);
-		newBlockStandardSize = new Dimension(newImg.getWidth() / blocksWide, newImg.getHeight() / blocksWide);
+				scaledImg.getWidth() - G.blocksWide * blockStandardSize.width,
+				scaledImg.getHeight() - G.blocksWide * blockStandardSize.height);
+		newBlockStandardSize = new Dimension(newImg.getWidth() / G.blocksWide, newImg.getHeight() / G.blocksWide);
 		newOffSet = new Dimension(
-				newImg.getWidth() - blocksWide * newBlockStandardSize.width,
-				newImg.getHeight() - blocksWide * newBlockStandardSize.height);
+				newImg.getWidth() - G.blocksWide * newBlockStandardSize.width,
+				newImg.getHeight() - G.blocksWide * newBlockStandardSize.height);
 		newImgGraphics = newImg.createGraphics();
 		
 	}
@@ -106,10 +101,10 @@ public class BlockThread extends Thread {
 		
 		double bestScore = 0;
 		Block bestBlock = null;
-		while (currentSample < samples) {
+		while (currentSample < G.samples) {
 			Block block = new Block(blockPosition, blockSize, scaledImg, new ArrayList<Triangle>());
-			while (!block.isDone(maxTriangles)) {
-				block.move(maxTriangles);
+			while (!block.isDone()) {
+				block.move();
 				currentTestImage = block.getImage();
 			}
 			if (bestScore < block.getMaxScore()) {
@@ -118,15 +113,15 @@ public class BlockThread extends Thread {
 			}
 			currentSample++;
 		}
-		if (postProcessing) {
+		if (G.postProcessing) {
 			Block block = new Block(newBlockPosition, newBlockSize, scaledUpImg, bestBlock.getTriangles());
-			while (!block.isDone(maxTriangles)) {
-				block.move(maxTriangles);
+			while (!block.isDone()) {
+				block.move();
 				currentTestImage = block.getImage();
 			}
 			bestBlock = block;
 		}
-		solvedText = bestBlock.getText(position.x, position.y, 1.0 / blocksWide);
+		solvedText = bestBlock.getText(position.x, position.y, 1.0 / G.blocksWide);
 		solvedImage = bestBlock.getImage(newBlockSize);
 		
 	    newImgGraphics.drawImage(solvedImage, newBlockPosition.x, newBlockPosition.y, newBlockSize.width, newBlockSize.height, null);
@@ -173,31 +168,7 @@ public class BlockThread extends Thread {
 	}
 	
 	public static boolean isDone() {
-		return nextPos.y >= blocksWide;
-	}
-	
-	public static void setSamples(int samp) {
-		samples = samp;
-	}
-	
-	public static int getSamples() {
-		return samples;
-	}
-	
-	public static void setBlockSize(int blksize) {
-		blocksWide = blksize;
-	}
-
-	public static void setPostProcessing(boolean postProces) {
-		postProcessing = postProces;
-	}
-	
-	public static void setMaxTriangles(int maxTriangle) {
-		maxTriangles = maxTriangle;
-	}
-	
-	public static int getBlockSize() {
-		return blocksWide;
+		return nextPos.y >= G.blocksWide;
 	}
 
 	public static void clear() {
@@ -205,9 +176,5 @@ public class BlockThread extends Thread {
 		blockStandardSize = null;
 		nextPos = null;
 		offSet = null;
-	}
-
-	public static int getMaxTriangles() {
-		return maxTriangles;
 	}
 }

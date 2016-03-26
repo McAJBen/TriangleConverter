@@ -49,7 +49,7 @@ public class Block {
 	}
 
 	// checks triangleMode to modify bestTriFile and see if it improves
-	public void move(int maxTriangles) {
+	public void move() {
 		TrianglesFile modifyTriFile = new TrianglesFile(bestTriFile);
 		// changes modifyTri based on triangleMode
 		switch (triangleMode) {
@@ -93,7 +93,7 @@ public class Block {
 			// if triangleMode is at the end try adding another triangle
 			if (triangleMode == TriangleMode.RANDOM) {
 				bestTriFile.addTriangle();
-				while (bestTriFile.getSize() > maxTriangles) {
+				while (bestTriFile.getSize() > G.maxTriangles) {
 					bestTriFile.removeBackTriangle();
 				}
 				maxScore = bestTriFile.compare(imgChunk);
@@ -111,14 +111,14 @@ public class Block {
 				lastBestImgChunk.getHeight() * windowSize.height / origH, null);
 	}
 	
-	public boolean isDone(int maxTriangles) {
+	public boolean isDone() {
 		if (bestTriFile.hasAlpha()) {
 			return false;
 		}
 		else if (maxScore > 0.99) {
 			return true;
 		}
-		if (bestTriFile.getSize() == maxTriangles) {
+		if (bestTriFile.getSize() == G.maxTriangles) {
 			if (triangleMode == TriangleMode.REMOVE) {
 				return true;
 			}

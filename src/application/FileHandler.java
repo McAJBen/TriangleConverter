@@ -70,7 +70,7 @@ public class FileHandler {
 	    }
 	}
 
-	public static void saveText(File f, String header, ArrayList<StringBuffer> strings, int blockSize) {
+	public static void saveText(File f, ArrayList<StringBuffer> strings) {
 		
 		File fi = new File(f.getParent() + "\\TriFi");
 		if (!fi.exists()) {
@@ -80,8 +80,8 @@ public class FileHandler {
 		fi = new File(f.getParent() + "\\TriFi\\" + f.getName().substring(0, f.getName().length() - 4) + ".trifi");
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(fi));
-			writer.write(header + "\n");
-			ArrayList<String> triStrings = StringBuffer.combineStrings(strings, blockSize);
+			writer.write("b" + G.blocksWide + "t" + G.maxTriangles + "|" + "\n");
+			ArrayList<String> triStrings = StringBuffer.combineStrings(strings, G.blocksWide);
 			
 			for (String s: triStrings) {
 				writer.write(s);
