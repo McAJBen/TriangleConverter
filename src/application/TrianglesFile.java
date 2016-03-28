@@ -35,7 +35,6 @@ public class TrianglesFile {
 	private BufferedImage makeImg(int width, int height) {
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 	    Graphics2D g2d = img.createGraphics();
-	    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 	    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		for (int i = 0; i < triangles.size(); i++) {
 			g2d.setColor(triangles.get(i).getColor());

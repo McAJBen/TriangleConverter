@@ -24,7 +24,7 @@ public class G {
 	static void reset() {
 		Random rand = new Random();
 		if (blocksWideRandom) {
-			blocksWide = rand.nextInt(95) + 5;
+			blocksWide = rand.nextInt(46) + 5;
 		}
 		if (maxTrianglesRandom) {
 			maxTriangles = rand.nextInt(9) + 2;

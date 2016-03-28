@@ -59,7 +59,7 @@ public class FileHandler {
 	public static void putImageInFile(File f, String folder, BufferedImage image, String append) {
 		
 		File fi = new File(f.getParent() + "\\" + folder + "\\" + 
-				f.getName().substring(0, f.getName().length() - 4) + "_" + append + ".png");
+				f.getName().substring(0, f.getName().length() - 4) + append + ".png");
 	    try {
 	    	if (!fi.exists()) {
 	    		fi.mkdirs();

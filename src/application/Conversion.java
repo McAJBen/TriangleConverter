@@ -63,11 +63,12 @@ public class Conversion {
         	}
         }
         
-		if (attemptNum == 0) {
+		if (attemptNum >= G.attempts - 1) {
 			file.delete();
 			FileHandler.putImageInFile(file, "Original", originalImg, "");
 		}
-		FileHandler.putImageInFile(file, "New", originalImg, attemptNum + "");
+		FileHandler.putImageInFile(file, "New", newImg,
+				"_" + (G.maxTriangles * G.blocksWide * G.blocksWide) + "_" + attemptNum);
 		
 		newImg = null;
 		blockThreadArray = null;

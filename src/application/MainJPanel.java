@@ -30,7 +30,7 @@ public class MainJPanel extends JPanel {
         while (true) {
         	File file = FileHandler.getFile();
         	if (file != null) {
-        		for (int i = G.attempts - 1; i >= 0; i--) {
+        		for (int i = 0; i < G.attempts; i++) {
         			System.out.println("Found file: " + file);
 		        	G.reset();
 		        	frame.setTitle(getTitle(i));
@@ -49,7 +49,6 @@ public class MainJPanel extends JPanel {
 					Thread.sleep(10_000);
 				} catch (InterruptedException e) { }
         	}
-        	
         }
     }
 	
@@ -80,7 +79,7 @@ public class MainJPanel extends JPanel {
         		" Th:" + G.threadCount + 
         		" Sc:" + G.scale + 
         		" Ps:" + G.postScale + 
-        		" At:" + (attempt + 1);
+        		" At:" + attempt;
 	}
 	
 	public void paint(Graphics g) {
