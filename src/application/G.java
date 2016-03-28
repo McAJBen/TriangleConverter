@@ -5,7 +5,8 @@ import java.util.Random;
 public class G {
 	static boolean
 		preDraw = true,
-		postProcessing = true;
+		postProcessing = true,
+		display = true;
 	static int 
 		blocksWide = 10,
 		maxTriangles = 2,

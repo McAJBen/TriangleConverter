@@ -19,14 +19,16 @@ public class MainJPanel extends JPanel {
 		
 		Settings.load();
 		
-        JFrame frame = new JFrame();
-        
-        MainJPanel imageEvolutionJPanel = new MainJPanel();
-        frame.add(imageEvolutionJPanel);
-        frame.setSize(SCREEN_SIZE.width + SCREEN_OFFSET.width, SCREEN_SIZE.height + SCREEN_OFFSET.height);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+		MainJPanel imageEvolutionJPanel = new MainJPanel();
+		JFrame frame = null;
+		if (G.display) {
+			frame = new JFrame();
+        	frame.add(imageEvolutionJPanel);
+        	frame.setSize(SCREEN_SIZE.width + SCREEN_OFFSET.width, SCREEN_SIZE.height + SCREEN_OFFSET.height);
+        	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        	frame.setLocationRelativeTo(null);
+        	frame.setVisible(true);
+		}
         while (true) {
         	File file = FileHandler.getFile();
         	if (file != null) {
@@ -36,19 +38,28 @@ public class MainJPanel extends JPanel {
         		for (int i = 0; i < G.attempts; i++) {
         			System.out.println("Found file: " + file);
 		        	G.reset(imagePixels);
-		        	frame.setTitle(getTitle(i));
 		        	
-		        	Thread repaintThread = imageEvolutionJPanel.getPaintThread();
-		        	
-		        	repaintThread.start();
+		        	Thread repaintThread = null;
+		        	if (G.display) {
+		        		frame.setTitle(getTitle(i));
+		        		repaintThread = imageEvolutionJPanel.getPaintThread();
+		        		repaintThread.start();
+		        	}
+		        	else {
+		        		System.out.println(getTitle(i));
+		        	}
 		        	
 		        	imageEvolutionJPanel.startConversion(file, i);
-	    	
-		        	repaintThread.interrupt();
+		        	
+		        	if (G.display) {
+		        		repaintThread.interrupt();
+		        	}
         		}
         	}
         	else {
-        		frame.setTitle("Finding File ...");
+        		if (G.display) {
+        			frame.setTitle("Finding File ...");
+        		}
 	    		try {
 					Thread.sleep(10_000);
 				} catch (InterruptedException e) { }

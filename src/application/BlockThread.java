@@ -52,6 +52,9 @@ public class BlockThread extends Thread {
 		if (nextPos.x >= G.blocksWide) {
 			nextPos.y++;
 			nextPos.x = 0;
+			if (!G.display) {
+				System.out.printf("%.2f%%%n",100.0 * nextPos.y / G.blocksWide);
+			}
 		}
 		return p;
 	}

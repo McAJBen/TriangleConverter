@@ -13,6 +13,7 @@ public class Settings {
 		// BOOLEANS
 		PREDRAW_ID = "PREDRAW",
 		POST_PROCESSING_ID = "POST_PROCESSING",
+		DISPLAY_ID = "DISPLAY",
 		// INTEGERS
 		BLOCKS_WIDE_ID = "BLOCKS_WIDE",
 		MAX_TRIANGLES_ID = "MAX_TRIANGLES",
@@ -75,6 +76,9 @@ public class Settings {
 						break;
 					case POST_PROCESSING_ID:
 						G.postProcessing = Boolean.parseBoolean(split[1]);
+						break;
+					case DISPLAY_ID:
+						G.display = Boolean.parseBoolean(split[1]);
 						break;
 					// INTEGERS
 					case BLOCKS_WIDE_ID:
@@ -150,7 +154,8 @@ public class Settings {
 				
 				COMMENT_SYMBOL + "Boolean variables\n" +
 				PREDRAW_ID			+ IDENTIFIER_SYMBOL + G.preDraw			+ "\n" +
-				POST_PROCESSING_ID	+ IDENTIFIER_SYMBOL + G.postProcessing	+ "\n";
+				POST_PROCESSING_ID	+ IDENTIFIER_SYMBOL + G.postProcessing	+ "\n" +
+				DISPLAY_ID			+ IDENTIFIER_SYMBOL + G.display;
 		// write default settings to file
 		try {
 			File settingsFile = new File(
