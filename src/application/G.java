@@ -23,14 +23,16 @@ public class G {
 	
 	static void reset() {
 		Random rand = new Random();
-		if (blocksWideRandom) {
-			blocksWide = rand.nextInt(46) + 5;
-		}
-		if (maxTrianglesRandom) {
-			maxTriangles = rand.nextInt(9) + 2;
-		}
-		if (samplesRandom) {
-			samples = rand.nextInt(10) + 1;
-		}
+		do {
+			if (blocksWideRandom) {
+				blocksWide = rand.nextInt(196) + 5;
+			}
+			if (maxTrianglesRandom) {
+				maxTriangles = rand.nextInt(9) + 2;
+			}
+			if (samplesRandom) {
+				samples = rand.nextInt(10) + 1;
+			}
+		} while (samples * maxTriangles * blocksWide > 1_500);
 	}
 }
