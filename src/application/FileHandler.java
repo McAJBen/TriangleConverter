@@ -51,18 +51,20 @@ public class FileHandler {
 		return extension.equals(fileName.substring(lastIndex));
 	}
 	
-	public static void save(File f, BufferedImage oldImg, BufferedImage newImg) {
+	/*public static void save(File f, BufferedImage oldImg, BufferedImage newImg) {
 		putImageInFile(f, "Original", oldImg);
 		putImageInFile(f, "New", newImg);
-	}
+	}*/
 	
-	private static void putImageInFile(File f, String folder, BufferedImage b) {
-		File fi = new File(f.getParent() + "\\" + folder + "\\" + f.getName());
+	public static void putImageInFile(File f, String folder, BufferedImage image, String append) {
+		
+		File fi = new File(f.getParent() + "\\" + folder + "\\" + 
+				f.getName().substring(0, f.getName().length() - 4) + "_" + append + ".png");
 	    try {
 	    	if (!fi.exists()) {
 	    		fi.mkdirs();
 	    	}
-	    	ImageIO.write(b, "png", fi);
+	    	ImageIO.write(image, "png", fi);
 	    } catch (IOException e) {
 	        throw new RuntimeException(e);
 	    }

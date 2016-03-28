@@ -13,19 +13,13 @@ public class MainJPanel extends JPanel {
 					SCREEN_SIZE = new Dimension(500, 500),
 					SCREEN_OFFSET = new Dimension(7, 30);
 	
-	private static Conversion conversion;
+	private Conversion conversion;
 
 	public static void main(String[] args) {
 		
 		Settings.load();
 		
-        JFrame frame = new JFrame("Triangle Converter" +
-        		" Wi:" + G.blocksWide + 
-        		" Tr:" + G.maxTriangles + 
-        		" Sa:" + G.samples + 
-        		" Th:" + G.threadCount + 
-        		" Sc:" + G.scale + 
-        		" Ps:" + G.postScale);
+        JFrame frame = new JFrame();
         
         MainJPanel imageEvolutionJPanel = new MainJPanel();
         frame.add(imageEvolutionJPanel);
@@ -33,43 +27,60 @@ public class MainJPanel extends JPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        imageEvolutionJPanel.start();
-    }
-	
-	private void start() {
         while (true) {
         	File file = FileHandler.getFile();
-        	while (file == null) {
-        		try {
+        	if (file != null) {
+        		for (int i = G.attempts - 1; i >= 0; i--) {
+        			System.out.println("Found file: " + file);
+		        	G.reset();
+		        	frame.setTitle(getTitle(i));
+		        	
+		        	Thread repaintThread = imageEvolutionJPanel.getPaintThread();
+		        	repaintThread.start();
+		        	
+		        	imageEvolutionJPanel.startConversion(file, i);
+	    	
+		        	repaintThread.interrupt();
+        		}
+        	}
+        	else {
+        		frame.setTitle("Finding File ...");
+	    		try {
 					Thread.sleep(10_000);
 				} catch (InterruptedException e) { }
-        		file = FileHandler.getFile();
         	}
-        	System.out.println("Found file: " + file);
-        	Thread repaintThread = new RepaintThread();
-        	repaintThread.start();
-        	conversion = new Conversion(file);
-        	conversion.startConversion();
-        	conversion = null;
-        	repaintThread.interrupt();
-        	Runtime.getRuntime().gc();
         	
         }
-	}
+    }
 	
-	private class RepaintThread extends Thread {
-		public RepaintThread() {
-			super ("repaintThread");
-		}
-		@Override
-		public void run() {
-			while (!isInterrupted()) {
-				repaint();
-				try {
-					sleep(G.repaintWait);
-				} catch (InterruptedException e) {}
+	private void startConversion(File f, int i) {
+		conversion = new Conversion(f, i);
+    	conversion.startConversion();
+    	conversion = null;
+	}
+
+	private Thread getPaintThread() {
+		return new Thread("repaintThread") {
+			public void run() {
+				while (!isInterrupted()) {
+					repaint();
+					try {
+						sleep(G.repaintWait);
+					} catch (InterruptedException e) {}
+				}
 			}
-		}
+		};
+	}
+
+	private static String getTitle(int attempt) {
+		return "Triangle Converter" +
+        		" Wi:" + G.blocksWide + 
+        		" Tr:" + G.maxTriangles + 
+        		" Sa:" + G.samples + 
+        		" Th:" + G.threadCount + 
+        		" Sc:" + G.scale + 
+        		" Ps:" + G.postScale + 
+        		" At:" + (attempt + 1);
 	}
 	
 	public void paint(Graphics g) {

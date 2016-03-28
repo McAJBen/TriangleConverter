@@ -3,7 +3,6 @@ package application;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,9 +15,11 @@ public class Conversion {
 	private BufferedImage newImg;
 	private File file;
 	private BlockThread[] blockThreadArray;
+	private int attemptNum;
 	
-	public Conversion(File f) {
+	public Conversion(File f, int attemptNumber) {
 		file = f;
+		attemptNum = attemptNumber;
 	}
 
 	void startConversion() {
@@ -62,11 +63,11 @@ public class Conversion {
         	}
         }
         
-		FileHandler.save(file, originalImg, newImg);
-		
-		file.delete();
-		
-		System.out.println("completed: " + file.getAbsolutePath());
+		if (attemptNum == 0) {
+			file.delete();
+			FileHandler.putImageInFile(file, "Original", originalImg, "");
+		}
+		FileHandler.putImageInFile(file, "New", originalImg, attemptNum + "");
 		
 		newImg = null;
 		blockThreadArray = null;
@@ -75,8 +76,6 @@ public class Conversion {
 	
 	public void paint(Graphics g, Dimension size) {
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
 		g2d.drawImage(newImg, 0, 0, size.width, size.height - 14, null);
 				
 		if (file != null) {

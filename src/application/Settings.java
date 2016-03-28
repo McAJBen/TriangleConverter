@@ -19,13 +19,14 @@ public class Settings {
 		SAMPLES_ID = "SAMPLES",
 		THREAD_COUNT_ID = "THREAD_COUNT",
 		REPAINT_WAIT_ID = "REAPINT_WAIT_MS",
+		ATTEMPTS_ID = "ATTEMPTS",
 		// DOUBLES
 		SCALE_ID = "SCALE",
 		POST_SCALE_ID = "POST_SCALE",
 		// FORMAT
 		IDENTIFIER_SYMBOL = ":",
 		COMMENT_SYMBOL = "#",
-		DEFAULT_HEADER = COMMENT_SYMBOL + "All Comments must begin with " + COMMENT_SYMBOL;
+		RANDOM_ID = "RANDOM";
 	
 	@SuppressWarnings("resource")
 	public static void load() {
@@ -77,13 +78,28 @@ public class Settings {
 						break;
 					// INTEGERS
 					case BLOCKS_WIDE_ID:
-						G.blocksWide = Integer.parseInt(split[1]);
+						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
+							G.blocksWideRandom = true;
+						}
+						else {
+							G.blocksWide = Integer.parseInt(split[1]);
+						}
 						break;
 					case MAX_TRIANGLES_ID:
-						G.maxTriangles = Integer.parseInt(split[1]);
+						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
+							G.maxTrianglesRandom = true;
+						}
+						else {
+							G.maxTriangles = Integer.parseInt(split[1]);
+						}
 						break;
 					case SAMPLES_ID:
-						G.samples = Integer.parseInt(split[1]);
+						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
+							G.samplesRandom = true;
+						}
+						else {
+							G.samples = Integer.parseInt(split[1]);
+						}
 						break;
 					case THREAD_COUNT_ID:
 						if (split[1].equalsIgnoreCase("AUTO")) {
@@ -95,6 +111,9 @@ public class Settings {
 						break;
 					case REPAINT_WAIT_ID:
 						G.repaintWait = Integer.parseInt(split[1]);
+						break;
+					case ATTEMPTS_ID:
+						G.attempts = Integer.parseInt(split[1]);
 						break;
 					// DOUBLES
 					case SCALE_ID:
@@ -113,15 +132,24 @@ public class Settings {
 	private static void createSettingsFile() {
 		// create default settings strings
 		String settingsString = 
-				DEFAULT_HEADER												+ "\n" +
-				BLOCKS_WIDE_ID		+ IDENTIFIER_SYMBOL + G.blocksWide		+ "\n" +
-				MAX_TRIANGLES_ID	+ IDENTIFIER_SYMBOL + G.maxTriangles	+ "\n" +
-				SAMPLES_ID			+ IDENTIFIER_SYMBOL + G.samples			+ "\n" +
-				THREAD_COUNT_ID		+ IDENTIFIER_SYMBOL + G.threadCount		+ "\n" +
-				SCALE_ID			+ IDENTIFIER_SYMBOL + G.scale			+ "\n" +
+				COMMENT_SYMBOL + "All Comments must begin with " + COMMENT_SYMBOL 	+ "\n\n" +
+		
+				COMMENT_SYMBOL + "Integer variables\n" +
+				COMMENT_SYMBOL + "These 3 can be set to 'RANDOM'\n" +
+				BLOCKS_WIDE_ID		+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
+				MAX_TRIANGLES_ID	+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
+				SAMPLES_ID			+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
+				COMMENT_SYMBOL + "Thread count can be set to 'AUTO' \n" +
+				THREAD_COUNT_ID		+ IDENTIFIER_SYMBOL + "AUTO"			+ "\n" +
 				REPAINT_WAIT_ID		+ IDENTIFIER_SYMBOL + G.repaintWait		+ "\n" +
+				ATTEMPTS_ID			+ IDENTIFIER_SYMBOL + G.attempts		+ "\n\n" +
+				
+				COMMENT_SYMBOL + "Double variables\n" +
+				SCALE_ID			+ IDENTIFIER_SYMBOL + G.scale			+ "\n" +
+				POST_SCALE_ID		+ IDENTIFIER_SYMBOL + G.postScale		+ "\n\n" +
+				
+				COMMENT_SYMBOL + "Boolean variables\n" +
 				PREDRAW_ID			+ IDENTIFIER_SYMBOL + G.preDraw			+ "\n" +
-				POST_SCALE_ID		+ IDENTIFIER_SYMBOL + G.postScale		+ "\n" +
 				POST_PROCESSING_ID	+ IDENTIFIER_SYMBOL + G.postProcessing	+ "\n";
 		// write default settings to file
 		try {

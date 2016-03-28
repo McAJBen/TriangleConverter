@@ -35,7 +35,7 @@ public class BlockThread extends Thread {
 	
 	public BlockThread(String name) {
 		super(name);
-		position = getNextPosition();
+		reset();
 	}
 
 	public Point getNextBlockPosition() {
@@ -69,7 +69,6 @@ public class BlockThread extends Thread {
 		scaledImg = scaleImg;
 		scaledUpImg = new BufferedImage(newImg.getWidth(), newImg.getHeight(), newImg.getType());
 		scaledUpImg.getGraphics().drawImage(originalImg, 0, 0, scaledUpImg.getWidth(), scaledUpImg.getHeight(), null);
-		
 		blockStandardSize = new Dimension(scaledImg.getWidth() / G.blocksWide, scaledImg.getHeight() / G.blocksWide);
 		nextPos = new Point(0, 0);
 		offSet = new Dimension(
@@ -98,6 +97,14 @@ public class BlockThread extends Thread {
 			newBlockPosition = new Point(
 					getPoint(position.x, newBlockStandardSize.width, newOffSet.width),
 					getPoint(position.y, newBlockStandardSize.height, newOffSet.height));
+			
+			if (blockSize.width <= 0 || blockSize.height <= 0 ||
+				newBlockSize.width <= 0 || newBlockSize.height <= 0) {
+				
+				reset();
+				continue;
+			}
+			
 			
 			double bestScore = 0;
 			Block bestBlock = null;
