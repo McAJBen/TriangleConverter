@@ -25,14 +25,14 @@ public class G {
 		Random rand = new Random();
 		do {
 			if (blocksWideRandom) {
-				blocksWide = rand.nextInt(196) + 5;
+				blocksWide = rand.nextInt(201 - threadCount) + threadCount;
 			}
 			if (maxTrianglesRandom) {
 				maxTriangles = rand.nextInt(9) + 2;
 			}
 			if (samplesRandom) {
-				samples = rand.nextInt(10) + 1;
+				samples = rand.nextInt(5) + 1;
 			}
-		} while (samples * maxTriangles * blocksWide > 1_500);
+		} while (samples * maxTriangles * blocksWide * blocksWide > 10_000);
 	}
 }
