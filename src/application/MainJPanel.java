@@ -79,7 +79,7 @@ public class MainJPanel extends JPanel {
         		" Th:" + G.threadCount + 
         		" Sc:" + G.scale + 
         		" Ps:" + G.postScale + 
-        		" At:" + attempt;
+        		" At:" + attempt + "/" + G.attempts;
 	}
 	
 	public void paint(Graphics g) {
