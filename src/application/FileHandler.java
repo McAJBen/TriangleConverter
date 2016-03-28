@@ -69,4 +69,21 @@ public class FileHandler {
 	        throw new RuntimeException(e);
 	    }
 	}
+
+	public static BufferedImage getImage(File file) {
+		BufferedImage b = null;
+		do {
+    		try {
+    			b =  ImageIO.read(file);
+    		} catch (IOException e) {
+    			System.out.println("ERROR: Could not read file" + file.getName());
+    		}
+    	} while (b == null);
+		return b;
+	}
+
+	public static int getPixels(File file) {
+		BufferedImage b = getImage(file);
+		return b.getWidth() * b.getHeight();
+	}
 }

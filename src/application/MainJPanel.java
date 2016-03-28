@@ -30,12 +30,16 @@ public class MainJPanel extends JPanel {
         while (true) {
         	File file = FileHandler.getFile();
         	if (file != null) {
+        		
+        		int imagePixels = FileHandler.getPixels(file);
+        		
         		for (int i = 0; i < G.attempts; i++) {
         			System.out.println("Found file: " + file);
-		        	G.reset();
+		        	G.reset(imagePixels);
 		        	frame.setTitle(getTitle(i));
 		        	
 		        	Thread repaintThread = imageEvolutionJPanel.getPaintThread();
+		        	
 		        	repaintThread.start();
 		        	
 		        	imageEvolutionJPanel.startConversion(file, i);

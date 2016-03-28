@@ -21,8 +21,9 @@ public class G {
 		maxTrianglesRandom = false,
 		samplesRandom = false;
 	
-	static void reset() {
+	static void reset(int pixels) {
 		Random rand = new Random();
+		int maxTriSamples = pixels / 25;
 		do {
 			if (blocksWideRandom) {
 				blocksWide = rand.nextInt(201 - threadCount) + threadCount;
@@ -33,6 +34,6 @@ public class G {
 			if (samplesRandom) {
 				samples = rand.nextInt(5) + 1;
 			}
-		} while (samples * maxTriangles * blocksWide * blocksWide > 10_000);
+		} while (samples * maxTriangles * blocksWide * blocksWide > maxTriSamples);
 	}
 }

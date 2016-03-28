@@ -5,10 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ConcurrentModificationException;
-
-import javax.imageio.ImageIO;
 
 public class Conversion {
 	
@@ -23,14 +20,8 @@ public class Conversion {
 	}
 
 	void startConversion() {
-		BufferedImage originalImg = null;
-		do {
-    		try {
-    			originalImg = ImageIO.read(file);
-    		} catch (IOException e) {
-    			System.out.println("ERROR: Could not read file" + file.getName());
-    		}
-    	} while (originalImg == null);
+		BufferedImage originalImg = FileHandler.getImage(file);
+		
 		
 		BufferedImage scaledImg = new BufferedImage((int)(originalImg.getWidth() * G.scale),  (int)(originalImg.getHeight() * G.scale), originalImg.getType());
 		scaledImg.getGraphics().drawImage(originalImg, 0, 0, scaledImg.getWidth(), scaledImg.getHeight(), null);
