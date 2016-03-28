@@ -57,9 +57,7 @@ public class Conversion {
         	while (blockThreadArray[i].isAlive()) {
         		try {
 					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				} catch (InterruptedException e) {}
         	}
         }
         
