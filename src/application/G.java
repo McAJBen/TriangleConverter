@@ -23,7 +23,7 @@ public class G {
 	
 	static void reset(int pixels) {
 		Random rand = new Random();
-		int maxTriSamples = pixels / 25;
+		int maxTriSamples = pixels / 50;
 		do {
 			if (blocksWideRandom) {
 				blocksWide = rand.nextInt(201 - threadCount) + threadCount;
