@@ -6,26 +6,30 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class BlockThread extends Thread {
 
 	private static Thread mainThread;
-	private static BufferedImage 
+	private static BufferedImage
+			baseImg,
 			scaledUpImg,
 			scaledImg;
 	private static Dimension
 			blockStandardSize, // Standard SIZE are the generic size of the block
 			newBlockStandardSize,
 			offSet,
-			newOffSet;
+			newOffSet,
+			RandomBlockPositionSize;
 	private static Point nextPos;
+	private static int randomPlacementsDone;
 	private static Graphics2D newImgGraphics;
 	private static boolean calledInterrupt;
+	private static boolean gridMode;
 	
 	private int currentSample;
 	private BufferedImage 
 			currentTestImage;
-	private Point position;
 	private Dimension 
 			blockSize,
 			newBlockSize;
@@ -35,11 +39,6 @@ public class BlockThread extends Thread {
 	
 	public BlockThread(String name) {
 		super(name);
-		reset();
-	}
-
-	public Point getNextBlockPosition() {
-		return position;
 	}
 	
 	private static synchronized Point getNextPosition() {
@@ -82,32 +81,16 @@ public class BlockThread extends Thread {
 				newImg.getWidth() - G.blocksWide * newBlockStandardSize.width,
 				newImg.getHeight() - G.blocksWide * newBlockStandardSize.height);
 		newImgGraphics = newImg.createGraphics();
-		
+		RandomBlockPositionSize = new Dimension(newImg.getWidth() - blockStandardSize.width, 
+				newImg.getHeight() - blockStandardSize.height);
+		gridMode = true;
 	}
 	
 	@Override
 	public void run() {
-		while (position != null) {
-			blockSize = new Dimension(
-					getSize(position.x, blockStandardSize.width, offSet.width),
-					getSize(position.y, blockStandardSize.height, offSet.height));
-			blockPosition = new Point(
-					getPoint(position.x, blockStandardSize.width, offSet.width),
-					getPoint(position.y, blockStandardSize.height, offSet.height));
-			newBlockSize = new Dimension(
-					getSize(position.x, newBlockStandardSize.width, newOffSet.width),
-					getSize(position.y, newBlockStandardSize.height, newOffSet.height));
-			newBlockPosition = new Point(
-					getPoint(position.x, newBlockStandardSize.width, newOffSet.width),
-					getPoint(position.y, newBlockStandardSize.height, newOffSet.height));
+		while (!isDone()) {
 			
-			if (blockSize.width <= 0 || blockSize.height <= 0 ||
-				newBlockSize.width <= 0 || newBlockSize.height <= 0) {
-				
-				reset();
-				continue;
-			}
-			
+			reset();
 			
 			double bestScore = 0;
 			Block bestBlock = null;
@@ -140,7 +123,7 @@ public class BlockThread extends Thread {
 			
 			paintTo(bestBlock.getImage(newBlockSize), newBlockPosition, newBlockSize);
 		    
-		    reset();
+		    
 		}
 	}
 	
@@ -149,8 +132,39 @@ public class BlockThread extends Thread {
 	}
 	
 	private void reset() {
-		position = getNextPosition();
+		
 		currentSample = 0;
+		
+		if (gridMode) {
+			do {
+				Point position = getNextPosition();
+				if (position == null) {
+					return;
+				}
+				blockSize = new Dimension(
+						getSize(position.x, blockStandardSize.width, offSet.width),
+						getSize(position.y, blockStandardSize.height, offSet.height));
+				blockPosition = new Point(
+						getPoint(position.x, blockStandardSize.width, offSet.width),
+						getPoint(position.y, blockStandardSize.height, offSet.height));
+				newBlockSize = new Dimension(
+						getSize(position.x, newBlockStandardSize.width, newOffSet.width),
+						getSize(position.y, newBlockStandardSize.height, newOffSet.height));
+				newBlockPosition = new Point(
+						getPoint(position.x, newBlockStandardSize.width, newOffSet.width),
+						getPoint(position.y, newBlockStandardSize.height, newOffSet.height));
+			} while (blockSize.width <= 0 || blockSize.height <= 0 ||
+					newBlockSize.width <= 0 || newBlockSize.height <= 0);
+		}
+		else {
+			Random rand = new Random();
+			randomPlacementsDone++;
+			blockSize = blockStandardSize;
+			newBlockSize = newBlockStandardSize;
+			blockPosition = new Point(rand.nextInt(RandomBlockPositionSize.width),
+					rand.nextInt(RandomBlockPositionSize.height));
+			newBlockPosition = blockPosition; // TODO fix scaling
+		}
 	}
 
 	public void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
@@ -190,13 +204,26 @@ public class BlockThread extends Thread {
 	}
 	
 	public static boolean isDone() {
-		return nextPos.y >= G.blocksWide;
+		if (gridMode == true) {
+			return nextPos.y >= G.blocksWide;
+		}
+		else {
+			return randomPlacementsDone >= G.randomPlacements;
+		}
 	}
 
 	public static void clear() {
 		scaledImg = null;
 		blockStandardSize = null;
 		nextPos = null;
+		randomPlacementsDone = 0;
 		offSet = null;
+	}
+
+	public static void setRandomMode(BufferedImage newImg) {
+		gridMode = false;
+		newImgGraphics.dispose();
+		baseImg = newImg;
+		newImgGraphics = baseImg.createGraphics();
 	}
 }

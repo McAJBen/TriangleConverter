@@ -12,6 +12,7 @@ public class G {
 		maxTriangles = 2,
 		samples = 1,
 		threadCount = Runtime.getRuntime().availableProcessors(),
+		randomPlacements = 100, // TODO add to .settings
 		repaintWait = 500,
 		attempts = 3;
 	static double

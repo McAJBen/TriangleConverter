@@ -52,6 +52,28 @@ public class Conversion {
         	}
         }
         
+        if (true) { // TODO add variable in G
+        	BlockThread.setRandomMode(newImg);
+        	for (int i = 0; i < blockThreadArray.length; i++) {
+               	blockThreadArray[i] = new BlockThread("" + i);
+            }
+        	for (BlockThread b: blockThreadArray) {
+            	b.start();
+            }
+        	while (!BlockThread.isDone()) {
+            	try {
+    				Thread.sleep(10_000);
+    			} catch (InterruptedException e) {}
+            }
+        	for (int i = 0; i < blockThreadArray.length; i++) {
+            	while (blockThreadArray[i].isAlive()) {
+            		try {
+    					Thread.sleep(1);
+    				} catch (InterruptedException e) {}
+            	}
+            }
+        }
+        
 		if (attemptNum >= G.attempts - 1) {
 			file.delete();
 			FileHandler.putImageInFile(file, "Original", originalImg, "");
@@ -59,7 +81,6 @@ public class Conversion {
 		FileHandler.putImageInFile(file, "New", newImg,
 				"_" + (G.maxTriangles * G.blocksWide * G.blocksWide) + "_" + attemptNum);
 		
-		newImg = null;
 		blockThreadArray = null;
 		BlockThread.clear();
 	}
