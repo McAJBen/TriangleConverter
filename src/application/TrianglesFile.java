@@ -139,14 +139,7 @@ public class TrianglesFile {
 		double score = 0;
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
-				Color a = new Color(img.getRGB(i, j));
-				Color b = new Color(image.getRGB(i, j), true);
-				if (b.getAlpha() != 255) {
-					score += MAX_SCORE;
-				}
-				else {
-					score += Math.sqrt(Math.pow(a.getRed()-b.getRed(), 2)+Math.pow(a.getGreen()-b.getGreen(), 2)+Math.pow(a.getBlue()-b.getBlue(), 2));
-				}
+				score += getScore(img, image, i, j);
 			}
 		}
 		score /= MAX_SCORE;
@@ -154,6 +147,27 @@ public class TrianglesFile {
 		return 1-score;
 	}
 	
+	private double getScore(BufferedImage imgA, BufferedImage imgB, int i, int j) {
+		
+		int bInt = imgB.getRGB(i,  j);
+		if (bInt == 0) {
+			return MAX_SCORE;
+		}
+		int aInt = 16777216 + imgA.getRGB(i, j);
+		bInt += 16777216;
+		
+		double ret = 0;
+		for (int icount = 0; icount < 3; icount++) {
+			int a = aInt % 256;
+			int b = bInt % 256;
+			aInt /= 256;
+			bInt /= 256;
+			ret += Math.pow(a-b, 2);
+			
+		}
+		return Math.sqrt(ret);
+	}
+
 	public boolean hasAlpha() {
 		createImg();
 		for (int i = 0; i < image.getWidth(); i++) {
