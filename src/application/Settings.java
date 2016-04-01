@@ -14,6 +14,7 @@ public class Settings {
 		PREDRAW_ID = "PREDRAW",
 		POST_PROCESSING_ID = "POST_PROCESSING",
 		DISPLAY_ID = "DISPLAY",
+		SAMPLES_RANDOM_ID = "SAMPLES_RANDOM",
 		// INTEGERS
 		BLOCKS_WIDE_ID = "BLOCKS_WIDE",
 		MAX_TRIANGLES_ID = "MAX_TRIANGLES",
@@ -79,6 +80,9 @@ public class Settings {
 						break;
 					case DISPLAY_ID:
 						G.display = Boolean.parseBoolean(split[1]);
+						break;
+					case SAMPLES_RANDOM_ID:
+						G.samplesRandom = Boolean.parseBoolean(split[1]);
 						break;
 					// INTEGERS
 					case BLOCKS_WIDE_ID:
@@ -155,7 +159,8 @@ public class Settings {
 				COMMENT_SYMBOL + "Boolean variables\n" +
 				PREDRAW_ID			+ IDENTIFIER_SYMBOL + G.preDraw			+ "\n" +
 				POST_PROCESSING_ID	+ IDENTIFIER_SYMBOL + G.postProcessing	+ "\n" +
-				DISPLAY_ID			+ IDENTIFIER_SYMBOL + G.display;
+				DISPLAY_ID			+ IDENTIFIER_SYMBOL + G.display			+ "\n" +
+				SAMPLES_RANDOM_ID 	+ IDENTIFIER_SYMBOL + G.samplesRandom;
 		// write default settings to file
 		try {
 			File settingsFile = new File(

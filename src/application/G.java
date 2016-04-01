@@ -21,7 +21,7 @@ public class G {
 	static boolean 
 		blocksWideRandom = false,
 		maxTrianglesRandom = false,
-		samplesRandom = false;
+		samplesRandom = true;
 	
 	static void reset(int pixels) {
 		Random rand = new Random();

@@ -31,7 +31,7 @@ public class Conversion {
         blockThread = new btGrid(originalImg, newImg);
 		blockThread.startConversion();
 		
-        if (true) { // TODO add variable in G
+        if (G.samplesRandom) {
         	blockThread = new btRandom(originalImg, newImg);
         	blockThread.startConversion();
         }
