@@ -51,11 +51,6 @@ public class FileHandler {
 		return extension.equals(fileName.substring(lastIndex));
 	}
 	
-	/*public static void save(File f, BufferedImage oldImg, BufferedImage newImg) {
-		putImageInFile(f, "Original", oldImg);
-		putImageInFile(f, "New", newImg);
-	}*/
-	
 	public static void putImageInFile(File f, String folder, BufferedImage image, String append) {
 		
 		File fi = new File(f.getParent() + "\\" + folder + "\\" + 

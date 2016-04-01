@@ -14,7 +14,6 @@ public class Settings {
 		PREDRAW_ID = "PREDRAW",
 		POST_PROCESSING_ID = "POST_PROCESSING",
 		DISPLAY_ID = "DISPLAY",
-		SAMPLES_RANDOM_ID = "SAMPLES_RANDOM",
 		// INTEGERS
 		BLOCKS_WIDE_ID = "BLOCKS_WIDE",
 		MAX_TRIANGLES_ID = "MAX_TRIANGLES",
@@ -22,6 +21,7 @@ public class Settings {
 		THREAD_COUNT_ID = "THREAD_COUNT",
 		REPAINT_WAIT_ID = "REAPINT_WAIT_MS",
 		ATTEMPTS_ID = "ATTEMPTS",
+		RANDOM_BLOCKS_ID = "RANDOM_BLOCKS",
 		// DOUBLES
 		SCALE_ID = "SCALE",
 		POST_SCALE_ID = "POST_SCALE",
@@ -81,9 +81,6 @@ public class Settings {
 					case DISPLAY_ID:
 						G.display = Boolean.parseBoolean(split[1]);
 						break;
-					case SAMPLES_RANDOM_ID:
-						G.samplesRandom = Boolean.parseBoolean(split[1]);
-						break;
 					// INTEGERS
 					case BLOCKS_WIDE_ID:
 						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
@@ -117,6 +114,14 @@ public class Settings {
 							G.threadCount = Integer.parseInt(split[1]);
 						}
 						break;
+					case RANDOM_BLOCKS_ID:
+						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
+							G.randomBlocksRandom = true;
+						}
+						else {
+							G.randomBlocks = Integer.parseInt(split[1]);
+						}
+						break;
 					case REPAINT_WAIT_ID:
 						G.repaintWait = Integer.parseInt(split[1]);
 						break;
@@ -147,6 +152,7 @@ public class Settings {
 				BLOCKS_WIDE_ID		+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
 				MAX_TRIANGLES_ID	+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
 				SAMPLES_ID			+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
+				RANDOM_BLOCKS_ID	+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
 				COMMENT_SYMBOL + "Thread count can be set to 'AUTO' \n" +
 				THREAD_COUNT_ID		+ IDENTIFIER_SYMBOL + "AUTO"			+ "\n" +
 				REPAINT_WAIT_ID		+ IDENTIFIER_SYMBOL + G.repaintWait		+ "\n" +
@@ -159,8 +165,7 @@ public class Settings {
 				COMMENT_SYMBOL + "Boolean variables\n" +
 				PREDRAW_ID			+ IDENTIFIER_SYMBOL + G.preDraw			+ "\n" +
 				POST_PROCESSING_ID	+ IDENTIFIER_SYMBOL + G.postProcessing	+ "\n" +
-				DISPLAY_ID			+ IDENTIFIER_SYMBOL + G.display			+ "\n" +
-				SAMPLES_RANDOM_ID 	+ IDENTIFIER_SYMBOL + G.samplesRandom;
+				DISPLAY_ID			+ IDENTIFIER_SYMBOL + G.display;
 		// write default settings to file
 		try {
 			File settingsFile = new File(

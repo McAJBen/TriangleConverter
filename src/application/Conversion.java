@@ -19,6 +19,7 @@ public class Conversion {
 	}
 
 	void startConversion() {
+		long startTime = System.currentTimeMillis();
 		BufferedImage originalImg = FileHandler.getImage(file);
 		
 		
@@ -27,10 +28,10 @@ public class Conversion {
 		
 		newImg = new BufferedImage((int) (scaledImg.getWidth() * G.postScale), (int) (scaledImg.getHeight() * G.postScale), originalImg.getType());
         
-        //BlockThread.setup(originalImg, scaledImg, newImg, Thread.currentThread());
+       
         blockThread = new btGrid(originalImg, newImg);
 		blockThread.startConversion();
-		
+		System.out.println(System.currentTimeMillis() - startTime);
         if (G.samplesRandom) {
         	blockThread = new btRandom(originalImg, newImg);
         	blockThread.startConversion();
@@ -41,9 +42,11 @@ public class Conversion {
 			FileHandler.putImageInFile(file, "Original", originalImg, "");
 		}
 		FileHandler.putImageInFile(file, "New", newImg,
-				"_" + (G.maxTriangles * G.blocksWide * G.blocksWide) + "_" + attemptNum);
+				"_" + (G.maxTriangles * G.blocksWide * G.blocksWide + G.randomBlocks) + "_" + attemptNum);
 		
 		blockThread = null;
+		
+		System.out.println(System.currentTimeMillis() - startTime);
 	}
 	
 	public void paint(Graphics g, Dimension size) {

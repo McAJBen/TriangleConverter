@@ -2,6 +2,7 @@ package application;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 
 public class BlockLocation {
 
@@ -19,5 +20,9 @@ public class BlockLocation {
 		this.blockPosition = blockPosition;
 		this.scaledBlockSize = scaledBlockSize;
 		this.scaledBlockPosition = scaledBlockPosition;
+	}
+
+	public Rectangle getRectangle() {
+		return new Rectangle(blockPosition.x, blockPosition.y, blockSize.width, blockSize.height);
 	}
 }

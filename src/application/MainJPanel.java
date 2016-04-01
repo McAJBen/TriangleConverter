@@ -76,7 +76,8 @@ public class MainJPanel extends JPanel {
         		" Th:" + G.threadCount + 
         		" Sc:" + G.scale + 
         		" Ps:" + G.postScale + 
-        		" At:" + attempt + "/" + G.attempts;
+        		" At:" + attempt + "/" + G.attempts +
+        		" RB:" + G.randomBlocks;
 	}
 	
 	public void paint(Graphics g) {

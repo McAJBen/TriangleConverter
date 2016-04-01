@@ -86,6 +86,7 @@ public abstract class BlockThreadHandler {
 					bestBlock = block;
 				}
 				paintTo(bestBlock.getImage(blockLocation.scaledBlockSize), blockLocation.scaledBlockPosition, blockLocation.scaledBlockSize);
+				removeBlockLocation(blockLocation);
 			}
 		}
 		
@@ -117,6 +118,7 @@ public abstract class BlockThreadHandler {
 
 	public abstract boolean isDone();
 	public abstract BlockLocation getNewBlockLocation();
+	public abstract void removeBlockLocation(BlockLocation blockLocation);
 
 	
 	public void paint(Graphics2D g2d, Dimension size) {

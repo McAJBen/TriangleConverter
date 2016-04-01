@@ -2,7 +2,9 @@ package application;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class btRandom extends BlockThreadHandler {
@@ -12,6 +14,8 @@ public class btRandom extends BlockThreadHandler {
 	private int minWidth;
 	private int deltaWidth;
 	private Dimension imageSize;
+	
+	private ArrayList<Rectangle> alreadyTakenBlocks;
 	
 	public btRandom(BufferedImage originalImg, BufferedImage newImg) {
 		super(originalImg, newImg);
@@ -27,6 +31,7 @@ public class btRandom extends BlockThreadHandler {
 		minWidth *= 0.9;
 		minWidth /= G.blocksWide;
 		deltaWidth = maxW - minWidth;
+		alreadyTakenBlocks = new ArrayList<>();
 	}
 
 	@Override
@@ -35,15 +40,36 @@ public class btRandom extends BlockThreadHandler {
 	}
 
 	@Override
-	public BlockLocation getNewBlockLocation() {
-		Dimension blockSize = new Dimension(getSize(), getSize());
-		Point blockPosition = new Point(rand.nextInt(imageSize.width - blockSize.width), rand.nextInt(imageSize.height - blockSize.height));
-		
-		Dimension scaledBlockSize = new Dimension((int)(blockSize.width * G.postScale), (int)(blockSize.height * G.postScale));
-		Point scaledBlockPosition = new Point((int)(blockPosition.x * G.postScale), (int)(blockPosition.y * G.postScale));
-		
+	public synchronized BlockLocation getNewBlockLocation() {
 		randomPlacementsDone++;
-		return new BlockLocation(blockSize, blockPosition, scaledBlockSize, scaledBlockPosition);
+		BlockLocation bl;
+		do {
+			Dimension blockSize = new Dimension(getSize(), getSize());
+			Point blockPosition = new Point(rand.nextInt(imageSize.width - blockSize.width), rand.nextInt(imageSize.height - blockSize.height));
+			
+			Dimension scaledBlockSize = new Dimension((int)(blockSize.width * G.postScale), (int)(blockSize.height * G.postScale));
+			Point scaledBlockPosition = new Point((int)(blockPosition.x * G.postScale), (int)(blockPosition.y * G.postScale));
+			
+			bl = new BlockLocation(blockSize, blockPosition, scaledBlockSize, scaledBlockPosition);
+		} while (collides(bl));
+		
+		alreadyTakenBlocks.add(bl.getRectangle());
+		
+		return bl;
+	}
+	
+	private boolean collides(BlockLocation bl) {
+		for (int i = 0; i < alreadyTakenBlocks.size(); i++) {
+			if (alreadyTakenBlocks.get(i).contains(bl.getRectangle())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void removeBlockLocation(BlockLocation blockLocation) {
+		alreadyTakenBlocks.remove(blockLocation.getRectangle());
 	}
 	
 	private int getSize() {

@@ -90,4 +90,7 @@ public class btGrid extends BlockThreadHandler {
 		}
 		return p;
 	}
+
+	@Override
+	public void removeBlockLocation(BlockLocation blockLocation) {}
 }
