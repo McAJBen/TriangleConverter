@@ -18,11 +18,13 @@ public class TrianglesFile {
 	
 	private Dimension imageSize;
 	private ArrayList<Triangle> triangles = new ArrayList<Triangle>();
-	private BufferedImage image;
+	private BufferedImage
+					image,
+					baseImg;
 	private boolean imageMade = false;
 	
 	public TrianglesFile(TrianglesFile tf) {
-		this(tf.getTriangles(), tf.imageSize);
+		this(tf.getTriangles(), tf.imageSize, tf.baseImg);
 	}
 	
 	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension) {
@@ -32,9 +34,15 @@ public class TrianglesFile {
 		imageSize = (Dimension) dimension.clone();
 	}
 	
+	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension, BufferedImage baseChunk) {
+		this(trArray, dimension);
+		baseImg = baseChunk;
+	}
+
 	private BufferedImage makeImg(int width, int height) {
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 	    Graphics2D g2d = img.createGraphics();
+	    g2d.drawImage(baseImg, 0, 0, width, height, null);
 	    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		for (int i = 0; i < triangles.size(); i++) {
 			g2d.setColor(triangles.get(i).getColor());
@@ -139,33 +147,23 @@ public class TrianglesFile {
 		double score = 0;
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
-				score += getScore(img, image, i, j);
+				if (new Color(image.getRGB(i, j), true).getAlpha() != 255) {
+					score += MAX_SCORE;
+				}
+				else {
+					Color a = new Color(img.getRGB(i, j));
+					Color b = new Color(image.getRGB(i, j));
+					score += Math.sqrt(
+						Math.pow(a.getRed() - b.getRed(), 2) +
+						Math.pow(a.getGreen()-b.getGreen(), 2) +
+						Math.pow(a.getBlue()-b.getBlue(), 2));
+					
+				}
 			}
 		}
 		score /= MAX_SCORE;
 		score /= (imageSize.getWidth() * imageSize.getHeight());
 		return 1-score;
-	}
-	
-	private double getScore(BufferedImage imgA, BufferedImage imgB, int i, int j) {
-		
-		int bInt = imgB.getRGB(i,  j);
-		if (bInt == 0) {
-			return MAX_SCORE;
-		}
-		int aInt = 16777216 + imgA.getRGB(i, j);
-		bInt += 16777216;
-		
-		double ret = 0;
-		for (int icount = 0; icount < 3; icount++) {
-			int a = aInt % 256;
-			int b = bInt % 256;
-			aInt /= 256;
-			bInt /= 256;
-			ret += Math.pow(a-b, 2);
-			
-		}
-		return Math.sqrt(ret);
 	}
 
 	public boolean hasAlpha() {
