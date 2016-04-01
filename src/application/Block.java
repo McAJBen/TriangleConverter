@@ -10,7 +10,7 @@ public class Block {
 	private static final double MAX_STAGNANT_VAL = 100;
 	
 	private BufferedImage
-			imgChunk, // Image this Block is trying to solve
+			compareChunk, // Image this Block is trying to solve
 			lastBestImgChunk; // Last best solved image from this block
 	private TrianglesFile 
 			bestTriFile; // Best set of triangles found so far
@@ -39,13 +39,25 @@ public class Block {
 	
 	// position must be pixel position of top left of chunk
 	// size = pixel size of chunk
-	public Block(Point position, Dimension size, BufferedImage img, ArrayList<Triangle> trArray) {
+	public Block(Point position, Dimension size, BufferedImage img, BufferedImage baseImg, ArrayList<Triangle> trArray) {
 		pos = position;
-		imgChunk = new BufferedImage(size.width, size.height, img.getType());
-		imgChunk.getGraphics().drawImage(img, -position.x, -position.y, null);
-		bestTriFile = new TrianglesFile(trArray, size);
-		maxScore = bestTriFile.compare(imgChunk);
+		compareChunk = new BufferedImage(size.width, size.height, img.getType());
+		compareChunk.getGraphics().drawImage(img, -position.x, -position.y, null);
+		
+		BufferedImage baseChunk = new BufferedImage(size.width, size.height, img.getType());
+		if (baseImg != null) {
+			baseChunk.getGraphics().drawImage(baseImg, -position.x, -position.y, null);
+		}
+		if (trArray.size() <= 0) {
+			trArray.add(new Triangle());
+		}
+		bestTriFile = new TrianglesFile(trArray, size, baseChunk);
+		maxScore = bestTriFile.compare(compareChunk);
 		lastBestImgChunk = bestTriFile.getImage();
+	}
+	
+	public Block(Point position, Dimension size, BufferedImage img) {
+		this(position, size, img, null, new ArrayList<Triangle>());
 	}
 
 	// checks triangleMode to modify bestTriFile and see if it improves
@@ -69,7 +81,7 @@ public class Block {
 				modifyTriFile.modifyRemove();
 				break;
 		}
-		double modifyScore = modifyTriFile.compare(imgChunk);
+		double modifyScore = modifyTriFile.compare(compareChunk);
 		
 		// checks if the modify improved
 		if (modifyScore >= maxScore) {
@@ -96,7 +108,7 @@ public class Block {
 				while (bestTriFile.getSize() > G.maxTriangles) {
 					bestTriFile.removeBackTriangle();
 				}
-				maxScore = bestTriFile.compare(imgChunk);
+				maxScore = bestTriFile.compare(compareChunk);
 			}
 		}
 	}

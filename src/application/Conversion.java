@@ -5,13 +5,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ConcurrentModificationException;
 
 public class Conversion {
 	
 	private BufferedImage newImg;
 	private File file;
-	private BlockThread[] blockThreadArray;
+	private BlockThreadHandler blockThread;
 	private int attemptNum;
 	
 	public Conversion(File f, int attemptNumber) {
@@ -28,50 +27,13 @@ public class Conversion {
 		
 		newImg = new BufferedImage((int) (scaledImg.getWidth() * G.postScale), (int) (scaledImg.getHeight() * G.postScale), originalImg.getType());
         
-        BlockThread.setup(originalImg, scaledImg, newImg, Thread.currentThread());
-        
-		blockThreadArray = new BlockThread[G.threadCount];
-        for (int i = 0; i < blockThreadArray.length; i++) {
-           	blockThreadArray[i] = new BlockThread("" + i);
-        }
-        
-        for (BlockThread b: blockThreadArray) {
-        	b.start();
-        }
-        
-        while (!BlockThread.isDone()) {
-        	try {
-				Thread.sleep(10_000);
-			} catch (InterruptedException e) {}
-        }
-        for (int i = 0; i < blockThreadArray.length; i++) {
-        	while (blockThreadArray[i].isAlive()) {
-        		try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {}
-        	}
-        }
-        
+        //BlockThread.setup(originalImg, scaledImg, newImg, Thread.currentThread());
+        blockThread = new btGrid(originalImg, newImg);
+		blockThread.startConversion();
+		
         if (true) { // TODO add variable in G
-        	BlockThread.setRandomMode(newImg);
-        	for (int i = 0; i < blockThreadArray.length; i++) {
-               	blockThreadArray[i] = new BlockThread("" + i);
-            }
-        	for (BlockThread b: blockThreadArray) {
-            	b.start();
-            }
-        	while (!BlockThread.isDone()) {
-            	try {
-    				Thread.sleep(10_000);
-    			} catch (InterruptedException e) {}
-            }
-        	for (int i = 0; i < blockThreadArray.length; i++) {
-            	while (blockThreadArray[i].isAlive()) {
-            		try {
-    					Thread.sleep(1);
-    				} catch (InterruptedException e) {}
-            	}
-            }
+        	blockThread = new btRandom(originalImg, newImg);
+        	blockThread.startConversion();
         }
         
 		if (attemptNum >= G.attempts - 1) {
@@ -81,8 +43,7 @@ public class Conversion {
 		FileHandler.putImageInFile(file, "New", newImg,
 				"_" + (G.maxTriangles * G.blocksWide * G.blocksWide) + "_" + attemptNum);
 		
-		blockThreadArray = null;
-		BlockThread.clear();
+		blockThread = null;
 	}
 	
 	public void paint(Graphics g, Dimension size) {
@@ -91,18 +52,11 @@ public class Conversion {
 				
 		if (file != null) {
 			g2d.drawString(file.getName() + "", 2, size.height - 2);
-			if (G.preDraw && blockThreadArray != null) {
+			if (G.preDraw && blockThread != null) {
 				Dimension windowSize = size;
 				windowSize.height -= 14;
 				if (newImg != null) {
-					try {
-						for (BlockThread bt: blockThreadArray) {
-							bt.paint(g2d, newImg.getWidth(), newImg.getHeight(), windowSize);
-						}
-					}
-					catch (ConcurrentModificationException ce) {
-						System.out.println("failed to paint");
-					}
+					blockThread.paint(g2d, windowSize);
 				}
 			}
 		}
