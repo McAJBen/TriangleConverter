@@ -19,9 +19,7 @@ public class Conversion {
 	}
 
 	void startConversion() {
-		long startTime = System.currentTimeMillis();
 		BufferedImage originalImg = FileHandler.getImage(file);
-		
 		
 		BufferedImage scaledImg = new BufferedImage((int)(originalImg.getWidth() * G.scale),  (int)(originalImg.getHeight() * G.scale), originalImg.getType());
 		scaledImg.getGraphics().drawImage(originalImg, 0, 0, scaledImg.getWidth(), scaledImg.getHeight(), null);
@@ -29,24 +27,19 @@ public class Conversion {
 		newImg = new BufferedImage((int) (scaledImg.getWidth() * G.postScale), (int) (scaledImg.getHeight() * G.postScale), originalImg.getType());
         
        
-        blockThread = new btGrid(originalImg, newImg);
+        blockThread = new btGrid(scaledImg, newImg);
 		blockThread.startConversion();
-		System.out.println(System.currentTimeMillis() - startTime);
-        if (G.samplesRandom) {
-        	blockThread = new btRandom(originalImg, newImg);
-        	blockThread.startConversion();
-        }
+        blockThread = new btRandom(scaledImg, newImg);
+        blockThread.startConversion();
         
 		if (attemptNum >= G.attempts - 1) {
 			file.delete();
 			FileHandler.putImageInFile(file, "Original", originalImg, "");
 		}
 		FileHandler.putImageInFile(file, "New", newImg,
-				"_" + (G.maxTriangles * G.blocksWide * G.blocksWide + G.randomBlocks) + "_" + attemptNum);
+				"_" + (G.maxTriangles * (G.blocksWide * G.blocksWide + G.randomBlocks)) + "_" + attemptNum);
 		
 		blockThread = null;
-		
-		System.out.println(System.currentTimeMillis() - startTime);
 	}
 	
 	public void paint(Graphics g, Dimension size) {

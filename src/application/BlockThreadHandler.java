@@ -75,7 +75,7 @@ public abstract class BlockThreadHandler {
 					}
 				}
 				if (G.postProcessing) {
-					Block block = new Block(blockLocation.scaledBlockPosition, blockLocation.scaledBlockSize, originalImg, newImg, bestBlock.getTriangles());
+					Block block = new Block(blockLocation.scaledBlockPosition, blockLocation.scaledBlockSize, originalImg, newImg, bestBlock.getTriangles()); // TODO check and resize automatically?
 					while (!block.isDone()) {
 						block.move();
 						if (G.preDraw) {
