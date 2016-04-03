@@ -11,7 +11,7 @@ public class BlockLocation {
 	Dimension scaledBlockSize;
 	Point scaledBlockPosition;
 	
-	public BlockLocation(Dimension blockSize,
+	BlockLocation(Dimension blockSize,
 						Point blockPosition,
 						Dimension scaledBlockSize,
 						Point scaledBlockPosition)
@@ -22,7 +22,7 @@ public class BlockLocation {
 		this.scaledBlockPosition = scaledBlockPosition;
 	}
 
-	public Rectangle getRectangle() {
+	Rectangle getRectangle() {
 		return new Rectangle(blockPosition.x, blockPosition.y, blockSize.width, blockSize.height);
 	}
 }

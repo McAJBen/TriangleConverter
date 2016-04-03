@@ -65,6 +65,9 @@ public class btGrid extends BlockThreadHandler {
 		return new BlockLocation(blockSize, blockPosition, scaledBlockSize, scaledBlockPosition);
 	}
 	
+	@Override
+	public void removeBlockLocation(BlockLocation blockLocation) {}
+	
 	private static int getSize(int i, int blockPixelSize, int offSet) {
 		if (i < offSet) {
 			return blockPixelSize + 1;
@@ -90,7 +93,4 @@ public class btGrid extends BlockThreadHandler {
 		}
 		return p;
 	}
-
-	@Override
-	public void removeBlockLocation(BlockLocation blockLocation) {}
 }

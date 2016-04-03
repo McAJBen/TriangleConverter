@@ -6,25 +6,27 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Triangle {
-	private final static int SIDES = 3;
-	private static Random rand = new Random();
+	private static final int SIDES = 3;
+	private static final Random RAND = new Random();
 	private double[] Xpoints = new double[SIDES];
 	private double[] Ypoints = new double[SIDES];
 	private Color color;
 	
-	public Triangle() {
+	Triangle() {
 		for (int i = 0; i < SIDES; i++) {
-			Xpoints[i] = rand.nextDouble();
-			Ypoints[i] = rand.nextDouble();
+			Xpoints[i] = RAND.nextDouble();
+			Ypoints[i] = RAND.nextDouble();
 		}
-		color = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+		color = new Color(RAND.nextInt(256), RAND.nextInt(256), RAND.nextInt(256));
 	}
-	public Triangle(double[] px, double[] py, Color c) {
+	
+	Triangle(double[] px, double[] py, Color c) {
 		Xpoints = px.clone();
 		Ypoints = py.clone();
 		setColor(c);
 	}
-	public Triangle(ArrayList<Double> px, ArrayList<Double> py, Color c) {
+	
+	Triangle(ArrayList<Double> px, ArrayList<Double> py, Color c) {
 		Xpoints = new double[SIDES];
 		Ypoints = new double[SIDES];
 		for (int i = 0; i < SIDES; i++) {
@@ -33,13 +35,12 @@ public class Triangle {
 		}
 		setColor(c);
 	}
-	private void setColor(Color c) {
-		color = new Color(c.getRed(), c.getGreen(), c.getBlue());
-	}
-	public Color getColor() {
+	
+	Color getColor() {
 		return new Color(color.getRed(), color.getGreen(), color.getBlue());
 	}
-	public Polygon getPolygon(int width, int height) {
+	
+	Polygon getPolygon(int width, int height) {
 		width++;
 		height++;
 		int[] xp = new int[SIDES];
@@ -50,31 +51,25 @@ public class Triangle {
 		}
 		return new Polygon(xp, yp, SIDES);
 	}
-	public double[] getXpoints() {
+	
+	double[] getXpoints() {
 		return Xpoints.clone();
 	}
-	public double[] getYpoints() {
+	
+	double[] getYpoints() {
 		return Ypoints.clone();
 	}
-	public int getRed() {
-		return color.getRed();
+	
+	int[] getColorArray() {
+		return new int[] {color.getRed(), color.getGreen(), color.getBlue()};
 	}
-	public int getGreen() {
-		return color.getGreen();
-	}
-	public int getBlue() {
-		return color.getBlue();
-	}
+	
 	@Override
 	public Triangle clone() {
 		return new Triangle(Xpoints.clone(), Ypoints.clone(), getColor());
 	}
-	@Override
-	public String toString() {
-		String s = color.toString();
-		for (int i = 0; i < SIDES; i++) {
-			s = s.concat("\t" + Xpoints[i] + "\t" + Ypoints[i]);
-		}
-		return  s;
+
+	private void setColor(Color c) {
+		color = new Color(c.getRed(), c.getGreen(), c.getBlue());
 	}
 }

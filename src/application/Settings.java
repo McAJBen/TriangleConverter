@@ -31,7 +31,7 @@ public class Settings {
 		RANDOM_ID = "RANDOM";
 	
 	@SuppressWarnings("resource")
-	public static void load() {
+	static void load() {
 		String settingsString = null;
 		BufferedReader br = null;
 		try {

@@ -17,7 +17,7 @@ public class btRandom extends BlockThreadHandler {
 	
 	private ArrayList<Rectangle> alreadyTakenBlocks;
 	
-	public btRandom(BufferedImage originalImg, BufferedImage newImg) {
+	btRandom(BufferedImage originalImg, BufferedImage newImg) {
 		super(originalImg, newImg);
 		rand = new Random();
 		randomPlacementsDone = 0;
@@ -40,7 +40,7 @@ public class btRandom extends BlockThreadHandler {
 	}
 
 	@Override
-	public synchronized BlockLocation getNewBlockLocation() {
+	synchronized BlockLocation getNewBlockLocation() {
 		randomPlacementsDone++;
 		BlockLocation bl;
 		do {
@@ -68,7 +68,7 @@ public class btRandom extends BlockThreadHandler {
 	}
 
 	@Override
-	public void removeBlockLocation(BlockLocation blockLocation) {
+	void removeBlockLocation(BlockLocation blockLocation) {
 		alreadyTakenBlocks.remove(blockLocation.getRectangle());
 	}
 	

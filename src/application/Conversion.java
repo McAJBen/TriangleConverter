@@ -13,7 +13,7 @@ public class Conversion {
 	private BlockThreadHandler blockThread;
 	private int attemptNum;
 	
-	public Conversion(File f, int attemptNumber) {
+	Conversion(File f, int attemptNumber) {
 		file = f;
 		attemptNum = attemptNumber;
 	}
@@ -42,7 +42,7 @@ public class Conversion {
 		blockThread = null;
 	}
 	
-	public void paint(Graphics g, Dimension size) {
+	void paint(Graphics g, Dimension size) {
         Graphics2D g2d = (Graphics2D) g;
 		g2d.drawImage(newImg, 0, 0, size.width, size.height - 14, null);
 				

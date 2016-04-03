@@ -15,10 +15,10 @@ public class MainJPanel extends JPanel {
 	
 	private Conversion conversion;
 
-	public static void main() {
-		MainJPanel imageEvolutionJPanel = new MainJPanel();
+	static void main() {
+		MainJPanel mainJPanel = new MainJPanel();
 		JFrame frame = new JFrame();
-    	frame.add(imageEvolutionJPanel);
+    	frame.add(mainJPanel);
     	frame.setSize(SCREEN_SIZE.width + SCREEN_OFFSET.width, SCREEN_SIZE.height + SCREEN_OFFSET.height);
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	frame.setLocationRelativeTo(null);
@@ -33,10 +33,10 @@ public class MainJPanel extends JPanel {
 		        	G.reset(imagePixels);
 		        	
 		        	Thread repaintThread = null;
-		        	frame.setTitle(getTitle(i));
-		        	repaintThread = imageEvolutionJPanel.getPaintThread();
+		        	frame.setTitle(G.getTitle(i));
+		        	repaintThread = mainJPanel.getPaintThread();
 		        	repaintThread.start();
-		        	imageEvolutionJPanel.startConversion(file, i);
+		        	mainJPanel.startConversion(file, i);
 		        	repaintThread.interrupt();
         		}
         	}
@@ -48,6 +48,13 @@ public class MainJPanel extends JPanel {
         	}
         }
     }
+	
+	public void paint(Graphics g) {
+		super.paint(g);
+		if (conversion != null) {
+			conversion.paint(g, getSize());
+		}
+	}
 	
 	private void startConversion(File f, int i) {
 		conversion = new Conversion(f, i);
@@ -66,24 +73,5 @@ public class MainJPanel extends JPanel {
 				}
 			}
 		};
-	}
-
-	static String getTitle(int attempt) {
-		return "Triangle Converter" +
-        		" Wi:" + G.blocksWide + 
-        		" Tr:" + G.maxTriangles + 
-        		" Sa:" + G.samples + 
-        		" Th:" + G.threadCount + 
-        		" Sc:" + G.scale + 
-        		" Ps:" + G.postScale + 
-        		" At:" + attempt + "/" + G.attempts +
-        		" RB:" + G.randomBlocks;
-	}
-	
-	public void paint(Graphics g) {
-		super.paint(g);
-		if (conversion != null) {
-			conversion.paint(g, getSize());
-		}
 	}
 }

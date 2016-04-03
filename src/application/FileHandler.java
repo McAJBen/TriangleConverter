@@ -10,18 +10,6 @@ public class FileHandler {
 	
 	private static ArrayList<File> files = new ArrayList<File>();
 	
-	public static File getFile() {
-		if (files.size() == 0) {
-			files = getFiles();
-		}
-		if (files.size() > 0) {
-			File f = files.get(0);
-			files.remove(0);
-			return f;
-		}
-	    return null;
-	}
-	
 	private static ArrayList<File> getFiles() {
 		ArrayList<File> fileList = new ArrayList<File>();
 		File directory = new File(System.getProperty("user.dir"));
@@ -49,6 +37,18 @@ public class FileHandler {
 			return false;
 		}
 		return extension.equals(fileName.substring(lastIndex));
+	}
+	
+	public static File getFile() {
+		if (files.size() == 0) {
+			files = getFiles();
+		}
+		if (files.size() > 0) {
+			File f = files.get(0);
+			files.remove(0);
+			return f;
+		}
+	    return null;
 	}
 	
 	public static void putImageInFile(File f, String folder, BufferedImage image, String append) {

@@ -40,4 +40,16 @@ public class G {
 			randomBlocks = rand.nextInt(blocksWide) * blocksWide;
 		}
 	}
+	
+	static String getTitle(int attempt) {
+		return "Triangle Converter" +
+        		" Wi:" + G.blocksWide + 
+        		" Tr:" + G.maxTriangles + 
+        		" Sa:" + G.samples + 
+        		" Th:" + G.threadCount + 
+        		" Sc:" + G.scale + 
+        		" Ps:" + G.postScale + 
+        		" At:" + attempt + "/" + G.attempts +
+        		" RB:" + G.randomBlocks;
+	}
 }

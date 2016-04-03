@@ -13,14 +13,11 @@ public class Main {
 			while (true) {
 	        	File file = FileHandler.getFile();
 	        	if (file != null) {
-	        		
 	        		int imagePixels = FileHandler.getPixels(file);
-	        		
 	        		for (int i = 0; i < G.attempts; i++) {
 	        			System.out.println("Found file: " + file);
 			        	G.reset(imagePixels);
-			        	System.out.println(MainJPanel.getTitle(i));
-			        	
+			        	System.out.println(G.getTitle(i));
 			        	Conversion conversion = new Conversion(file, i);
 			        	conversion.startConversion();
 	        		}
