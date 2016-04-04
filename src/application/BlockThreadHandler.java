@@ -74,7 +74,7 @@ public abstract class BlockThreadHandler {
 				}
 				
 				for (int sample = 0; sample < G.samples; sample++) {
-					Block block = new Block(blockLocation.blockPosition, blockLocation.blockSize, originalImg);
+					Block block = new Block(blockLocation.original, originalImg);
 					while (!block.isDone()) {
 						block.move();
 						if (G.preDraw) {
@@ -88,7 +88,7 @@ public abstract class BlockThreadHandler {
 					}
 				}
 				if (G.postProcessing) {
-					Block block = new Block(blockLocation.scaledBlockPosition, blockLocation.scaledBlockSize, originalImg, newImg, bestBlock.getTriangles()); // TODO check and resize automatically?
+					Block block = new Block(blockLocation.scaled, originalImg, newImg, bestBlock.getTriangles()); // TODO check and resize automatically?
 					while (!block.isDone()) {
 						block.move();
 						if (G.preDraw) {
@@ -98,7 +98,7 @@ public abstract class BlockThreadHandler {
 					currentTestImage = block.getImage();
 					bestBlock = block;
 				}
-				paintTo(bestBlock.getImage(blockLocation.scaledBlockSize), blockLocation.scaledBlockPosition, blockLocation.scaledBlockSize);
+				paintTo(bestBlock.getImage(blockLocation.scaled.getSize()), blockLocation.scaled.getLocation(), blockLocation.scaled.getSize());
 				removeBlockLocation(blockLocation);
 			}
 		}
@@ -112,11 +112,11 @@ public abstract class BlockThreadHandler {
 			if (currentTestImage != null && blockLocation != null) {
 				
 				Point blPos = new Point(
-						blockLocation.scaledBlockPosition.x * windowSize.width / origW,
-						blockLocation.scaledBlockPosition.y * windowSize.height / origH);
+						blockLocation.scaled.x * windowSize.width / origW,
+						blockLocation.scaled.y * windowSize.height / origH);
 				Dimension blSize = new Dimension(
-						blockLocation.scaledBlockSize.width * windowSize.width / origW,
-						blockLocation.scaledBlockSize.height * windowSize.height / origH);
+						blockLocation.scaled.width * windowSize.width / origW,
+						blockLocation.scaled.height * windowSize.height / origH);
 				
 				g.drawImage(currentTestImage,
 						blPos.x, blPos.y,

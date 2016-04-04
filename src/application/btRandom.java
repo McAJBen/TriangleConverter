@@ -53,14 +53,14 @@ public class btRandom extends BlockThreadHandler {
 			bl = new BlockLocation(blockSize, blockPosition, scaledBlockSize, scaledBlockPosition);
 		} while (collides(bl));
 		
-		alreadyTakenBlocks.add(bl.getRectangle());
+		alreadyTakenBlocks.add(bl.original);
 		
 		return bl;
 	}
 	
 	private boolean collides(BlockLocation bl) {
 		for (int i = 0; i < alreadyTakenBlocks.size(); i++) {
-			if (alreadyTakenBlocks.get(i).contains(bl.getRectangle())) {
+			if (alreadyTakenBlocks.get(i).contains(bl.original)) {
 				return true;
 			}
 		}
@@ -69,7 +69,7 @@ public class btRandom extends BlockThreadHandler {
 
 	@Override
 	void removeBlockLocation(BlockLocation blockLocation) {
-		alreadyTakenBlocks.remove(blockLocation.getRectangle());
+		alreadyTakenBlocks.remove(blockLocation.original);
 	}
 	
 	private int getSize() {

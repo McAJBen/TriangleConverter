@@ -2,6 +2,7 @@ package application;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -21,24 +22,24 @@ public class Block {
 	
 	// position must be pixel position of top left of chunk
 	// size = pixel size of chunk
-	Block(Point position, Dimension size, BufferedImage img, BufferedImage baseImg, ArrayList<Triangle> trArray) {
-		compareChunk = new BufferedImage(size.width, size.height, img.getType());
-		compareChunk.getGraphics().drawImage(img, -position.x, -position.y, null);
+	Block(Rectangle rectangle, BufferedImage img, BufferedImage baseImg, ArrayList<Triangle> trArray) {
+		compareChunk = new BufferedImage(rectangle.width, rectangle.height, img.getType());
+		compareChunk.getGraphics().drawImage(img, -rectangle.x, -rectangle.y, null);
 		
-		BufferedImage baseChunk = new BufferedImage(size.width, size.height, img.getType());
+		BufferedImage baseChunk = new BufferedImage(rectangle.width, rectangle.height, img.getType());
 		if (baseImg != null) {
-			baseChunk.getGraphics().drawImage(baseImg, -position.x, -position.y, null);
+			baseChunk.getGraphics().drawImage(baseImg, -rectangle.x, -rectangle.y, null);
 		}
 		if (trArray.size() <= 0) {
 			trArray.add(new Triangle());
 		}
-		bestTriFile = new TrianglesFile(trArray, size, baseChunk);
+		bestTriFile = new TrianglesFile(trArray, rectangle.getSize(), baseChunk);
 		maxScore = bestTriFile.compare(compareChunk);
 		lastBestImgChunk = bestTriFile.getImage();
 	}
 	
-	Block(Point position, Dimension size, BufferedImage img) {
-		this(position, size, img, null, new ArrayList<Triangle>());
+	Block(Rectangle rectangle, BufferedImage img) {
+		this(rectangle, img, null, new ArrayList<Triangle>());
 	}
 
 	// checks triangleMode to modify bestTriFile and see if it improves

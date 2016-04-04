@@ -29,6 +29,7 @@ public class Conversion {
        
         blockThread = new btGrid(scaledImg, newImg);
 		blockThread.startConversion();
+		
         blockThread = new btRandom(scaledImg, newImg);
         blockThread.startConversion();
         
