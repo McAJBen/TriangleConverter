@@ -3,6 +3,9 @@ package application;
 import java.util.Random;
 
 public class G {
+	
+	static final Random RANDOM = new Random();
+	
 	static boolean
 		preDraw = true,
 		postProcessing = true,

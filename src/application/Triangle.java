@@ -3,21 +3,19 @@ package application;
 import java.awt.Color;
 import java.awt.Polygon;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Triangle {
 	private static final int SIDES = 3;
-	private static final Random RAND = new Random();
 	private double[] Xpoints = new double[SIDES];
 	private double[] Ypoints = new double[SIDES];
 	private Color color;
 	
 	Triangle() {
 		for (int i = 0; i < SIDES; i++) {
-			Xpoints[i] = RAND.nextDouble();
-			Ypoints[i] = RAND.nextDouble();
+			Xpoints[i] = G.RANDOM.nextDouble();
+			Ypoints[i] = G.RANDOM.nextDouble();
 		}
-		color = new Color(RAND.nextInt(256), RAND.nextInt(256), RAND.nextInt(256));
+		color = new Color(G.RANDOM.nextInt(256), G.RANDOM.nextInt(256), G.RANDOM.nextInt(256));
 	}
 	
 	Triangle(double[] px, double[] py, Color c) {

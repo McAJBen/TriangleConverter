@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class TrianglesFile {
 	
@@ -14,14 +13,13 @@ public class TrianglesFile {
 	private static final double FACT_INVERSE = 1.0 / FACT, 
 			MAX_SCORE = Math.pow(195075, 0.5);
 	
-	private static Random rand = new Random();
-	
 	private Dimension imageSize;
 	private ArrayList<Triangle> triangles = new ArrayList<Triangle>();
 	private BufferedImage
 					image,
 					baseImg;
 	private boolean imageMade = false;
+	private double totalPossibleScore;
 	
 	TrianglesFile(TrianglesFile tf) {
 		this(tf.getTriangles(), tf.imageSize, tf.baseImg);
@@ -31,7 +29,8 @@ public class TrianglesFile {
 		for (int i = 0; i < trArray.size(); i++) {
 			this.triangles.add(trArray.get(i));
 		}
-		imageSize = (Dimension) dimension.clone();
+		imageSize = dimension.getSize();
+		totalPossibleScore = MAX_SCORE * imageSize.getWidth() * imageSize.getHeight();
 	}
 	
 	TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension, BufferedImage baseChunk) {
@@ -58,8 +57,8 @@ public class TrianglesFile {
 		double xp[] = triangles.get(i).getXpoints();
 		double yp[] = triangles.get(i).getYpoints();
 		for (int j = 0; j < 3; j++) {
-			xp[j] += rand.nextDouble() / 5 - 0.1;
-			yp[j] += rand.nextDouble() / 5 - 0.1;
+			xp[j] += G.RANDOM.nextDouble() / 5 - 0.1;
+			yp[j] += G.RANDOM.nextDouble() / 5 - 0.1;
 			
 			xp[j] = checkBounds(xp[j], 1);
 			yp[j] = checkBounds(yp[j], 1);
@@ -76,8 +75,8 @@ public class TrianglesFile {
 		double xp[] = triangles.get(i).getXpoints();
 		double yp[] = triangles.get(i).getYpoints();
 		for (int j = 0; j < 3; j++) {
-			xp[j] = rand.nextDouble();
-			yp[j] = rand.nextDouble();
+			xp[j] = G.RANDOM.nextDouble();
+			yp[j] = G.RANDOM.nextDouble();
 		}
 		triangles.set(i, new Triangle(xp, yp, triangles.get(i).getColor()));
 	}
@@ -90,7 +89,7 @@ public class TrianglesFile {
 		int i = getRandom();
 		int[] col = triangles.get(i).getColorArray();
 		for (int j = 0; j < col.length; j++) {
-			col[j] += rand.nextInt(51) - 25;
+			col[j] += G.RANDOM.nextInt(51) - 25;
 			col[j] = checkBounds(col[j], 255);
 		}
 		triangles.set(i, new Triangle(triangles.get(i).getXpoints(), triangles.get(i).getYpoints(), new Color(col[0], col[1], col[2])));
@@ -99,7 +98,7 @@ public class TrianglesFile {
 	void modifyRemove() {
 		imageMade = false;
 		if (triangles.size() > 2) {
-			triangles.remove(rand.nextInt(triangles.size()));
+			triangles.remove(G.RANDOM.nextInt(triangles.size()));
 		}
 	}
 	
@@ -108,22 +107,20 @@ public class TrianglesFile {
 		double score = 0;
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
-				if (new Color(image.getRGB(i, j), true).getAlpha() != 255) {
+				Color b = new Color(image.getRGB(i, j), true);
+				if (b.getAlpha() != 255) {
 					score += MAX_SCORE;
 				}
 				else {
 					Color a = new Color(img.getRGB(i, j));
-					Color b = new Color(image.getRGB(i, j));
 					score += Math.sqrt(
 						Math.pow(a.getRed() - b.getRed(), 2) +
 						Math.pow(a.getGreen()-b.getGreen(), 2) +
 						Math.pow(a.getBlue()-b.getBlue(), 2));
-					
 				}
 			}
 		}
-		score /= MAX_SCORE;
-		score /= (imageSize.getWidth() * imageSize.getHeight());
+		score /= totalPossibleScore;
 		return 1-score;
 	}
 
@@ -131,7 +128,7 @@ public class TrianglesFile {
 		createImg();
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
-				if (new Color(image.getRGB(i, j), true).getAlpha() != 255) {
+				if (image.getRGB(i, j) == 0) {
 					return true;
 				}
 			}
@@ -196,7 +193,7 @@ public class TrianglesFile {
 	}
 	
 	private int getRandom() {
-		return (int) Math.pow(rand.nextInt((int) Math.pow(triangles.size(), FACT)), FACT_INVERSE);
+		return (int) Math.pow(G.RANDOM.nextInt((int) Math.pow(triangles.size(), FACT)), FACT_INVERSE);
 	}
 	
 	private double checkBounds(double n, int max) {

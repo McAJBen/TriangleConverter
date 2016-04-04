@@ -5,11 +5,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class btRandom extends BlockThreadHandler {
 
-	private Random rand;
 	private int randomPlacementsDone;
 	private int minWidth;
 	private int deltaWidth;
@@ -19,7 +17,6 @@ public class btRandom extends BlockThreadHandler {
 	
 	btRandom(BufferedImage originalImg, BufferedImage newImg) {
 		super(originalImg, newImg);
-		rand = new Random();
 		randomPlacementsDone = 0;
 		
 		imageSize = new Dimension(originalImg.getWidth(), originalImg.getHeight());
@@ -45,7 +42,7 @@ public class btRandom extends BlockThreadHandler {
 		BlockLocation bl;
 		do {
 			Dimension blockSize = new Dimension(getSize(), getSize());
-			Point blockPosition = new Point(rand.nextInt(imageSize.width - blockSize.width), rand.nextInt(imageSize.height - blockSize.height));
+			Point blockPosition = new Point(G.RANDOM.nextInt(imageSize.width - blockSize.width), G.RANDOM.nextInt(imageSize.height - blockSize.height));
 			
 			Dimension scaledBlockSize = new Dimension((int)(blockSize.width * G.postScale), (int)(blockSize.height * G.postScale));
 			Point scaledBlockPosition = new Point((int)(blockPosition.x * G.postScale), (int)(blockPosition.y * G.postScale));
@@ -73,6 +70,6 @@ public class btRandom extends BlockThreadHandler {
 	}
 	
 	private int getSize() {
-		return rand.nextInt(deltaWidth) + minWidth;
+		return G.RANDOM.nextInt(deltaWidth) + minWidth;
 	}
 }
