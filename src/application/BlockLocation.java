@@ -1,25 +1,16 @@
 package application;
 
-import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Rectangle;
 
 public class BlockLocation {
 
 	Rectangle original;
-	Rectangle scaled;
+	Rectangle first;
+	Rectangle second;
 	
-	/*Dimension blockSize;
-	Point blockPosition;
-	Dimension scaledBlockSize;
-	Point scaledBlockPosition;*/
-	
-	BlockLocation(Dimension blockSize,
-						Point blockPosition,
-						Dimension scaledBlockSize,
-						Point scaledBlockPosition)
-	{
-		original = new Rectangle(blockPosition, blockSize);
-		scaled = new Rectangle(scaledBlockPosition, scaledBlockSize);
+	BlockLocation(Rectangle o, Rectangle f, Rectangle s) {
+		original = o;
+		first = f;
+		second = s;
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 public abstract class BlockThreadHandler {
@@ -15,7 +16,6 @@ public abstract class BlockThreadHandler {
 	private BT[] BTArray;
 	
 	BlockThreadHandler(BufferedImage originalImg, BufferedImage newImg) {
-		
 		this.originalImg = originalImg;
 		this.newImg = newImg;
 		BTArray = new BT[G.threadCount];
@@ -30,7 +30,6 @@ public abstract class BlockThreadHandler {
         for (int i = 0; i < BTArray.length; i++) {
            	BTArray[i] = new BT("" + i);
         }
-        
         for (BT b: BTArray) {
         	b.start();
         }
@@ -74,7 +73,7 @@ public abstract class BlockThreadHandler {
 				}
 				
 				for (int sample = 0; sample < G.samples; sample++) {
-					Block block = new Block(blockLocation.original, originalImg);
+					Block block = new Block(blockLocation.original, blockLocation.first, originalImg);
 					while (!block.isDone()) {
 						block.move();
 						if (G.preDraw) {
@@ -88,7 +87,7 @@ public abstract class BlockThreadHandler {
 					}
 				}
 				if (G.postProcessing) {
-					Block block = new Block(blockLocation.scaled, originalImg, newImg, bestBlock.getTriangles()); // TODO check and resize automatically?
+					Block block = new Block(blockLocation.original, blockLocation.second, originalImg, bestBlock.getTriangles());
 					while (!block.isDone()) {
 						block.move();
 						if (G.preDraw) {
@@ -98,7 +97,7 @@ public abstract class BlockThreadHandler {
 					currentTestImage = block.getImage();
 					bestBlock = block;
 				}
-				paintTo(bestBlock.getImage(blockLocation.scaled.getSize()), blockLocation.scaled.getLocation(), blockLocation.scaled.getSize());
+				paintTo(bestBlock.getImage(blockLocation.second.getSize()), blockLocation.second.getLocation(), blockLocation.second.getSize());
 				removeBlockLocation(blockLocation);
 			}
 		}
@@ -111,25 +110,24 @@ public abstract class BlockThreadHandler {
 		private void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
 			if (currentTestImage != null && blockLocation != null) {
 				
-				Point blPos = new Point(
-						blockLocation.scaled.x * windowSize.width / origW,
-						blockLocation.scaled.y * windowSize.height / origH);
-				Dimension blSize = new Dimension(
-						blockLocation.scaled.width * windowSize.width / origW,
-						blockLocation.scaled.height * windowSize.height / origH);
+				Rectangle rect = new Rectangle(
+						blockLocation.second.x * windowSize.width / origW,
+						blockLocation.second.y * windowSize.height / origH,
+						blockLocation.second.width * windowSize.width / origW,
+						blockLocation.second.height * windowSize.height / origH);
 				
 				g.drawImage(currentTestImage,
-						blPos.x, blPos.y,
-						blSize.width, blSize.height, null);
+						rect.x, rect.y,
+						rect.width, rect.height, null);
 				
 				g.setColor(Color.YELLOW);
 				
 				g.drawString(getName() + "",
-						blPos.x + 1, 
-						blPos.y + 11);
+						rect.x + 1, 
+						rect.y + 11);
 				g.drawRect(
-						blPos.x, blPos.y,
-						blSize.width, blSize.height);
+						rect.x, rect.y,
+						rect.width, rect.height);
 			}
 		}
 	}

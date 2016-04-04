@@ -33,7 +33,7 @@ public class btRandom extends BlockThreadHandler {
 
 	@Override
 	public boolean isDone() {
-		return randomPlacementsDone >= G.randomPlacements;
+		return randomPlacementsDone >= G.randomBlocks;
 	}
 
 	@Override
@@ -41,13 +41,17 @@ public class btRandom extends BlockThreadHandler {
 		randomPlacementsDone++;
 		BlockLocation bl;
 		do {
-			Dimension blockSize = new Dimension(getSize(), getSize());
-			Point blockPosition = new Point(G.RANDOM.nextInt(imageSize.width - blockSize.width), G.RANDOM.nextInt(imageSize.height - blockSize.height));
+			int w = getSize();
+			int h = getSize();
+			Rectangle blockSize = new Rectangle(
+					w, h, 
+					G.RANDOM.nextInt(imageSize.width - w), G.RANDOM.nextInt(imageSize.height - h));
 			
-			Dimension scaledBlockSize = new Dimension((int)(blockSize.width * G.postScale), (int)(blockSize.height * G.postScale));
-			Point scaledBlockPosition = new Point((int)(blockPosition.x * G.postScale), (int)(blockPosition.y * G.postScale));
+			Rectangle scaledBlockSize = new Rectangle(
+					(int)(blockSize.width * G.postScale), (int)(blockSize.height * G.postScale), 
+					(int)(blockSize.x * G.postScale), (int)(blockSize.y * G.postScale));
 			
-			bl = new BlockLocation(blockSize, blockPosition, scaledBlockSize, scaledBlockPosition);
+			bl = new BlockLocation(blockSize, scaledBlockSize, scaledBlockSize);
 		} while (collides(bl));
 		
 		alreadyTakenBlocks.add(bl.original);

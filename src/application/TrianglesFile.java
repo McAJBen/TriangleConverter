@@ -25,7 +25,7 @@ public class TrianglesFile {
 		this(tf.getTriangles(), tf.imageSize, tf.baseImg);
 	}
 	
-	private TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension) {
+	TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension) {
 		for (int i = 0; i < trArray.size(); i++) {
 			this.triangles.add(trArray.get(i));
 		}
@@ -131,6 +131,9 @@ public class TrianglesFile {
 				if (image.getRGB(i, j) == 0) {
 					return true;
 				}
+				/*if (new Color(image.getRGB(i, j), true).getAlpha() != 255) {
+					return true;
+				}*/
 			}
 		}
 		return false;

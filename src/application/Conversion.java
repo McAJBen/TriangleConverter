@@ -21,16 +21,15 @@ public class Conversion {
 	void startConversion() {
 		BufferedImage originalImg = FileHandler.getImage(file);
 		
-		BufferedImage scaledImg = new BufferedImage((int)(originalImg.getWidth() * G.scale),  (int)(originalImg.getHeight() * G.scale), originalImg.getType());
-		scaledImg.getGraphics().drawImage(originalImg, 0, 0, scaledImg.getWidth(), scaledImg.getHeight(), null);
-		
-		newImg = new BufferedImage((int) (scaledImg.getWidth() * G.postScale), (int) (scaledImg.getHeight() * G.postScale), originalImg.getType());
+		newImg = new BufferedImage(
+				(int) (originalImg.getWidth() * G.postScale * G.scale),
+				(int) (originalImg.getHeight() * G.postScale * G.scale),
+				originalImg.getType());
         
-       
-        blockThread = new btGrid(scaledImg, newImg);
+        blockThread = new btGrid(originalImg, newImg);
 		blockThread.startConversion();
 		
-        blockThread = new btRandom(scaledImg, newImg);
+        blockThread = new btRandom(originalImg, newImg);
         blockThread.startConversion();
         
 		if (attemptNum >= G.attempts - 1) {

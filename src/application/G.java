@@ -15,7 +15,6 @@ public class G {
 		maxTriangles = 2,
 		samples = 1,
 		threadCount = Runtime.getRuntime().availableProcessors(),
-		randomPlacements = 625,
 		repaintWait = 500,
 		attempts = 3,
 		randomBlocks = 100;
