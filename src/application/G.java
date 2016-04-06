@@ -12,8 +12,14 @@ public class G {
 		display = true;
 	static int 
 		blocksWide = 10,
-		maxTriangles = 2,
+		blocksWideMin = 5,
+		blocksWideMax = 100,
+		triangles = 2,
+		trianglesMin = 2,
+		trianglesMax = 5,
 		samples = 1,
+		samplesMin = 1,
+		samplesMax = 5,
 		threadCount = Runtime.getRuntime().availableProcessors(),
 		repaintWait = 500,
 		attempts = 3,
@@ -22,31 +28,50 @@ public class G {
 		scale = 1.0,
 		postScale = 1.0;
 	static boolean 
-		blocksWideRandom = false,
-		maxTrianglesRandom = false,
-		samplesRandom = false,
-		randomBlocksRandom = false;
+		scaleRandom = false,
+		postScaleRandom = false,
+		randomBlocksRandom = false,
+		postProcessingRandom = false;
 	
 	static void reset(int pixels) {
 		Random rand = new Random();
-		if (blocksWideRandom) {
-			blocksWide = rand.nextInt(201 - threadCount) + threadCount;
+		if (postProcessingRandom) {
+			postProcessing = rand.nextBoolean();
 		}
-		if (maxTrianglesRandom) {
-			maxTriangles = rand.nextInt(9) + 2;
-		}
-		if (samplesRandom) {
-			samples = rand.nextInt(5) + 1;
-		}
+		blocksWide = rand.nextInt(blocksWideMax - blocksWideMin + 1) + blocksWideMin;
+		triangles = rand.nextInt(trianglesMax - trianglesMin + 1) + trianglesMin;
+		samples = rand.nextInt(samplesMax - samplesMin + 1) + samplesMin;
 		if (randomBlocksRandom) {
 			randomBlocks = rand.nextInt(blocksWide) * blocksWide;
+		}
+		if (scaleRandom) {
+			scale = getRandomScale(rand);
+		}
+		if (postScaleRandom) {
+			postScale = getRandomScale(rand);
+		}
+	}
+	
+	private static double getRandomScale(Random r) {
+		switch (r.nextInt(5)) {
+		case 0:
+		default:
+			return 1.0;
+		case 1:
+			return 0.5;
+		case 2:
+			return 0.25;
+		case 3:
+			return 2.0;
+		case 4:
+			return 4.0;
 		}
 	}
 	
 	static String getTitle(int attempt) {
 		return "Triangle Converter" +
         		" Wi:" + G.blocksWide + 
-        		" Tr:" + G.maxTriangles + 
+        		" Tr:" + G.triangles + 
         		" Sa:" + G.samples + 
         		" Th:" + G.threadCount + 
         		" Sc:" + G.scale + 

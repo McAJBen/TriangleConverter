@@ -37,7 +37,7 @@ public class Conversion {
 			FileHandler.putImageInFile(file, "Original", originalImg, "");
 		}
 		FileHandler.putImageInFile(file, "New", newImg,
-				"_" + (G.maxTriangles * (G.blocksWide * G.blocksWide + G.randomBlocks)) + "_" + attemptNum);
+				"_" + (G.triangles * (G.blocksWide * G.blocksWide + G.randomBlocks)) + "_" + attemptNum);
 		
 		blockThread = null;
 	}

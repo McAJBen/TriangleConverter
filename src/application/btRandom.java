@@ -1,7 +1,6 @@
 package application;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -44,14 +43,18 @@ public class btRandom extends BlockThreadHandler {
 			int w = getSize();
 			int h = getSize();
 			Rectangle blockSize = new Rectangle(
-					w, h, 
-					G.RANDOM.nextInt(imageSize.width - w), G.RANDOM.nextInt(imageSize.height - h));
+					G.RANDOM.nextInt(imageSize.width - w), G.RANDOM.nextInt(imageSize.height - h),
+					w, h);
 			
 			Rectangle scaledBlockSize = new Rectangle(
-					(int)(blockSize.width * G.postScale), (int)(blockSize.height * G.postScale), 
-					(int)(blockSize.x * G.postScale), (int)(blockSize.y * G.postScale));
+					(int)(blockSize.x * G.scale), (int)(blockSize.y * G.scale),
+					(int)(blockSize.width * G.scale), (int)(blockSize.height * G.scale));
 			
-			bl = new BlockLocation(blockSize, scaledBlockSize, scaledBlockSize);
+			Rectangle scaled2BlockSize = new Rectangle(
+					(int)(blockSize.x * G.postScale), (int)(blockSize.y * G.postScale),
+					(int)(blockSize.width * G.postScale), (int)(blockSize.height * G.postScale));
+			
+			bl = new BlockLocation(blockSize, scaledBlockSize, scaled2BlockSize);
 		} while (collides(bl));
 		
 		alreadyTakenBlocks.add(bl.original);

@@ -28,7 +28,9 @@ public class Settings {
 		// FORMAT
 		IDENTIFIER_SYMBOL = ":",
 		COMMENT_SYMBOL = "#",
-		RANDOM_ID = "RANDOM";
+		RANDOM_ID = "RANDOM",
+		MIN_ID = "_MIN",
+		MAX_ID = "_MAX";
 	
 	@SuppressWarnings("resource")
 	static void load() {
@@ -76,35 +78,35 @@ public class Settings {
 						G.preDraw = Boolean.parseBoolean(split[1]);
 						break;
 					case POST_PROCESSING_ID:
-						G.postProcessing = Boolean.parseBoolean(split[1]);
+						
+						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
+							G.postProcessingRandom = true;
+						}
+						else {
+							G.postProcessing = Boolean.parseBoolean(split[1]);
+						}
 						break;
 					case DISPLAY_ID:
 						G.display = Boolean.parseBoolean(split[1]);
 						break;
 					// INTEGERS
-					case BLOCKS_WIDE_ID:
-						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
-							G.blocksWideRandom = true;
-						}
-						else {
-							G.blocksWide = Integer.parseInt(split[1]);
-						}
+					case BLOCKS_WIDE_ID + MIN_ID:
+						G.blocksWideMin = Integer.parseInt(split[1]);
 						break;
-					case MAX_TRIANGLES_ID:
-						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
-							G.maxTrianglesRandom = true;
-						}
-						else {
-							G.maxTriangles = Integer.parseInt(split[1]);
-						}
+					case BLOCKS_WIDE_ID + MAX_ID:
+						G.blocksWideMax = Integer.parseInt(split[1]);
 						break;
-					case SAMPLES_ID:
-						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
-							G.samplesRandom = true;
-						}
-						else {
-							G.samples = Integer.parseInt(split[1]);
-						}
+					case MAX_TRIANGLES_ID + MIN_ID:
+						G.trianglesMin = Integer.parseInt(split[1]);
+						break;
+					case MAX_TRIANGLES_ID + MAX_ID:
+						G.trianglesMax = Integer.parseInt(split[1]);
+						break;
+					case SAMPLES_ID + MIN_ID:
+						G.samplesMin = Integer.parseInt(split[1]);
+						break;
+					case SAMPLES_ID + MAX_ID:
+						G.samplesMax = Integer.parseInt(split[1]);
 						break;
 					case THREAD_COUNT_ID:
 						if (split[1].equalsIgnoreCase("AUTO")) {
@@ -130,10 +132,20 @@ public class Settings {
 						break;
 					// DOUBLES
 					case SCALE_ID:
-						G.scale = Double.parseDouble(split[1]);
+						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
+							G.scaleRandom = true;
+						}
+						else {
+							G.scale = Double.parseDouble(split[1]);
+						}
 						break;
 					case POST_SCALE_ID:
-						G.postScale = Double.parseDouble(split[1]);
+						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
+							G.postScaleRandom = true;
+						}
+						else {
+							G.postScale = Double.parseDouble(split[1]);
+						}
 						break;
 					default: // any unknown ID is ignored
 						break;
@@ -148,10 +160,12 @@ public class Settings {
 				COMMENT_SYMBOL + "All Comments must begin with " + COMMENT_SYMBOL 	+ "\n\n" +
 		
 				COMMENT_SYMBOL + "Integer variables\n" +
-				COMMENT_SYMBOL + "These 3 can be set to 'RANDOM'\n" +
-				BLOCKS_WIDE_ID		+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
-				MAX_TRIANGLES_ID	+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
-				SAMPLES_ID			+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
+				BLOCKS_WIDE_ID + MIN_ID		+ IDENTIFIER_SYMBOL + G.blocksWideMin	+ "\n" +
+				BLOCKS_WIDE_ID + MAX_ID		+ IDENTIFIER_SYMBOL + G.blocksWideMax	+ "\n" +
+				MAX_TRIANGLES_ID + MIN_ID	+ IDENTIFIER_SYMBOL + G.trianglesMin	+ "\n" +
+				MAX_TRIANGLES_ID + MAX_ID	+ IDENTIFIER_SYMBOL + G.trianglesMax 	+ "\n" +
+				SAMPLES_ID + MIN_ID			+ IDENTIFIER_SYMBOL + G.samplesMin		+ "\n" +
+				SAMPLES_ID + MAX_ID			+ IDENTIFIER_SYMBOL + G.samplesMax		+ "\n" +
 				RANDOM_BLOCKS_ID	+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
 				COMMENT_SYMBOL + "Thread count can be set to 'AUTO' \n" +
 				THREAD_COUNT_ID		+ IDENTIFIER_SYMBOL + "AUTO"			+ "\n" +
@@ -159,12 +173,12 @@ public class Settings {
 				ATTEMPTS_ID			+ IDENTIFIER_SYMBOL + G.attempts		+ "\n\n" +
 				
 				COMMENT_SYMBOL + "Double variables\n" +
-				SCALE_ID			+ IDENTIFIER_SYMBOL + G.scale			+ "\n" +
-				POST_SCALE_ID		+ IDENTIFIER_SYMBOL + G.postScale		+ "\n\n" +
+				SCALE_ID			+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
+				POST_SCALE_ID		+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n\n" +
 				
 				COMMENT_SYMBOL + "Boolean variables\n" +
+				POST_PROCESSING_ID	+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
 				PREDRAW_ID			+ IDENTIFIER_SYMBOL + G.preDraw			+ "\n" +
-				POST_PROCESSING_ID	+ IDENTIFIER_SYMBOL + G.postProcessing	+ "\n" +
 				DISPLAY_ID			+ IDENTIFIER_SYMBOL + G.display;
 		// write default settings to file
 		try {

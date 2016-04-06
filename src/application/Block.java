@@ -108,7 +108,7 @@ public class Block {
 			// if triangleMode is at the end try adding another triangle
 			if (triangleMode == TriangleMode.RANDOM) {
 				bestTriFile.addTriangle();
-				while (bestTriFile.getSize() > G.maxTriangles) {
+				while (bestTriFile.getSize() > G.triangles) {
 					bestTriFile.removeBackTriangle();
 				}
 				maxScore = bestTriFile.compare(compareChunk);
@@ -123,7 +123,7 @@ public class Block {
 		else if (maxScore > 0.99) {
 			return true;
 		}
-		if (bestTriFile.getSize() == G.maxTriangles) {
+		if (bestTriFile.getSize() == G.triangles) {
 			if (triangleMode == TriangleMode.REMOVE) {
 				return true;
 			}
