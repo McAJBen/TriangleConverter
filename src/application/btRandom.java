@@ -51,8 +51,8 @@ public class btRandom extends BlockThreadHandler {
 					(int)(blockSize.width * G.scale), (int)(blockSize.height * G.scale));
 			
 			Rectangle scaled2BlockSize = new Rectangle(
-					(int)(blockSize.x * G.postScale), (int)(blockSize.y * G.postScale),
-					(int)(blockSize.width * G.postScale), (int)(blockSize.height * G.postScale));
+					(int)(blockSize.x * G.postScale * G.scale), (int)(blockSize.y * G.postScale * G.scale),
+					(int)(blockSize.width * G.postScale * G.scale), (int)(blockSize.height * G.postScale * G.scale));
 			
 			bl = new BlockLocation(blockSize, scaledBlockSize, scaled2BlockSize);
 		} while (collides(bl));
