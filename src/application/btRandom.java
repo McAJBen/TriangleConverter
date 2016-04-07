@@ -8,8 +8,7 @@ import java.util.ArrayList;
 public class btRandom extends BlockThreadHandler {
 
 	private int randomPlacementsDone;
-	private int minWidth;
-	private int deltaWidth;
+	private final Dimension defaultSize;
 	private Dimension imageSize;
 	
 	private ArrayList<Rectangle> alreadyTakenBlocks;
@@ -20,13 +19,8 @@ public class btRandom extends BlockThreadHandler {
 		
 		imageSize = new Dimension(originalImg.getWidth(), originalImg.getHeight());
 		
-		int maxW = Math.max(imageSize.width, imageSize.height);
-		maxW *= 1.1;
-		maxW /= G.blocksWide;
-		minWidth = Math.min(imageSize.width, imageSize.height);
-		minWidth *= 0.9;
-		minWidth /= G.blocksWide;
-		deltaWidth = maxW - minWidth;
+		defaultSize = new Dimension(imageSize.width / G.blocksWide, imageSize.height / G.blocksWide);
+		
 		alreadyTakenBlocks = new ArrayList<>();
 	}
 
@@ -38,28 +32,53 @@ public class btRandom extends BlockThreadHandler {
 	@Override
 	synchronized BlockLocation getNewBlockLocation() {
 		randomPlacementsDone++;
+		Rectangle orig, first, second;
 		BlockLocation bl;
 		do {
-			int w = getSize();
-			int h = getSize();
-			Rectangle blockSize = new Rectangle(
-					G.RANDOM.nextInt(imageSize.width - w), G.RANDOM.nextInt(imageSize.height - h),
-					w, h);
+			Dimension size = getBlock();
 			
-			Rectangle scaledBlockSize = new Rectangle(
-					(int)(blockSize.x * G.scale), (int)(blockSize.y * G.scale),
-					(int)(blockSize.width * G.scale), (int)(blockSize.height * G.scale));
+			orig = new Rectangle(
+					G.RANDOM.nextInt(imageSize.width - size.width),
+					G.RANDOM.nextInt(imageSize.height - size.height),
+					size.width,
+					size.height);
 			
-			Rectangle scaled2BlockSize = new Rectangle(
-					(int)(blockSize.x * G.postScale * G.scale), (int)(blockSize.y * G.postScale * G.scale),
-					(int)(blockSize.width * G.postScale * G.scale), (int)(blockSize.height * G.postScale * G.scale));
+			first = new Rectangle(
+					(int)(orig.x * G.scale),
+					(int)(orig.y * G.scale),
+					(int)(orig.width * G.scale),
+					(int)(orig.height * G.scale));
 			
-			bl = new BlockLocation(blockSize, scaledBlockSize, scaled2BlockSize);
-		} while (collides(bl));
+			second = new Rectangle(
+					(int)(first.x * G.postScale),
+					(int)(first.y * G.postScale),
+					(int)(first.width * G.postScale),
+					(int)(first.height * G.postScale));
+			
+			bl = new BlockLocation(orig, first, second);
+		} while (collides(bl) ||
+				orig.width <= 0 || orig.height <= 0 ||
+				first.width <= 0 || first.height <= 0 ||
+				second.width <= 0 || second.height <= 0);
+		
+		
 		
 		alreadyTakenBlocks.add(bl.original);
 		
 		return bl;
+	}
+	
+	@Override
+	void removeBlockLocation(BlockLocation blockLocation) {
+		alreadyTakenBlocks.remove(blockLocation.original);
+	}
+	
+	private Dimension getBlock() {
+		Dimension r = defaultSize.getSize();
+		
+		r.width *= G.RANDOM.nextDouble() + 0.5;
+		r.height *= G.RANDOM.nextDouble() + 0.5;
+		return r;
 	}
 	
 	private boolean collides(BlockLocation bl) {
@@ -71,12 +90,5 @@ public class btRandom extends BlockThreadHandler {
 		return false;
 	}
 
-	@Override
-	void removeBlockLocation(BlockLocation blockLocation) {
-		alreadyTakenBlocks.remove(blockLocation.original);
-	}
 	
-	private int getSize() {
-		return G.RANDOM.nextInt(deltaWidth) + minWidth;
-	}
 }
