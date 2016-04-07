@@ -53,18 +53,14 @@ public class G {
 	}
 	
 	private static double getRandomScale(Random r) {
-		switch (r.nextInt(5)) {
+		switch (r.nextInt(3)) {
 		case 0:
 		default:
 			return 1.0;
 		case 1:
 			return 0.5;
 		case 2:
-			return 0.25;
-		case 3:
 			return 2.0;
-		case 4:
-			return 4.0;
 		}
 	}
 	
