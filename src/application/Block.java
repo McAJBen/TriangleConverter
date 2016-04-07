@@ -20,47 +20,21 @@ public class Block {
 	private TriangleMode 
 			triangleMode = TriangleMode.RANDOM;
 	
-	
-	/*Block(Rectangle rectangle, BufferedImage img) {
-		this(rectangle, img, null, new ArrayList<Triangle>());
-	}
-	
-	// position must be pixel position of top left of chunk
-	// size = pixel size of chunk
-	Block(Rectangle inR, Rectangle outR, BufferedImage img, BufferedImage baseImg, ArrayList<Triangle> trArray) {
-		compareChunk = new BufferedImage(inR.width, inR.height, img.getType());
-		compareChunk.getGraphics().drawImage(img, -inR.x, -inR.y, null);
-		
-		BufferedImage baseChunk = new BufferedImage(inR.width, inR.height, img.getType());
-		if (baseImg != null) {
-			baseChunk.getGraphics().drawImage(baseImg, -inR.x, -inR.y, null);
-		}
-		if (trArray.size() <= 0) {
-			trArray.add(new Triangle());
-		}
-		bestTriFile = new TrianglesFile(trArray, inR.getSize(), baseChunk);
-		maxScore = bestTriFile.compare(compareChunk);
-		lastBestImgChunk = bestTriFile.getImage();
-	}*/
-	
-	public Block(Rectangle original, Rectangle scaled, BufferedImage originalImg) {
-		this(original, scaled, originalImg, new ArrayList<Triangle>(Arrays.asList(new Triangle())));
+	public Block(Rectangle original, Rectangle scaled, BufferedImage originalImg, BufferedImage newImg) {
+		this(original, scaled, originalImg, newImg, new ArrayList<Triangle>(Arrays.asList(new Triangle())));
 	}
 
-	public Block(Rectangle original, Rectangle scaled, BufferedImage originalImg, ArrayList<Triangle> triangles) {
+	public Block(Rectangle original, Rectangle scaled, BufferedImage originalImg, BufferedImage newImg, ArrayList<Triangle> triangles) {
 		
 		BufferedImage b = originalImg.getSubimage(original.x, original.y, original.width, original.height);
 		
 		compareChunk = new BufferedImage(scaled.width, scaled.height, BufferedImage.TYPE_INT_ARGB);
 		compareChunk.createGraphics().drawImage(b, 0, 0, scaled.width, scaled.height, null);
 		
-		// TODO breaks something
-		bestTriFile = new TrianglesFile(triangles, scaled.getSize());
+		bestTriFile = new TrianglesFile(triangles, scaled.getSize(), newImg);
 		
 		maxScore = bestTriFile.compare(compareChunk);
 		lastBestImgChunk = bestTriFile.getImage();
-		
-		
 	}
 
 	// checks triangleMode to modify bestTriFile and see if it improves

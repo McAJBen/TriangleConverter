@@ -25,16 +25,12 @@ public class TrianglesFile {
 		this(tf.getTriangles(), tf.imageSize, tf.baseImg);
 	}
 	
-	TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension) {
+	TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension, BufferedImage baseChunk) {
 		for (int i = 0; i < trArray.size(); i++) {
 			this.triangles.add(trArray.get(i));
 		}
 		imageSize = dimension.getSize();
 		totalPossibleScore = MAX_SCORE * imageSize.getWidth() * imageSize.getHeight();
-	}
-	
-	TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension, BufferedImage baseChunk) {
-		this(trArray, dimension);
 		baseImg = baseChunk;
 	}
 	
@@ -184,7 +180,11 @@ public class TrianglesFile {
 		
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 	    Graphics2D g2d = img.createGraphics();
-	    g2d.drawImage(baseImg, 0, 0, width, height, null);
+	    
+	    if (baseImg != null) {
+	    	g2d.drawImage(baseImg, 0, 0, width, height, null);
+	    }
+	    
 		
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		for (int i = 0; i < triangles.size(); i++) {

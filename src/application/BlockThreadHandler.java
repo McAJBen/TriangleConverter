@@ -67,13 +67,13 @@ public abstract class BlockThreadHandler {
 				Block bestBlock = null;
 				
 				blockLocation = getNewBlockLocation();
-				
+				BufferedImage subImage = newImg.getSubimage(blockLocation.second.x, blockLocation.second.y, blockLocation.second.width, blockLocation.second.height);
 				if (blockLocation == null) {
 					break;
 				}
 				
 				for (int sample = 0; sample < G.samples; sample++) {
-					Block block = new Block(blockLocation.original, blockLocation.first, originalImg);
+					Block block = new Block(blockLocation.original, blockLocation.first, originalImg, subImage);
 					while (!block.isDone()) {
 						block.move();
 						if (G.preDraw) {
@@ -87,7 +87,7 @@ public abstract class BlockThreadHandler {
 					}
 				}
 				if (G.postProcessing) {
-					Block block = new Block(blockLocation.original, blockLocation.second, originalImg, bestBlock.getTriangles());
+					Block block = new Block(blockLocation.original, blockLocation.second, originalImg, subImage, bestBlock.getTriangles());
 					while (!block.isDone()) {
 						block.move();
 						if (G.preDraw) {
