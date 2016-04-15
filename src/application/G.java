@@ -33,7 +33,7 @@ public class G {
 		randomBlocksRandom = false,
 		postProcessingRandom = false;
 	
-	static void reset(int pixels) {
+	static void reset(int attempt) {
 		Random rand = new Random();
 		if (postProcessingRandom) {
 			postProcessing = rand.nextBoolean();

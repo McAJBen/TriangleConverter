@@ -70,7 +70,9 @@ public class btRandom extends BlockThreadHandler {
 	
 	@Override
 	void removeBlockLocation(BlockLocation blockLocation) {
-		alreadyTakenBlocks.remove(blockLocation.original);
+		synchronized(this) {
+			alreadyTakenBlocks.remove(blockLocation.original);
+		}
 	}
 	
 	private Dimension getBlock() {
@@ -81,7 +83,7 @@ public class btRandom extends BlockThreadHandler {
 		return r;
 	}
 	
-	private boolean collides(BlockLocation bl) {
+	private synchronized boolean collides(BlockLocation bl) {
 		for (int i = 0; i < alreadyTakenBlocks.size(); i++) {
 			if (alreadyTakenBlocks.get(i).contains(bl.original)) {
 				return true;

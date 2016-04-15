@@ -27,16 +27,14 @@ public class MainJPanel extends JPanel {
         	File file = FileHandler.getFile();
         	if (file != null) {
         		
-        		int imagePixels = FileHandler.getPixels(file);
-        		
-        		for (int i = 0; i < G.attempts; i++) {
-		        	G.reset(imagePixels);
+        		for (int attempt = 0; attempt < G.attempts; attempt++) {
+		        	G.reset(attempt);
 		        	
 		        	Thread repaintThread = null;
-		        	frame.setTitle(G.getTitle(i));
+		        	frame.setTitle(G.getTitle(attempt));
 		        	repaintThread = mainJPanel.getPaintThread();
 		        	repaintThread.start();
-		        	mainJPanel.startConversion(file, i);
+		        	mainJPanel.startConversion(file, attempt);
 		        	repaintThread.interrupt();
         		}
         	}
