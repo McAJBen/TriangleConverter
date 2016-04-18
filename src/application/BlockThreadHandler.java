@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage;
 
 public abstract class BlockThreadHandler {
 	
+	private static final Color PINK = new Color(255, 0, 255);
+	
 	private BufferedImage
 			originalImg, // original image being compared to
 			newImg; // image being changed
@@ -68,6 +70,8 @@ public abstract class BlockThreadHandler {
 				
 				blockLocation = getNewBlockLocation();
 				BufferedImage subImage = newImg.getSubimage(blockLocation.second.x, blockLocation.second.y, blockLocation.second.width, blockLocation.second.height);
+				double prevScore = TrianglesFile.compare(originalImg.getSubimage(blockLocation.original.x, blockLocation.original.y, blockLocation.original.width, blockLocation.original.height), subImage);
+				
 				if (blockLocation == null) {
 					break;
 				}
@@ -96,8 +100,15 @@ public abstract class BlockThreadHandler {
 					}
 					currentTestImage = block.getImage();
 					bestBlock = block;
+					bestScore = bestBlock.getMaxScore();
 				}
-				paintTo(bestBlock.getImage(blockLocation.second.getSize()), blockLocation.second.getLocation(), blockLocation.second.getSize());
+				
+				if (bestScore > prevScore) {
+					paintTo(bestBlock.getImage(blockLocation.second.getSize()), blockLocation.second.getLocation(), blockLocation.second.getSize());
+				}
+				else {
+					System.out.println();
+				}
 				removeBlockLocation(blockLocation);
 			}
 		}
@@ -120,11 +131,12 @@ public abstract class BlockThreadHandler {
 						rect.x, rect.y,
 						rect.width, rect.height, null);
 				
-				g.setColor(Color.YELLOW);
+				g.setColor(PINK);
 				
 				g.drawString(getName() + "",
 						rect.x + 1, 
 						rect.y + 11);
+				
 				g.drawRect(
 						rect.x, rect.y,
 						rect.width, rect.height);
