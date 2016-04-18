@@ -32,16 +32,20 @@ public class btRandom extends BlockThreadHandler {
 	@Override
 	synchronized BlockLocation getNewBlockLocation() {
 		randomPlacementsDone++;
-		Rectangle orig, first, second;
+		Rectangle orig = new Rectangle(),
+				first = new Rectangle(),
+				second = new Rectangle();
 		BlockLocation bl;
 		do {
 			Dimension size = getBlock();
 			
-			orig = new Rectangle(
-					G.RANDOM.nextInt(imageSize.width - size.width),
-					G.RANDOM.nextInt(imageSize.height - size.height),
-					size.width,
-					size.height);
+			do {
+				orig = new Rectangle(
+						G.RANDOM.nextInt(imageSize.width - size.width),
+						G.RANDOM.nextInt(imageSize.height - size.height),
+						size.width,
+						size.height);
+			} while (collides(orig) || orig.width <= 0 || orig.height <= 0);
 			
 			first = new Rectangle(
 					(int)(orig.x * G.scale),
@@ -56,8 +60,8 @@ public class btRandom extends BlockThreadHandler {
 					(int)(first.height * G.postScale));
 			
 			bl = new BlockLocation(orig, first, second);
-		} while (collides(bl) ||
-				orig.width <= 0 || orig.height <= 0 ||
+			
+		} while (
 				first.width <= 0 || first.height <= 0 ||
 				second.width <= 0 || second.height <= 0);
 		
@@ -67,7 +71,7 @@ public class btRandom extends BlockThreadHandler {
 		
 		return bl;
 	}
-	
+
 	@Override
 	void removeBlockLocation(BlockLocation blockLocation) {
 		synchronized(this) {
@@ -83,9 +87,9 @@ public class btRandom extends BlockThreadHandler {
 		return r;
 	}
 	
-	private synchronized boolean collides(BlockLocation bl) {
+	private synchronized boolean collides(Rectangle rect) {
 		for (int i = 0; i < alreadyTakenBlocks.size(); i++) {
-			if (alreadyTakenBlocks.get(i).contains(bl.original)) {
+			if (alreadyTakenBlocks.get(i).intersects(rect)) {
 				return true;
 			}
 		}
