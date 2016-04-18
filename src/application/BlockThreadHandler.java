@@ -26,6 +26,7 @@ public abstract class BlockThreadHandler {
 	abstract boolean isDone();
 	abstract BlockLocation getNewBlockLocation();
 	abstract void removeBlockLocation(BlockLocation blockLocation);
+	abstract boolean usePreviousImage();
 
 	void startConversion() {
 		
@@ -65,12 +66,18 @@ public abstract class BlockThreadHandler {
 		
 		public void run() {
 			while (!isDone()) {
-				double bestScore = Double.MIN_VALUE;
+				double bestScore = 0;
 				Block bestBlock = null;
 				
 				blockLocation = getNewBlockLocation();
 				BufferedImage subImage = newImg.getSubimage(blockLocation.second.x, blockLocation.second.y, blockLocation.second.width, blockLocation.second.height);
-				double prevScore = TrianglesFile.compare(originalImg.getSubimage(blockLocation.original.x, blockLocation.original.y, blockLocation.original.width, blockLocation.original.height), subImage);
+				double prevScore = -1;
+				if (usePreviousImage()){
+					BufferedImage baseSub = new BufferedImage(blockLocation.second.width, blockLocation.second.height, BufferedImage.TYPE_INT_RGB);
+					baseSub.createGraphics().drawImage(originalImg.getSubimage(blockLocation.original.x, blockLocation.original.y, blockLocation.original.width, blockLocation.original.height),
+							0, 0, blockLocation.second.width, blockLocation.second.height, null);
+					prevScore = TrianglesFile.compare(baseSub, subImage);
+				}
 				
 				if (blockLocation == null) {
 					break;
