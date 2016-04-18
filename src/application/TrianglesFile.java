@@ -25,6 +25,15 @@ public class TrianglesFile {
 		this(tf.getTriangles(), tf.imageSize, tf.baseImg);
 	}
 	
+	TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension) {
+		for (int i = 0; i < trArray.size(); i++) {
+			this.triangles.add(trArray.get(i));
+		}
+		imageSize = dimension.getSize();
+		totalPossibleScore = MAX_SCORE * imageSize.getWidth() * imageSize.getHeight();
+		baseImg = null;
+	}
+	
 	TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension, BufferedImage baseChunk) {
 		for (int i = 0; i < trArray.size(); i++) {
 			this.triangles.add(trArray.get(i));
