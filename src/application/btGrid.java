@@ -112,4 +112,9 @@ public class btGrid extends BlockThreadHandler {
 		}
 		return p;
 	}
+
+	@Override
+	boolean usePreviousImage() {
+		return false;
+	}
 }

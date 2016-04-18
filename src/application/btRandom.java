@@ -96,5 +96,10 @@ public class btRandom extends BlockThreadHandler {
 		return false;
 	}
 
+	@Override
+	boolean usePreviousImage() {
+		return true;
+	}
+
 	
 }
