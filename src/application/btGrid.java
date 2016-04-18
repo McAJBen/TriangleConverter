@@ -1,42 +1,37 @@
 package application;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 
 public class btGrid extends BlockThreadHandler {
 
-	private Dimension standardSize;
-	private Dimension standardOffSet;
-	private Dimension midStandardSize;
-	private Dimension midStandardOffSet;
-	private Dimension scaledStandardSize;
-	private Dimension scaledStandardOffSet;
+	private D2D standardSize;
+	private D2D midStandardSize;
+	private D2D scaledStandardSize;
+	
 	private Point nextPos;
 
 	public btGrid(BufferedImage originalImg, BufferedImage newImg) {
 		super(originalImg, newImg);
-		standardSize = new Dimension(
-			originalImg.getWidth() / G.blocksWide,
-			originalImg.getHeight() / G.blocksWide);
-		standardOffSet = new Dimension(
-			originalImg.getWidth() - G.blocksWide * standardSize.width,
-			originalImg.getHeight() - G.blocksWide * standardSize.height);
 		
-		midStandardSize = new Dimension(
-			(int) (originalImg.getWidth() * G.scale / G.blocksWide),
-			(int) (originalImg.getHeight() * G.scale / G.blocksWide));
-		midStandardOffSet = new Dimension(
-			(int) (originalImg.getWidth() * G.scale - G.blocksWide * midStandardSize.width),
-			(int) (originalImg.getHeight() * G.scale - G.blocksWide * midStandardSize.height));
+		standardSize = new D2D();
+		midStandardSize = new D2D();
+		scaledStandardSize = new D2D();
 		
-		scaledStandardSize = new Dimension(
-			newImg.getWidth() / G.blocksWide,
-			newImg.getHeight() / G.blocksWide);
-		scaledStandardOffSet = new Dimension(
-			newImg.getWidth() - G.blocksWide * scaledStandardSize.width,
-			newImg.getHeight() - G.blocksWide * scaledStandardSize.height);
+		standardSize.setSize(
+			(double)originalImg.getWidth() / G.blocksWide,
+			(double)originalImg.getHeight() / G.blocksWide);
+		
+		midStandardSize.setSize(
+			standardSize.getWidth() * G.scale,
+			standardSize.getHeight() * G.scale);
+		
+		scaledStandardSize.setSize(
+			midStandardSize.getWidth() * G.postScale,
+			midStandardSize.getHeight() * G.postScale);
+		
 		nextPos = new Point(0, 0);
 	}
 
@@ -48,30 +43,33 @@ public class btGrid extends BlockThreadHandler {
 	@Override
 	public BlockLocation getNewBlockLocation() {
 		
-		Rectangle orig;
-		Rectangle first;
-		Rectangle second;
+		Rectangle orig = new Rectangle();
+		Rectangle first = new Rectangle();
+		Rectangle second = new Rectangle();
 		
 		do {
 			Point position = getNextPos();
 			if (position == null || position.y >= G.blocksWide) {
 				return null;
 			}
-			orig = new Rectangle(
-					getPoint(position.x, standardSize.width, standardOffSet.width),
-					getPoint(position.y, standardSize.height, standardOffSet.height),
-					getSize(position.x, standardSize.width, standardOffSet.width),
-					getSize(position.y, standardSize.height, standardOffSet.height));
-			first = new Rectangle(
-					getPoint(position.x, midStandardSize.width, midStandardOffSet.width),
-					getPoint(position.y, midStandardSize.height, midStandardOffSet.height),
-					getSize(position.x, midStandardSize.width, midStandardOffSet.width),
-					getSize(position.y, midStandardSize.height, midStandardOffSet.height));
-			second = new Rectangle(
-					getPoint(position.x, scaledStandardSize.width, scaledStandardOffSet.width),
-					getPoint(position.y, scaledStandardSize.height, scaledStandardOffSet.height),
-					getSize(position.x, scaledStandardSize.width, scaledStandardOffSet.width),
-					getSize(position.y, scaledStandardSize.height, scaledStandardOffSet.height));
+			orig.setLocation(
+					(int)(position.x * standardSize.getWidth()),
+					(int)(position.y * standardSize.getHeight()));
+			orig.setSize(
+					(int)((position.x + 1) * standardSize.getWidth()) - orig.x,
+					(int)((position.y + 1) * standardSize.getHeight()) - orig.y);
+			first.setLocation(
+					(int)(position.x * midStandardSize.getWidth()),
+					(int)(position.y * midStandardSize.getHeight()));
+			first.setSize(
+					(int)((position.x + 1) * midStandardSize.getWidth()) - first.x,
+					(int)((position.y + 1) * midStandardSize.getHeight()) - first.y);
+			second.setLocation(
+					(int)(position.x * scaledStandardSize.getWidth()),
+					(int)(position.y * scaledStandardSize.getHeight()));
+			second.setSize(
+					(int)((position.x + 1) * scaledStandardSize.getWidth()) - second.x,
+					(int)((position.y + 1) * scaledStandardSize.getHeight()) - second.y);
 		
 		} while (orig.width <= 0 || orig.height <= 0 ||
 				 first.width <= 0 || first.height <= 0 ||
@@ -82,17 +80,24 @@ public class btGrid extends BlockThreadHandler {
 	@Override
 	public void removeBlockLocation(BlockLocation blockLocation) {}
 	
-	private static int getSize(int i, int blockPixelSize, int offSet) {
-		if (i < offSet) {
-			return blockPixelSize + 1;
+	private class D2D extends Dimension2D {
+		private double width;
+		private double height;
+		@Override
+		public double getHeight() {
+			return height;
 		}
-		else {
-			return blockPixelSize;
+
+		@Override
+		public double getWidth() {
+			return width;
 		}
-	}
-	
-	private static int getPoint(int i, int blockPixelSize, int offSet) {
-		return i * blockPixelSize + Math.min(i, offSet);
+
+		@Override
+		public void setSize(double width, double height) {
+			this.width = width;
+			this.height = height;
+		}
 	}
 
 	private synchronized Point getNextPos() {
