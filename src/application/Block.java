@@ -31,7 +31,13 @@ public class Block {
 		compareChunk = new BufferedImage(scaled.width, scaled.height, BufferedImage.TYPE_INT_ARGB);
 		compareChunk.createGraphics().drawImage(b, 0, 0, scaled.width, scaled.height, null);
 		
-		bestTriFile = new TrianglesFile(triangles, scaled.getSize(), newImg);
+		// if triangles is more than 1 then they were pre-processed
+		if (triangles.size() > 1) {
+			bestTriFile = new TrianglesFile(triangles, scaled.getSize(), newImg);
+		}
+		else {
+			bestTriFile = new TrianglesFile(triangles, scaled.getSize());
+		}
 		
 		maxScore = bestTriFile.compare(compareChunk);
 		lastBestImgChunk = bestTriFile.getImage();
