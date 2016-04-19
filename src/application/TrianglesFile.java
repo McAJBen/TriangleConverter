@@ -116,7 +116,7 @@ public class TrianglesFile {
 	
 	static double compare(BufferedImage original, BufferedImage newImg) {
 		double score = compareTotal(original, newImg);
-		score /= newImg.getWidth() * newImg.getHeight() * MAX_SCORE;
+		score /= (newImg.getWidth() * newImg.getHeight() * MAX_SCORE);
 		return 1-score;
 	}
 	

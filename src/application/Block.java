@@ -25,12 +25,12 @@ public class Block {
 	}
 
 	public Block(Rectangle original, Rectangle scaled, BufferedImage originalImg, BufferedImage newImg, ArrayList<Triangle> triangles) {
-		
-		BufferedImage b = originalImg.getSubimage(original.x, original.y, original.width, original.height);
-		
-		compareChunk = new BufferedImage(scaled.width, scaled.height, BufferedImage.TYPE_INT_ARGB);
-		compareChunk.createGraphics().drawImage(b, 0, 0, scaled.width, scaled.height, null);
-		
+		{
+			BufferedImage b = originalImg.getSubimage(original.x, original.y, original.width, original.height);
+			
+			compareChunk = new BufferedImage(scaled.width, scaled.height, BufferedImage.TYPE_INT_ARGB);
+			compareChunk.createGraphics().drawImage(b, 0, 0, scaled.width, scaled.height, null);
+		}
 		// if triangles is more than 1 then they were pre-processed
 		if (triangles.size() > 1) {
 			bestTriFile = new TrianglesFile(triangles, scaled.getSize(), newImg);
@@ -38,6 +38,29 @@ public class Block {
 		else {
 			bestTriFile = new TrianglesFile(triangles, scaled.getSize());
 		}
+		
+		maxScore = bestTriFile.compare(compareChunk);
+		lastBestImgChunk = bestTriFile.getImage();
+	}
+	
+	public Block(BufferedImage compareImg, Dimension size) {
+		this(compareImg, size, new ArrayList<Triangle>(Arrays.asList(new Triangle())));
+	}
+
+	public Block(BufferedImage compareImg, Dimension size, ArrayList<Triangle> triangles) {
+		
+		compareChunk = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+		compareChunk.createGraphics().drawImage(compareImg, 0, 0, size.width, size.height, null);
+		
+		// if triangles is more than 1 then they were pre-processed
+		/*if (triangles.size() > 1) {
+			bestTriFile = new TrianglesFile(triangles, scaled.getSize(), newImg);
+		}
+		else {
+			bestTriFile = new TrianglesFile(triangles, scaled.getSize());
+		}*/
+		
+		bestTriFile = new TrianglesFile(triangles, size);
 		
 		maxScore = bestTriFile.compare(compareChunk);
 		lastBestImgChunk = bestTriFile.getImage();

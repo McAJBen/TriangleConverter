@@ -3,7 +3,6 @@ package application;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
@@ -55,8 +54,12 @@ public abstract class BlockThreadHandler {
 		}
 	}
 	
-	private synchronized void paintTo(BufferedImage b, Point p, Dimension size) {
-		newImg.createGraphics().drawImage(b, p.x, p.y, size.width, size.height, null);
+	private synchronized void paintTo(BufferedImage b, Rectangle rect) {
+		newImg.createGraphics().drawImage(b, rect.x, rect.y, rect.width, rect.height, null);
+	}
+	
+	private static BufferedImage getSubImage(BufferedImage b, Rectangle r) {
+		return b.getSubimage(r.x, r.y, r.width, r.height);
 	}
 	
 	private class BT extends Thread {
@@ -66,58 +69,42 @@ public abstract class BlockThreadHandler {
 		
 		public void run() {
 			while (!isDone()) {
-				double bestScore = 0;
+				
 				Block bestBlock = null;
-				
 				blockLocation = getNewBlockLocation();
-				BufferedImage subImage = newImg.getSubimage(blockLocation.second.x, blockLocation.second.y, blockLocation.second.width, blockLocation.second.height);
-				double prevScore = -1;
-				if (usePreviousImage()){
-					BufferedImage baseSub = new BufferedImage(blockLocation.second.width, blockLocation.second.height, BufferedImage.TYPE_INT_RGB);
-					baseSub.createGraphics().drawImage(originalImg.getSubimage(blockLocation.original.x, blockLocation.original.y, blockLocation.original.width, blockLocation.original.height),
-							0, 0, blockLocation.second.width, blockLocation.second.height, null);
-					prevScore = TrianglesFile.compare(baseSub, subImage);
-				}
-				
+				BufferedImage subImage = getSubImage(originalImg, blockLocation.original);
 				if (blockLocation == null) {
 					break;
 				}
-				
-				for (int sample = 0; sample < G.samples; sample++) {
-					Block block = new Block(blockLocation.original, blockLocation.first, originalImg, subImage);
-					while (!block.isDone()) {
-						block.move();
-						if (G.preDraw) {
-							currentTestImage = block.getImage();
+				{
+					double bestScore = 0;
+					for (int sample = 0; sample < G.samples; sample++) {
+						Block block = new Block(subImage, blockLocation.first.getSize());
+						compute(block);
+						if (bestScore < block.getMaxScore()) {
+							bestBlock = block;
+							bestScore = block.getMaxScore();
 						}
-					}
-					currentTestImage = block.getImage();
-					if (bestScore < block.getMaxScore()) {
-						bestBlock = block;
-						bestScore = block.getMaxScore();
 					}
 				}
 				if (G.postProcessing) {
-					Block block = new Block(blockLocation.original, blockLocation.second, originalImg, subImage, bestBlock.getTriangles());
-					while (!block.isDone()) {
-						block.move();
-						if (G.preDraw) {
-							currentTestImage = block.getImage();
-						}
-					}
-					currentTestImage = block.getImage();
+					Block block = new Block(subImage, blockLocation.second.getSize(), bestBlock.getTriangles());
+					compute(block);
 					bestBlock = block;
-					bestScore = bestBlock.getMaxScore();
 				}
-				
-				if (bestScore > prevScore) {
-					paintTo(bestBlock.getImage(blockLocation.second.getSize()), blockLocation.second.getLocation(), blockLocation.second.getSize());
-				}
-				else {
-					System.out.println();
-				}
+				paintTo(bestBlock.getImage(), blockLocation.second);
 				removeBlockLocation(blockLocation);
 			}
+		}
+		
+		private void compute(Block block) {
+			while (!block.isDone()) {
+				block.move();
+				if (G.preDraw) {
+					currentTestImage = block.getImage();
+				}
+			}
+			currentTestImage = block.getImage();
 		}
 		
 		private BT(String string) {
