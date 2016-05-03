@@ -54,7 +54,7 @@ public abstract class BlockThreadHandler {
 		}
 	}
 	
-	private synchronized void paintTo(BufferedImage b, Rectangle rect) {
+	private synchronized void paintTo(BufferedImage b, Rectangle rect) { // TODO make faster
 		newImg.createGraphics().drawImage(b, rect.x, rect.y, rect.width, rect.height, null);
 	}
 	
@@ -92,7 +92,8 @@ public abstract class BlockThreadHandler {
 					compute(block);
 					bestBlock = block;
 				}
-				paintTo(bestBlock.getImage(), blockLocation.second);
+				
+				paintTo(bestBlock.getImage(), blockLocation.third);
 				removeBlockLocation(blockLocation);
 			}
 		}
@@ -116,10 +117,10 @@ public abstract class BlockThreadHandler {
 			if (currentTestImage != null && blockLocation != null) {
 				
 				Rectangle rect = new Rectangle(
-						blockLocation.second.x * windowSize.width / origW,
-						blockLocation.second.y * windowSize.height / origH,
-						blockLocation.second.width * windowSize.width / origW,
-						blockLocation.second.height * windowSize.height / origH);
+						blockLocation.third.x * windowSize.width / origW,
+						blockLocation.third.y * windowSize.height / origH,
+						blockLocation.third.width * windowSize.width / origW,
+						blockLocation.third.height * windowSize.height / origH);
 				
 				g.drawImage(currentTestImage,
 						rect.x, rect.y,

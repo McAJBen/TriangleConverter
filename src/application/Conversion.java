@@ -22,8 +22,8 @@ public class Conversion {
 		BufferedImage originalImg = FileHandler.getImage(file);
 		
 		newImg = new BufferedImage(
-				(int) (originalImg.getWidth() * G.postScale * G.scale),
-				(int) (originalImg.getHeight() * G.postScale * G.scale),
+				(int) (originalImg.getWidth() * G.postScale * G.scale * G.finalScale),
+				(int) (originalImg.getHeight() * G.postScale * G.scale * G.finalScale),
 				originalImg.getType());
         
         blockThread = new btGrid(originalImg, newImg);

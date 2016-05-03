@@ -10,6 +10,7 @@ public class btGrid extends BlockThreadHandler {
 	private D2D standardSize;
 	private D2D midStandardSize;
 	private D2D scaledStandardSize;
+	private D2D finalStandardSize;
 	
 	private Point nextPos;
 
@@ -19,6 +20,7 @@ public class btGrid extends BlockThreadHandler {
 		standardSize = new D2D();
 		midStandardSize = new D2D();
 		scaledStandardSize = new D2D();
+		finalStandardSize = new D2D();
 		
 		standardSize.setSize(
 			(double)originalImg.getWidth() / G.blocksWide,
@@ -31,6 +33,10 @@ public class btGrid extends BlockThreadHandler {
 		scaledStandardSize.setSize(
 			midStandardSize.getWidth() * G.postScale,
 			midStandardSize.getHeight() * G.postScale);
+		
+		finalStandardSize.setSize(
+				scaledStandardSize.getWidth() * G.finalScale,
+				scaledStandardSize.getHeight() * G.finalScale);
 		
 		nextPos = new Point(0, 0);
 	}
@@ -46,6 +52,7 @@ public class btGrid extends BlockThreadHandler {
 		Rectangle orig = new Rectangle();
 		Rectangle first = new Rectangle();
 		Rectangle second = new Rectangle();
+		Rectangle third = new Rectangle();
 		
 		do {
 			Point position = getNextPos();
@@ -70,11 +77,19 @@ public class btGrid extends BlockThreadHandler {
 			second.setSize(
 					(int)((position.x + 1) * scaledStandardSize.getWidth()) - second.x,
 					(int)((position.y + 1) * scaledStandardSize.getHeight()) - second.y);
+			
+			third.setLocation(
+					(int)(position.x * finalStandardSize.getWidth()),
+					(int)(position.y * finalStandardSize.getHeight()));
+			third.setSize(
+					(int)((position.x + 1) * finalStandardSize.getWidth()) - third.x,
+					(int)((position.y + 1) * finalStandardSize.getHeight()) - third.y);
 		
 		} while (orig.width <= 0 || orig.height <= 0 ||
 				 first.width <= 0 || first.height <= 0 ||
-				 second.width <= 0 || second.height <= 0);
-		return new BlockLocation(orig, first, second);
+				 second.width <= 0 || second.height <= 0 ||
+				 third.width <= 0 || third.height <= 0);
+		return new BlockLocation(orig, first, second, third);
 	}
 	
 	@Override

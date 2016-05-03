@@ -26,7 +26,8 @@ public class G {
 		randomBlocks = 100;
 	static double
 		scale = 1.0,
-		postScale = 1.0;
+		postScale = 1.0,
+		finalScale = 4.0;
 	static boolean 
 		scaleRandom = false,
 		postScaleRandom = false,

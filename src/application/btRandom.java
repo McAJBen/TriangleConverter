@@ -34,7 +34,8 @@ public class btRandom extends BlockThreadHandler {
 		randomPlacementsDone++;
 		Rectangle orig = new Rectangle(),
 				first = new Rectangle(),
-				second = new Rectangle();
+				second = new Rectangle(),
+				third = new Rectangle();
 		BlockLocation bl;
 		do {
 			Dimension size = getBlock();
@@ -59,13 +60,18 @@ public class btRandom extends BlockThreadHandler {
 					(int)(first.width * G.postScale),
 					(int)(first.height * G.postScale));
 			
-			bl = new BlockLocation(orig, first, second);
+			third = new Rectangle(
+					(int)(second.x * G.finalScale),
+					(int)(second.y * G.finalScale),
+					(int)(second.width * G.finalScale),
+					(int)(second.height * G.finalScale));
+			
+			bl = new BlockLocation(orig, first, second, third);
 			
 		} while (
 				first.width <= 0 || first.height <= 0 ||
-				second.width <= 0 || second.height <= 0);
-		
-		
+				second.width <= 0 || second.height <= 0 ||
+				third.width <= 0 || third.height <= 0);
 		
 		alreadyTakenBlocks.add(bl.original);
 		
