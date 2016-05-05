@@ -25,6 +25,7 @@ public class Settings {
 		// DOUBLES
 		SCALE_ID = "SCALE",
 		POST_SCALE_ID = "POST_SCALE",
+		FINAL_SCALE_ID = "FINAL_SCALE",
 		// FORMAT
 		IDENTIFIER_SYMBOL = ":",
 		COMMENT_SYMBOL = "#",
@@ -145,6 +146,14 @@ public class Settings {
 						}
 						else {
 							G.postScale = Double.parseDouble(split[1]);
+						}
+						break;
+					case FINAL_SCALE_ID:
+						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
+							G.finalScaleRandom = true;
+						}
+						else {
+							G.finalScale = Double.parseDouble(split[1]);
 						}
 						break;
 					default: // any unknown ID is ignored
