@@ -82,6 +82,7 @@ public class G {
         		" Th:" + G.threadCount + 
         		" Sc:" + G.scale + 
         		" Ps:" + G.postScale + 
+        		" Fs:" + G.finalScale + 
         		" At:" + attempt + "/" + G.attempts +
         		" RB:" + G.randomBlocks;
 	}
