@@ -27,12 +27,13 @@ public class G {
 	static double
 		scale = 1.0,
 		postScale = 1.0,
-		finalScale = 4.0;
+		finalScale = 1.0;
 	static boolean 
 		scaleRandom = false,
 		postScaleRandom = false,
 		randomBlocksRandom = false,
-		postProcessingRandom = false;
+		postProcessingRandom = false,
+		finalScaleRandom = false;
 	
 	static void reset(int attempt) {
 		Random rand = new Random();
@@ -43,7 +44,12 @@ public class G {
 		triangles = rand.nextInt(trianglesMax - trianglesMin + 1) + trianglesMin;
 		samples = rand.nextInt(samplesMax - samplesMin + 1) + samplesMin;
 		if (randomBlocksRandom) {
-			randomBlocks = rand.nextInt(blocksWide) * blocksWide;
+			if (rand.nextBoolean()) {
+				randomBlocks = rand.nextInt(blocksWide) * blocksWide;
+			}
+			else {
+				randomBlocks = 0;
+			}
 		}
 		if (scaleRandom) {
 			scale = getRandomScale(rand);
@@ -51,15 +57,18 @@ public class G {
 		if (postScaleRandom) {
 			postScale = getRandomScale(rand);
 		}
+		if (finalScaleRandom) {
+			finalScale = getRandomScale(rand) * 2.0;
+		}
 	}
 	
 	private static double getRandomScale(Random r) {
 		switch (r.nextInt(3)) {
 		case 0:
+			return 0.5;
+		case 1:
 		default:
 			return 1.0;
-		case 1:
-			return 0.5;
 		case 2:
 			return 2.0;
 		}
