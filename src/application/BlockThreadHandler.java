@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public abstract class BlockThreadHandler {
 	
@@ -54,10 +56,10 @@ public abstract class BlockThreadHandler {
 		}
 	}
 	
-	private synchronized void paintTo(BufferedImage b, Rectangle rect) { // TODO make faster
+	private synchronized void paintTo(BufferedImage b, Rectangle rect) {
 		newImg.createGraphics().drawImage(b, rect.x, rect.y, rect.width, rect.height, null);
 	}
-	
+
 	private static BufferedImage getSubImage(BufferedImage b, Rectangle r) {
 		return b.getSubimage(r.x, r.y, r.width, r.height);
 	}
@@ -92,6 +94,7 @@ public abstract class BlockThreadHandler {
 					compute(block);
 					bestBlock = block;
 				}
+				
 				
 				paintTo(bestBlock.getImage(), blockLocation.third);
 				removeBlockLocation(blockLocation);
