@@ -183,7 +183,8 @@ public class Settings {
 				
 				COMMENT_SYMBOL + "Double variables\n" +
 				SCALE_ID			+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
-				POST_SCALE_ID		+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n\n" +
+				POST_SCALE_ID		+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
+				FINAL_SCALE_ID		+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n\n" +
 				
 				COMMENT_SYMBOL + "Boolean variables\n" +
 				POST_PROCESSING_ID	+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
