@@ -75,24 +75,14 @@ public class G {
 	}
 	
 	static String getTitle(int attempt) {
-<<<<<<< HEAD
 		return  " TC Wi:" + G.blocksWide +
-=======
-		return "Triangle Converter" +
-        		" Wi:" + G.blocksWide +
->>>>>>> branch 'master' of https://github.com/McAJBen/TriangleConverter
         		" Tr:" + G.triangles +
         		" Sa:" + G.samples +
         		" Th:" + G.threadCount +
         		" At:" + attempt + "/" + G.attempts +
         		" Sc:" + G.scale +
-<<<<<<< HEAD
         		" > "  + G.postScale +
         		" > "  + G.finalScale +
-=======
-        		" Ps:" + G.postScale +
-        		" Fs:" + G.finalScale +
->>>>>>> branch 'master' of https://github.com/McAJBen/TriangleConverter
         		" RB:" + G.randomBlocks;
 	}
 }
