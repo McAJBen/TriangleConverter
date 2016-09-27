@@ -122,22 +122,25 @@ public class TrianglesFile {
 	
 	private static double compareTotal(BufferedImage original, BufferedImage newImg) {
 		double score = 0;
-		for (int i = 0; i < newImg.getWidth(); i++) {
-			for (int j = 0; j < newImg.getHeight(); j++) {
-				Color b = new Color(newImg.getRGB(i, j), true);
-				if (b.getAlpha() != 255) {
-					score += MAX_SCORE;
-				}
-				else {
-					Color a = new Color(original.getRGB(i, j));
-					score += Math.sqrt(
-						Math.pow(a.getRed() - b.getRed(), 2) +
-						Math.pow(a.getGreen()-b.getGreen(), 2) +
-						Math.pow(a.getBlue()-b.getBlue(), 2));
-				}
+		
+		int[] newImgCol = new int[newImg.getWidth() * newImg.getHeight() * 4];
+		int[] originCol = new int[newImgCol.length];
+		newImg.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), newImgCol);
+		original.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
+		
+		for (int i = 0; i < newImgCol.length; i += 4) {
+			if (newImgCol[i + 3] != 255) {
+				score += MAX_SCORE;
+			}
+			else {
+				score += Math.sqrt(
+					Math.pow(originCol[i] - newImgCol[i], 2) +
+					Math.pow(originCol[i + 1] - newImgCol[i + 1], 2) +
+					Math.pow(originCol[i + 2] - newImgCol[i + 2], 2));
 			}
 		}
 		return score;
+		
 	}
 
 	boolean hasAlpha() {
@@ -202,7 +205,6 @@ public class TrianglesFile {
 	    	g2d.drawImage(baseImg, 0, 0, width, height, null);
 	    }
 	    
-		
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		for (int i = 0; i < triangles.size(); i++) {
 			g2d.setColor(triangles.get(i).getColor());

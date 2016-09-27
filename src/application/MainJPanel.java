@@ -27,7 +27,7 @@ public class MainJPanel extends JPanel {
         	File file = FileHandler.getFile();
         	if (file != null) {
         		
-        		for (int attempt = 0; attempt < G.attempts; attempt++) {
+        		for (int attempt = 1; attempt <= G.attempts; attempt++) {
 		        	G.reset(attempt);
 		        	
 		        	Thread repaintThread = null;

@@ -14,12 +14,14 @@ public class Main {
 	        	File file = FileHandler.getFile();
 	        	if (file != null) {
 	        		int imagePixels = FileHandler.getPixels(file);
-	        		for (int i = 0; i < G.attempts; i++) {
+	        		for (int attempt = 1; attempt <= G.attempts; attempt++) {
 	        			System.out.println("Found file: " + file);
 			        	G.reset(imagePixels);
-			        	System.out.println(G.getTitle(i));
-			        	Conversion conversion = new Conversion(file, i);
+			        	System.out.println(G.getTitle(attempt));
+			        	Conversion conversion = new Conversion(file, attempt);
+			        	long startTime = System.currentTimeMillis();
 			        	conversion.startConversion();
+			        	System.out.println(System.currentTimeMillis() - startTime);
 	        		}
 	        	}
 	        	else {
