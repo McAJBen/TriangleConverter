@@ -94,7 +94,7 @@ public abstract class BlockThreadHandler {
 				}
 				
 				
-				paintTo(bestBlock.getImage(), blockLocation.third);
+				paintTo(bestBlock.getImage(blockLocation.third.getSize()), blockLocation.third);
 				removeBlockLocation(blockLocation);
 			}
 		}

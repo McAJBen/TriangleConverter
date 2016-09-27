@@ -1,0 +1,24 @@
+#All Comments must begin with #
+
+#Integer variables
+BLOCKS_WIDE_MIN:20
+BLOCKS_WIDE_MAX:20
+MAX_TRIANGLES_MIN:3
+MAX_TRIANGLES_MAX:3
+SAMPLES_MIN:1
+SAMPLES_MAX:1
+RANDOM_BLOCKS:0
+#Thread count can be set to 'AUTO'
+THREAD_COUNT:AUTO
+REAPINT_WAIT_MS:500
+ATTEMPTS:25
+
+#Double variables
+SCALE:0.16
+POST_SCALE:2.5
+FINAL_SCALE:2.5
+
+#Boolean variables
+POST_PROCESSING:true
+PREDRAW:false
+DISPLAY:false
