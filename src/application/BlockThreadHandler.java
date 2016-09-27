@@ -26,6 +26,7 @@ public abstract class BlockThreadHandler {
 	abstract BlockLocation getNewBlockLocation();
 	abstract void removeBlockLocation(BlockLocation blockLocation);
 	abstract boolean usePreviousImage();
+	abstract String getPercentDone();
 
 	void startConversion() {
 		
@@ -139,4 +140,5 @@ public abstract class BlockThreadHandler {
 			}
 		}
 	}
+
 }

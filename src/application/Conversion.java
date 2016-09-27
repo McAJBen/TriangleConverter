@@ -25,6 +25,7 @@ public class Conversion {
 				(int) (originalImg.getWidth() * G.postScale * G.scale * G.finalScale),
 				(int) (originalImg.getHeight() * G.postScale * G.scale * G.finalScale),
 				originalImg.getType());
+		
         
         blockThread = new btGrid(originalImg, newImg);
 		blockThread.startConversion();
@@ -44,8 +45,9 @@ public class Conversion {
 	
 	void paint(Graphics g, Dimension size) {
         Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(newImg, 0, 0, size.width, size.height - 14, null);
-				
+        
+        g2d.drawImage(newImg, 0, 0, size.width, size.height - 14, null);
+        
 		if (file != null) {
 			g2d.drawString(file.getName() + "", 2, size.height - 2);
 			if (G.preDraw && blockThread != null) {
@@ -57,4 +59,9 @@ public class Conversion {
 			}
 		}
     }
+
+	public String getPercentDone() {
+		//String s = blockThread.getClass().getSimpleName();
+		return blockThread.getPercentDone();
+	}
 }

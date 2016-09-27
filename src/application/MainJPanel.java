@@ -50,7 +50,13 @@ public class MainJPanel extends JPanel {
 	public void paint(Graphics g) {
 		super.paint(g);
 		if (conversion != null) {
-			conversion.paint(g, getSize());
+			try {
+				conversion.paint(g, getSize());
+			} catch (OutOfMemoryError e) {
+				// occurs when painting to screen uses too much memory
+				g.drawString("Out of memory, not able to display :(", 5, 15);
+				g.drawString(conversion.getPercentDone(), 5, 30);
+			}
 		}
 	}
 	

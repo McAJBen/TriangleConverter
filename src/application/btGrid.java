@@ -129,4 +129,10 @@ public class btGrid extends BlockThreadHandler {
 	boolean usePreviousImage() {
 		return false;
 	}
+	
+	@Override
+	String getPercentDone() {
+		double perc = (nextPos.getX() / G.blocksWide + nextPos.y) / G.blocksWide * 100;
+		return getClass().getSimpleName() + " " + perc + "%";
+	}
 }

@@ -106,6 +106,11 @@ public class btRandom extends BlockThreadHandler {
 	boolean usePreviousImage() {
 		return true;
 	}
-
+	
+	@Override
+	String getPercentDone() {
+		double perc = (double)randomPlacementsDone / G.randomBlocks * 100;
+		return getClass().getSimpleName() + " " + perc + "%";
+	}
 	
 }
