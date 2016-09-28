@@ -36,8 +36,7 @@ public class Conversion {
         blockThread = new btRandom(originalImg, newImg);
         blockThread.startConversion();
         
-		FileHandler.putImageInFile(file, "New", newImg,
-				"_" + (G.getTriangles() * (G.getBlocksWide() * G.getBlocksWide() + G.getRandomBlocks()))); // TODO increment or unique id
+		FileHandler.putImageInFile(file, "New", newImg, G.getShortTitle());
 		
 		blockThread = null;
 	}

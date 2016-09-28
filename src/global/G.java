@@ -118,7 +118,7 @@ public class G {
 	}
 	
 	public static String getTitle(int attempt) {
-		return  " TC Wi:" + G.getBlocksWide() +
+		return  " TC Wi:" + G.blocksWide +
         		" Tr:" + G.triangles +
         		" Sa:" + G.samples +
         		" Th:" + G.threadCount +
@@ -126,7 +126,17 @@ public class G {
         		" Sc:" + G.scale +
         		" > "  + G.postScale +
         		" > "  + G.finalScale +
-        		" RB:" + G.getRandomBlocks();
+        		" RB:" + G.randomBlocks;
+	}
+	
+	public static String getShortTitle() {
+		return  "_" + G.blocksWide +
+        		"_" + G.triangles +
+        		"_" + G.samples +
+        		"_" + G.scale +
+        		"_"  + G.postScale +
+        		"_"  + G.finalScale +
+        		"_" + G.randomBlocks;
 	}
 
 	public static int getThreadCount() {

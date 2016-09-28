@@ -53,8 +53,8 @@ public class FileHandler {
 	
 	public static void putImageInFile(File f, String folder, BufferedImage image, String append) {
 		
-		File fi = new File(f.getParent() + "\\" + folder + "\\" + 
-				f.getName().substring(0, f.getName().length() - 4) + append + ".png");
+		File fi = toFile(f, folder, append);
+		
 	    try {
 	    	if (!fi.exists()) {
 	    		fi.mkdirs();
@@ -63,6 +63,10 @@ public class FileHandler {
 	    } catch (IOException e) {
 	        throw new RuntimeException(e);
 	    }
+	}
+	
+	private static File toFile(File f, String folder, String append) {
+		return new File(f.getParent() + "\\" + folder + "\\" + f.getName().substring(0, f.getName().length() - 4) + append + ".png");
 	}
 
 	public static BufferedImage getImage(File file) {
