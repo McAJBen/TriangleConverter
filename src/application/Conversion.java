@@ -50,7 +50,7 @@ public class Conversion {
 		if (file != null && blockThread != null) {
 			g2d.drawString(file.getName() + " " + blockThread.getPercentDone(), 2, size.height - 2);
 			if (G.getPreDraw()) {
-				size.height -= 12;
+				size.height -= 14;
 				if (newImg != null) {
 					blockThread.paint(g2d, size);
 					g2d.setColor(Color.BLACK);
