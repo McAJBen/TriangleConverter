@@ -76,7 +76,7 @@ public class G {
 		samples = RANDOM.nextInt(samplesMax - samplesMin + 1) + samplesMin;
 		if (randomBlocksRandom) {
 			if (RANDOM.nextBoolean()) {
-				randomBlocks = RANDOM.nextInt(getBlocksWide()) * getBlocksWide();
+				randomBlocks = RANDOM.nextInt(getBlocksWide()) * getBlocksWide() * 3;
 			}
 			else {
 				randomBlocks = 0;

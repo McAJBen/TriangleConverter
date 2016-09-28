@@ -19,6 +19,8 @@ public abstract class BlockThreadHandler {
 	
 	private BT[] BTArray;
 	
+	protected boolean allowAlpha;
+	
 	BlockThreadHandler(BufferedImage originalImg, BufferedImage newImg) {
 		this.originalImg = originalImg;
 		this.newImg = newImg;
@@ -76,14 +78,18 @@ public abstract class BlockThreadHandler {
 				
 				Block bestBlock = null;
 				blockLocation = getNewBlockLocation();
-				BufferedImage subImage = getSubImage(originalImg, blockLocation.original);
+				BufferedImage compareImage = getSubImage(originalImg, blockLocation.original);
+				BufferedImage baseImg = getSubImage(newImg, blockLocation.third);
 				if (blockLocation == null) {
 					break;
 				}
 				{
 					double bestScore = 0;
 					for (int sample = 0; sample < G.getMaxSamples(); sample++) {
-						Block block = new Block(subImage, blockLocation.first.getSize());
+						Block block = allowAlpha ? 
+								new Block(compareImage, baseImg, blockLocation.first.getSize()):
+								new Block(compareImage, blockLocation.first.getSize());
+						
 						compute(block);
 						if (bestScore < block.getMaxScore()) {
 							bestBlock = block;
@@ -92,7 +98,9 @@ public abstract class BlockThreadHandler {
 					}
 				}
 				if (G.getPostProcessing()) {
-					Block block = new Block(subImage, blockLocation.second.getSize(), bestBlock.getTriangles());
+					Block block = allowAlpha ? 
+							new Block(compareImage, baseImg, blockLocation.first.getSize(), bestBlock.getTriangles()):
+							new Block(compareImage, blockLocation.first.getSize(), bestBlock.getTriangles());
 					compute(block);
 					bestBlock = block;
 				}

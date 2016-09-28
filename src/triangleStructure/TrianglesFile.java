@@ -143,15 +143,22 @@ public class TrianglesFile {
 		}
 		return score;
 	}
-
-	public boolean hasAlpha() {
-		createImg();
-		for (int i = 0; i < image.getWidth(); i++) {
-			for (int j = 0; j < image.getHeight(); j++) {
-				if (image.getRGB(i, j) == 0) {
+	
+	private boolean hasAlpha(BufferedImage b) {
+		for (int i = 0; i < b.getWidth(); i++) {
+			for (int j = 0; j < b.getHeight(); j++) {
+				if (b.getRGB(i, j) == 0) {
 					return true;
 				}
 			}
+		}
+		return false;
+	}
+
+	public boolean hasAlpha() {
+		if (baseImg == null) {
+			createImg();
+			return hasAlpha(image);
 		}
 		return false;
 	}
@@ -203,7 +210,7 @@ public class TrianglesFile {
 	    Graphics2D g2d = img.createGraphics();
 	    
 	    if (baseImg != null) {
-	    	g2d.drawImage(baseImg, 0, 0, width, height, null);
+	    	g2d.drawImage(baseImg, 0, 0, width, height, null); // TODO convert to raster
 	    }
 	    
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
