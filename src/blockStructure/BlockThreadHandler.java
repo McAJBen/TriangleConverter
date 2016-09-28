@@ -141,7 +141,7 @@ public abstract class BlockThreadHandler {
 				
 				g.setColor(PINK);
 				
-				g.drawString(getName() + "",
+				g.drawString(getName(),
 						rect.x + 1, 
 						rect.y + 11);
 				

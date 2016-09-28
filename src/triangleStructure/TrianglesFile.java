@@ -165,7 +165,7 @@ public class TrianglesFile {
 		return false;
 	}
 
-	public boolean hasAlpha() { // TODO test BufferdImg transparacy
+	public boolean hasAlpha() {
 		if (baseImg == null) {
 			createImg();
 			return hasAlpha(image);

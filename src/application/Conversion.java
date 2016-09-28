@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.RasterFormatException;
 import java.io.File;
 
 import blockStructure.BlockThreadHandler;
@@ -26,7 +25,7 @@ public class Conversion {
 
 	public void startConversion() {
 		BufferedImage originalImg = FileHandler.getImage(file);
-		if (originalImg.getType() == BufferedImage.TYPE_4BYTE_ABGR) {
+		if (originalImg.getType() == BufferedImage.TYPE_4BYTE_ABGR || originalImg.getType() == BufferedImage.TYPE_INT_ARGB) {
 			int[] pix3 = new int[originalImg.getWidth() * originalImg.getHeight() * 3];
 			int[] pix4 = new int[originalImg.getWidth() * originalImg.getHeight() * 4];
 			originalImg.getRaster().getPixels(0, 0, originalImg.getWidth(), originalImg.getHeight(), pix4);
@@ -43,12 +42,14 @@ public class Conversion {
 		newImg = new BufferedImage(
 				(int) (originalImg.getWidth() * G.getTotalScale()),
 				(int) (originalImg.getHeight() * G.getTotalScale()),
-				originalImg.getType());
+				BufferedImage.TYPE_3BYTE_BGR);
+		
+		long startTime = System.currentTimeMillis();
 		
         blockThread = new btGrid(originalImg, newImg);
 		blockThread.startConversion();
 		
-		long startTime = System.currentTimeMillis();
+		
 		
         blockThread = new btRandom(originalImg, newImg);
         blockThread.startConversion();
