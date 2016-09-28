@@ -1,5 +1,6 @@
 package application;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -46,13 +47,13 @@ public class Conversion {
         
         g2d.drawImage(newImg, 0, 0, size.width, size.height - 14, null);
         
-		if (file != null) {
-			g2d.drawString(file.getName() + "", 2, size.height - 2);
-			if (G.getPreDraw() && blockThread != null) {
-				Dimension windowSize = size;
-				windowSize.height -= 14;
+		if (file != null && blockThread != null) {
+			g2d.drawString(file.getName() + " " + blockThread.getPercentDone(), 2, size.height - 2);
+			if (G.getPreDraw()) {
+				size.height -= 12;
 				if (newImg != null) {
-					blockThread.paint(g2d, windowSize);
+					blockThread.paint(g2d, size);
+					g2d.setColor(Color.BLACK);
 				}
 			}
 		}

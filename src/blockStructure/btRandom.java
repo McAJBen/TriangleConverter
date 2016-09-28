@@ -112,7 +112,7 @@ public class btRandom extends BlockThreadHandler {
 	@Override
 	public String getPercentDone() {
 		double perc = (double)randomPlacementsDone / G.getRandomBlocks() * 100;
-		return getClass().getSimpleName() + " " + perc + "%";
+		return String.format("%s %2.0f %%", getClass().getSimpleName(), perc);
 	}
 	
 }

@@ -135,6 +135,6 @@ public class btGrid extends BlockThreadHandler {
 	@Override
 	public String getPercentDone() {
 		double perc = (nextPos.getX() / G.getBlocksWide() + nextPos.y) / G.getBlocksWide() * 100;
-		return getClass().getSimpleName() + " " + perc + "%";
+		return String.format("%s %2.0f %%", getClass().getSimpleName(), perc);
 	}
 }
