@@ -6,6 +6,10 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import global.G;
+import triangleStructure.Triangle;
+import triangleStructure.TrianglesFile;
+
 public class Block {
 	private static final double MAX_STAGNANT_VAL = 100;
 	
@@ -67,7 +71,7 @@ public class Block {
 	}
 
 	// checks triangleMode to modify bestTriFile and see if it improves
-	void move() {
+	public void move() {
 		TrianglesFile modifyTriFile = new TrianglesFile(bestTriFile);
 		// changes modifyTri based on triangleMode
 		switch (triangleMode) {
@@ -111,7 +115,7 @@ public class Block {
 			// if triangleMode is at the end try adding another triangle
 			if (triangleMode == TriangleMode.RANDOM) {
 				bestTriFile.addTriangle();
-				while (bestTriFile.getSize() > G.triangles) {
+				while (bestTriFile.getSize() > G.getTriangles()) {
 					bestTriFile.removeBackTriangle();
 				}
 				maxScore = bestTriFile.compare(compareChunk);
@@ -119,14 +123,14 @@ public class Block {
 		}
 	}
 	
-	boolean isDone() {
+	public boolean isDone() {
 		if (bestTriFile.hasAlpha()) {
 			return false;
 		}
 		else if (maxScore > 0.99) {
 			return true;
 		}
-		if (bestTriFile.getSize() == G.triangles) {
+		if (bestTriFile.getSize() == G.getTriangles()) {
 			if (triangleMode == TriangleMode.REMOVE) {
 				return true;
 			}
@@ -134,19 +138,19 @@ public class Block {
 		return false;
 	}
 	
-	BufferedImage getImage() {
+	public BufferedImage getImage() {
 		return lastBestImgChunk;
 	}
 	
-	ArrayList<Triangle> getTriangles() {
+	public ArrayList<Triangle> getTriangles() {
 		return bestTriFile.getTriangles();
 	}
 	
-	double getMaxScore() {
+	public double getMaxScore() {
 		return maxScore;
 	}
 
-	BufferedImage getImage(Dimension newBlockPixelSize) {
+	public BufferedImage getImage(Dimension newBlockPixelSize) {
 		return bestTriFile.getImage(newBlockPixelSize);
 	}
 	// the current modify the block should make to a triangle

@@ -1,4 +1,4 @@
-package application;
+package global;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

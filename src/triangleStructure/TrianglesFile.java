@@ -1,4 +1,4 @@
-package application;
+package triangleStructure;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import global.G;
 
 public class TrianglesFile {
 	
@@ -21,11 +23,11 @@ public class TrianglesFile {
 	private boolean imageMade = false;
 	private double totalPossibleScore;
 	
-	TrianglesFile(TrianglesFile tf) {
+	public TrianglesFile(TrianglesFile tf) {
 		this(tf.getTriangles(), tf.imageSize, tf.baseImg);
 	}
 	
-	TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension) {
+	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension) {
 		for (int i = 0; i < trArray.size(); i++) {
 			this.triangles.add(trArray.get(i));
 		}
@@ -34,7 +36,7 @@ public class TrianglesFile {
 		baseImg = null;
 	}
 	
-	TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension, BufferedImage baseChunk) {
+	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension, BufferedImage baseChunk) {
 		for (int i = 0; i < trArray.size(); i++) {
 			this.triangles.add(trArray.get(i));
 		}
@@ -43,27 +45,27 @@ public class TrianglesFile {
 		baseImg = baseChunk;
 	}
 	
-	void modifyRandom() {
+	public void modifyRandom() {
 		imageMade = false;
 		if (triangles.size() <= 0) {
 			return;
 		}
-		int i = getRandom();
+		int i = getRandomTri();
 		triangles.remove(i);
 		triangles.add(new Triangle());
 	}
 	
-	void modifyShape10() {
+	public void modifyShape10() {
 		imageMade = false;
 		if (triangles.size() <= 0) {
 			return;
 		}
-		int i = getRandom();
+		int i = getRandomTri();
 		double xp[] = triangles.get(i).getXpoints();
 		double yp[] = triangles.get(i).getYpoints();
 		for (int j = 0; j < 3; j++) {
-			xp[j] += G.RANDOM.nextDouble() / 5 - 0.1;
-			yp[j] += G.RANDOM.nextDouble() / 5 - 0.1;
+			xp[j] += G.getRandDouble() / 5 - 0.1;
+			yp[j] += G.getRandDouble() / 5 - 0.1;
 			
 			xp[j] = checkBounds(xp[j], 1);
 			yp[j] = checkBounds(yp[j], 1);
@@ -71,43 +73,43 @@ public class TrianglesFile {
 		triangles.set(i, new Triangle(xp, yp, triangles.get(i).getColor()));
 	}
 	
-	void modifyShapeFull() {
+	public void modifyShapeFull() {
 		imageMade = false;
 		if (triangles.size() <= 0) {
 			return;
 		}
-		int i = getRandom();
+		int i = getRandomTri();
 		double xp[] = triangles.get(i).getXpoints();
 		double yp[] = triangles.get(i).getYpoints();
 		for (int j = 0; j < 3; j++) {
-			xp[j] = G.RANDOM.nextDouble();
-			yp[j] = G.RANDOM.nextDouble();
+			xp[j] = G.getRandDouble();
+			yp[j] = G.getRandDouble();
 		}
 		triangles.set(i, new Triangle(xp, yp, triangles.get(i).getColor()));
 	}
 	
-	void modifyColor10() {
+	public void modifyColor10() {
 		imageMade = false;
 		if (triangles.size() <= 0) {
 			return;
 		}
-		int i = getRandom();
+		int i = getRandomTri();
 		int[] col = triangles.get(i).getColorArray();
 		for (int j = 0; j < col.length; j++) {
-			col[j] += G.RANDOM.nextInt(51) - 25;
+			col[j] += G.getRandInt(51) - 25;
 			col[j] = checkBounds(col[j], 255);
 		}
 		triangles.set(i, new Triangle(triangles.get(i).getXpoints(), triangles.get(i).getYpoints(), new Color(col[0], col[1], col[2])));
 	}
 	
-	void modifyRemove() {
+	public void modifyRemove() {
 		imageMade = false;
 		if (triangles.size() > 2) {
-			triangles.remove(G.RANDOM.nextInt(triangles.size()));
+			triangles.remove(G.getRandInt(triangles.size()));
 		}
 	}
 	
-	double compare(BufferedImage img) {
+	public double compare(BufferedImage img) {
 		createImg();
 		double score = compareTotal(img, image);
 		score /= totalPossibleScore;
@@ -140,10 +142,9 @@ public class TrianglesFile {
 			}
 		}
 		return score;
-		
 	}
 
-	boolean hasAlpha() {
+	public boolean hasAlpha() {
 		createImg();
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
@@ -155,28 +156,28 @@ public class TrianglesFile {
 		return false;
 	}
 	
-	BufferedImage getImage() {
+	public BufferedImage getImage() {
 		createImg();
 		return image;
 	}
 	
-	int getSize() {
+	public int getSize() {
 		return triangles.size();
 	}
 	
-	void addTriangle() {
+	public void addTriangle() {
 		imageMade = false;
 		triangles.add(new Triangle());
 	}
 	
-	void removeBackTriangle() {
+	public void removeBackTriangle() {
 		imageMade = false;
 		if (getSize() > 0) {
 			triangles.remove(0);
 		}
 	}
 	
-	ArrayList<Triangle> getTriangles() {
+	public ArrayList<Triangle> getTriangles() {
 		ArrayList<Triangle> tr = new ArrayList<Triangle>();
 		for (int i = 0; i < triangles.size(); i++) {
 			tr.add(triangles.get(i).clone());
@@ -184,7 +185,7 @@ public class TrianglesFile {
 		return triangles;
 	}
 	
-	BufferedImage getImage(Dimension newBlockPixelSize) {
+	public BufferedImage getImage(Dimension newBlockPixelSize) {
 		return makeImg(newBlockPixelSize.width, newBlockPixelSize.height);
 	}
 
@@ -214,8 +215,8 @@ public class TrianglesFile {
 	    return img;
 	}
 	
-	private int getRandom() {
-		return (int) Math.pow(G.RANDOM.nextInt((int) Math.pow(triangles.size(), FACT)), FACT_INVERSE);
+	private int getRandomTri() {
+		return (int) Math.pow(G.getRandInt((int) Math.pow(triangles.size(), FACT)), FACT_INVERSE);
 	}
 	
 	private double checkBounds(double n, int max) {

@@ -1,9 +1,11 @@
-package application;
+package blockStructure;
 
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
+
+import global.G;
 
 public class btGrid extends BlockThreadHandler {
 
@@ -23,27 +25,27 @@ public class btGrid extends BlockThreadHandler {
 		finalStandardSize = new D2D();
 		
 		standardSize.setSize(
-			(double)originalImg.getWidth() / G.blocksWide,
-			(double)originalImg.getHeight() / G.blocksWide);
+			(double)originalImg.getWidth() / G.getBlocksWide(),
+			(double)originalImg.getHeight() / G.getBlocksWide());
 		
 		midStandardSize.setSize(
-			standardSize.getWidth() * G.scale,
-			standardSize.getHeight() * G.scale);
+			standardSize.getWidth() * G.getScale(),
+			standardSize.getHeight() * G.getScale());
 		
 		scaledStandardSize.setSize(
-			midStandardSize.getWidth() * G.postScale,
-			midStandardSize.getHeight() * G.postScale);
+			midStandardSize.getWidth() * G.getPostScale(),
+			midStandardSize.getHeight() * G.getPostScale());
 		
 		finalStandardSize.setSize(
-				scaledStandardSize.getWidth() * G.finalScale,
-				scaledStandardSize.getHeight() * G.finalScale);
+				scaledStandardSize.getWidth() * G.getFinalScale(),
+				scaledStandardSize.getHeight() * G.getFinalScale());
 		
 		nextPos = new Point(0, 0);
 	}
 
 	@Override
 	public boolean isDone() {
-		return nextPos.y >= G.blocksWide;
+		return nextPos.y >= G.getBlocksWide();
 	}
 
 	@Override
@@ -56,7 +58,7 @@ public class btGrid extends BlockThreadHandler {
 		
 		do {
 			Point position = getNextPos();
-			if (position == null || position.y >= G.blocksWide) {
+			if (position == null || position.y >= G.getBlocksWide()) {
 				return null;
 			}
 			orig.setLocation(
@@ -118,7 +120,7 @@ public class btGrid extends BlockThreadHandler {
 	private synchronized Point getNextPos() {
 		Point p = (Point) nextPos.clone();
 		nextPos.x++;
-		if (nextPos.x >= G.blocksWide) {
+		if (nextPos.x >= G.getBlocksWide()) {
 			nextPos.y++;
 			nextPos.x = 0;
 		}
@@ -131,8 +133,8 @@ public class btGrid extends BlockThreadHandler {
 	}
 	
 	@Override
-	String getPercentDone() {
-		double perc = (nextPos.getX() / G.blocksWide + nextPos.y) / G.blocksWide * 100;
+	public String getPercentDone() {
+		double perc = (nextPos.getX() / G.getBlocksWide() + nextPos.y) / G.getBlocksWide() * 100;
 		return getClass().getSimpleName() + " " + perc + "%";
 	}
 }

@@ -1,10 +1,13 @@
-package application;
+package blockStructure;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+
+import application.Block;
+import global.G;
 
 public abstract class BlockThreadHandler {
 	
@@ -19,16 +22,16 @@ public abstract class BlockThreadHandler {
 	BlockThreadHandler(BufferedImage originalImg, BufferedImage newImg) {
 		this.originalImg = originalImg;
 		this.newImg = newImg;
-		BTArray = new BT[G.threadCount];
+		BTArray = new BT[G.getThreadCount()];
 	}
 
 	abstract boolean isDone();
 	abstract BlockLocation getNewBlockLocation();
 	abstract void removeBlockLocation(BlockLocation blockLocation);
 	abstract boolean usePreviousImage();
-	abstract String getPercentDone();
+	public abstract String getPercentDone();
 
-	void startConversion() {
+	public void startConversion() {
 		
         for (int i = 0; i < BTArray.length; i++) {
            	BTArray[i] = new BT("" + i);
@@ -45,7 +48,7 @@ public abstract class BlockThreadHandler {
         }
 	}
 	
-	void paint(Graphics2D g2d, Dimension size) {
+	public void paint(Graphics2D g2d, Dimension size) {
 		if (BTArray != null) {
 			for (BT b: BTArray) {
 				if (b != null) {
@@ -79,7 +82,7 @@ public abstract class BlockThreadHandler {
 				}
 				{
 					double bestScore = 0;
-					for (int sample = 0; sample < G.samples; sample++) {
+					for (int sample = 0; sample < G.getMaxSamples(); sample++) {
 						Block block = new Block(subImage, blockLocation.first.getSize());
 						compute(block);
 						if (bestScore < block.getMaxScore()) {
@@ -88,7 +91,7 @@ public abstract class BlockThreadHandler {
 						}
 					}
 				}
-				if (G.postProcessing) {
+				if (G.getPostProcessing()) {
 					Block block = new Block(subImage, blockLocation.second.getSize(), bestBlock.getTriangles());
 					compute(block);
 					bestBlock = block;
@@ -103,7 +106,7 @@ public abstract class BlockThreadHandler {
 		private void compute(Block block) {
 			while (!block.isDone()) {
 				block.move();
-				if (G.preDraw) {
+				if (G.getPreDraw()) {
 					currentTestImage = block.getImage();
 				}
 			}

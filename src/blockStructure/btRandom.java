@@ -1,9 +1,11 @@
-package application;
+package blockStructure;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import global.G;
 
 public class btRandom extends BlockThreadHandler {
 
@@ -13,20 +15,20 @@ public class btRandom extends BlockThreadHandler {
 	
 	private ArrayList<Rectangle> alreadyTakenBlocks;
 	
-	btRandom(BufferedImage originalImg, BufferedImage newImg) {
+	public btRandom(BufferedImage originalImg, BufferedImage newImg) {
 		super(originalImg, newImg);
 		randomPlacementsDone = 0;
 		
 		imageSize = new Dimension(originalImg.getWidth(), originalImg.getHeight());
 		
-		defaultSize = new Dimension(imageSize.width / G.blocksWide, imageSize.height / G.blocksWide);
+		defaultSize = new Dimension(imageSize.width / G.getBlocksWide(), imageSize.height / G.getBlocksWide());
 		
 		alreadyTakenBlocks = new ArrayList<>();
 	}
 
 	@Override
 	public boolean isDone() {
-		return randomPlacementsDone >= G.randomBlocks;
+		return randomPlacementsDone >= G.getRandomBlocks();
 	}
 
 	@Override
@@ -42,29 +44,29 @@ public class btRandom extends BlockThreadHandler {
 			
 			do {
 				orig = new Rectangle(
-						G.RANDOM.nextInt(imageSize.width - size.width),
-						G.RANDOM.nextInt(imageSize.height - size.height),
+						G.getRandInt(imageSize.width - size.width),
+						G.getRandInt(imageSize.height - size.height),
 						size.width,
 						size.height);
 			} while (collides(orig) || orig.width <= 0 || orig.height <= 0);
 			
 			first = new Rectangle(
-					(int)(orig.x * G.scale),
-					(int)(orig.y * G.scale),
-					(int)(orig.width * G.scale),
-					(int)(orig.height * G.scale));
+					(int)(orig.x * G.getScale()),
+					(int)(orig.y * G.getScale()),
+					(int)(orig.width * G.getScale()),
+					(int)(orig.height * G.getScale()));
 			
 			second = new Rectangle(
-					(int)(first.x * G.postScale),
-					(int)(first.y * G.postScale),
-					(int)(first.width * G.postScale),
-					(int)(first.height * G.postScale));
+					(int)(first.x * G.getPostScale()),
+					(int)(first.y * G.getPostScale()),
+					(int)(first.width * G.getPostScale()),
+					(int)(first.height * G.getPostScale()));
 			
 			third = new Rectangle(
-					(int)(second.x * G.finalScale),
-					(int)(second.y * G.finalScale),
-					(int)(second.width * G.finalScale),
-					(int)(second.height * G.finalScale));
+					(int)(second.x * G.getFinalScale()),
+					(int)(second.y * G.getFinalScale()),
+					(int)(second.width * G.getFinalScale()),
+					(int)(second.height * G.getFinalScale()));
 			
 			bl = new BlockLocation(orig, first, second, third);
 			
@@ -88,8 +90,8 @@ public class btRandom extends BlockThreadHandler {
 	private Dimension getBlock() {
 		Dimension r = defaultSize.getSize();
 		
-		r.width *= G.RANDOM.nextDouble() + 0.5;
-		r.height *= G.RANDOM.nextDouble() + 0.5;
+		r.width *= G.getRandDouble() + 0.5;
+		r.height *= G.getRandDouble() + 0.5;
 		return r;
 	}
 	
@@ -108,8 +110,8 @@ public class btRandom extends BlockThreadHandler {
 	}
 	
 	@Override
-	String getPercentDone() {
-		double perc = (double)randomPlacementsDone / G.randomBlocks * 100;
+	public String getPercentDone() {
+		double perc = (double)randomPlacementsDone / G.getRandomBlocks() * 100;
 		return getClass().getSimpleName() + " " + perc + "%";
 	}
 	

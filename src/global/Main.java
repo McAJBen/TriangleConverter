@@ -1,13 +1,16 @@
-package application;
+package global;
 
 import java.io.File;
+
+import application.Conversion;
+import window.DisplayWindow;
 
 public class Main {
 	
 	public static void main(String[] args) {
 		Settings.load();
 		
-		if (G.display) {
+		if (G.getDisplay()) {
 			DisplayWindow displayWindow = new DisplayWindow();
 			displayWindow.start();
 		}
@@ -15,7 +18,7 @@ public class Main {
 			while (true) {
 	        	File file = FileHandler.getFile();
 	        	if (file != null) {
-	        		for (int attempt = 1; attempt <= G.attempts; attempt++) {
+	        		for (int attempt = 1; attempt <= G.getMaxAttempts(); attempt++) {
 	        			System.out.println("Found file: " + file);
 			        	G.reset();
 			        	System.out.println(G.getTitle(attempt));

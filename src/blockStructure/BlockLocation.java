@@ -1,4 +1,4 @@
-package application;
+package blockStructure;
 
 import java.awt.Rectangle;
 

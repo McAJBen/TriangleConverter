@@ -1,8 +1,10 @@
-package application;
+package triangleStructure;
 
 import java.awt.Color;
 import java.awt.Polygon;
 import java.util.ArrayList;
+
+import global.G;
 
 public class Triangle {
 	private static final int SIDES = 3;
@@ -10,12 +12,12 @@ public class Triangle {
 	private double[] Ypoints = new double[SIDES];
 	private Color color;
 	
-	Triangle() {
+	public Triangle() {
 		for (int i = 0; i < SIDES; i++) {
-			Xpoints[i] = G.RANDOM.nextDouble();
-			Ypoints[i] = G.RANDOM.nextDouble();
+			Xpoints[i] = G.getRandDouble();
+			Ypoints[i] = G.getRandDouble();
 		}
-		color = new Color(G.RANDOM.nextInt(256), G.RANDOM.nextInt(256), G.RANDOM.nextInt(256));
+		color = new Color(G.getRandInt(256), G.getRandInt(256), G.getRandInt(256));
 	}
 	
 	Triangle(double[] px, double[] py, Color c) {

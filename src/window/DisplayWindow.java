@@ -1,4 +1,4 @@
-package application;
+package window;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -7,6 +7,10 @@ import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import application.Conversion;
+import global.FileHandler;
+import global.G;
 
 @SuppressWarnings("serial")
 public class DisplayWindow extends JFrame {
@@ -35,8 +39,8 @@ public class DisplayWindow extends JFrame {
         		
         		BufferedImage originalImg = FileHandler.getImage(file);
         		
-        		for (int attempt = 1; attempt <= G.attempts; attempt++) {
-		        	G.reset();
+        		for (int attempt = 1; attempt <= G.getMaxAttempts(); attempt++) {
+		        	global.G.reset();
 		        	setTitle(G.getTitle(attempt));
 		        	
 		        	window.startConversion(file);
@@ -86,7 +90,7 @@ public class DisplayWindow extends JFrame {
 					while (!isInterrupted()) {
 						repaint();
 						try {
-							sleep(G.repaintWait);
+							sleep(G.getPaintWait());
 						} catch (InterruptedException e) {}
 					}
 				}

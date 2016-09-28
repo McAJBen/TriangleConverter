@@ -1,10 +1,10 @@
-package application;
+package global;
 
 import java.util.Random;
 
 public class G {
 	
-	static final Random RANDOM = new Random();
+	private static final Random RANDOM = new Random();
 	
 	static boolean
 		preDraw = true,
@@ -35,7 +35,39 @@ public class G {
 		postProcessingRandom = false,
 		finalScaleRandom = false;
 	
-	static void reset() {
+	public static double getScale() {
+		return scale;
+	}
+	
+	public static double getPostScale() {
+		return postScale;
+	}
+	
+	public static double getFinalScale() {
+		return finalScale;
+	}
+	
+	public static boolean getDisplay() {
+		return display;
+	}
+	
+	public static boolean getPostProcessing() {
+		return postProcessing;
+	}
+	
+	public static int getMaxAttempts() {
+		return attempts;
+	}
+	
+	public static double getRandDouble() {
+		return RANDOM.nextDouble();
+	}
+	
+	public static int getRandInt(int i) {
+		return RANDOM.nextInt(i);
+	}
+	
+	public static void reset() {
 		Random rand = new Random();
 		if (postProcessingRandom) {
 			postProcessing = rand.nextBoolean();
@@ -45,10 +77,10 @@ public class G {
 		samples = rand.nextInt(samplesMax - samplesMin + 1) + samplesMin;
 		if (randomBlocksRandom) {
 			if (rand.nextBoolean()) {
-				randomBlocks = rand.nextInt(blocksWide) * blocksWide;
+				blocksWide = rand.nextInt(getBlocksWide()) * getBlocksWide();
 			}
 			else {
-				randomBlocks = 0;
+				blocksWide = 0;
 			}
 		}
 		if (scaleRandom) {
@@ -85,8 +117,8 @@ public class G {
 		}
 	}
 	
-	static String getTitle(int attempt) {
-		return  " TC Wi:" + G.blocksWide +
+	public static String getTitle(int attempt) {
+		return  " TC Wi:" + G.getBlocksWide() +
         		" Tr:" + G.triangles +
         		" Sa:" + G.samples +
         		" Th:" + G.threadCount +
@@ -94,6 +126,38 @@ public class G {
         		" Sc:" + G.scale +
         		" > "  + G.postScale +
         		" > "  + G.finalScale +
-        		" RB:" + G.randomBlocks;
+        		" RB:" + G.getRandomBlocks();
+	}
+
+	public static int getThreadCount() {
+		return threadCount;
+	}
+	
+	public static int getMaxSamples() {
+		return samples;
+	}
+
+	public static int getBlocksWide() {
+		return blocksWide;
+	}
+
+	public static int getRandomBlocks() {
+		return randomBlocks;
+	}
+	
+	public static double getTotalScale() {
+		return scale * postScale * finalScale;
+	}
+	
+	public static int getTriangles() {
+		return triangles;
+	}
+	
+	public static boolean getPreDraw() {
+		return preDraw;
+	}
+	
+	public static int getPaintWait() {
+		return repaintWait;
 	}
 }
