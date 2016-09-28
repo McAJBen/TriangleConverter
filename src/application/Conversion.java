@@ -11,11 +11,9 @@ public class Conversion {
 	private BufferedImage newImg;
 	private File file;
 	private BlockThreadHandler blockThread;
-	private int attemptNum;
 	
-	Conversion(File f, int attemptNumber) {
+	Conversion(File f) {
 		file = f;
-		attemptNum = attemptNumber;
 	}
 
 	void startConversion() {
@@ -26,19 +24,14 @@ public class Conversion {
 				(int) (originalImg.getHeight() * G.postScale * G.scale * G.finalScale),
 				originalImg.getType());
 		
-        
         blockThread = new btGrid(originalImg, newImg);
 		blockThread.startConversion();
 		
         blockThread = new btRandom(originalImg, newImg);
         blockThread.startConversion();
         
-		if (attemptNum >= G.attempts - 1) {
-			file.delete();
-			FileHandler.putImageInFile(file, "Original", originalImg, "");
-		}
 		FileHandler.putImageInFile(file, "New", newImg,
-				"_" + (G.triangles * (G.blocksWide * G.blocksWide + G.randomBlocks)) + "_" + attemptNum);
+				"_" + (G.triangles * (G.blocksWide * G.blocksWide + G.randomBlocks))); // TODO increment or unique id
 		
 		blockThread = null;
 	}
@@ -61,7 +54,6 @@ public class Conversion {
     }
 
 	public String getPercentDone() {
-		//String s = blockThread.getClass().getSimpleName();
 		return blockThread.getPercentDone();
 	}
 }

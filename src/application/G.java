@@ -35,7 +35,7 @@ public class G {
 		postProcessingRandom = false,
 		finalScaleRandom = false;
 	
-	static void reset(int attempt) {
+	static void reset() {
 		Random rand = new Random();
 		if (postProcessingRandom) {
 			postProcessing = rand.nextBoolean();
@@ -58,19 +58,30 @@ public class G {
 			postScale = getRandomScale(rand);
 		}
 		if (finalScaleRandom) {
-			finalScale = getRandomScale(rand) * 2.0;
+			finalScale = getRandomScale(rand);
 		}
 	}
 	
 	private static double getRandomScale(Random r) {
-		switch (r.nextInt(3)) {
-		case 0:
-			return 0.5;
-		case 1:
-		default:
-			return 1.0;
-		case 2:
-			return 2.0;
+		switch (r.nextInt(12)) {
+			default:
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+				return 1.0;
+			case 6:
+			case 7:
+				return 2.0;
+			case 8:
+			case 9:
+				return 0.5;
+			case 10:
+				return 4.0;
+			case 11:
+				return 0.25;
 		}
 	}
 	

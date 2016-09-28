@@ -71,14 +71,9 @@ public class FileHandler {
     		try {
     			b =  ImageIO.read(file);
     		} catch (IOException e) {
-    			System.out.println("ERROR: Could not read file" + file.getName());
+    			System.out.println("ERROR: Could not read file " + file.getName());
     		}
     	} while (b == null);
 		return b;
-	}
-
-	public static int getPixels(File file) {
-		BufferedImage b = getImage(file);
-		return b.getWidth() * b.getHeight();
 	}
 }
