@@ -68,34 +68,51 @@ public class G {
 	}
 	
 	public static void reset() {
-		Random rand = new Random();
 		if (postProcessingRandom) {
-			postProcessing = rand.nextBoolean();
+			postProcessing = RANDOM.nextBoolean();
 		}
-		blocksWide = rand.nextInt(blocksWideMax - blocksWideMin + 1) + blocksWideMin;
-		triangles = rand.nextInt(trianglesMax - trianglesMin + 1) + trianglesMin;
-		samples = rand.nextInt(samplesMax - samplesMin + 1) + samplesMin;
+		blocksWide = RANDOM.nextInt(blocksWideMax - blocksWideMin + 1) + blocksWideMin;
+		triangles = RANDOM.nextInt(trianglesMax - trianglesMin + 1) + trianglesMin;
+		samples = RANDOM.nextInt(samplesMax - samplesMin + 1) + samplesMin;
 		if (randomBlocksRandom) {
-			if (rand.nextBoolean()) {
-				randomBlocks = rand.nextInt(getBlocksWide()) * getBlocksWide();
+			if (RANDOM.nextBoolean()) {
+				randomBlocks = RANDOM.nextInt(getBlocksWide()) * getBlocksWide();
 			}
 			else {
 				randomBlocks = 0;
 			}
 		}
 		if (scaleRandom) {
-			scale = getRandomScale(rand);
+			scale = getRandomScale();
 		}
 		if (postScaleRandom) {
-			postScale = getRandomScale(rand);
+			postScale = getRandomScalePos();
 		}
 		if (finalScaleRandom) {
-			finalScale = getRandomScale(rand);
+			finalScale = getRandomScalePos();
 		}
 	}
 	
-	private static double getRandomScale(Random r) {
-		switch (r.nextInt(12)) {
+	private static double getRandomScalePos() {
+		switch (RANDOM.nextInt(9)) {
+			default:
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+				return 1.0;
+			case 6:
+			case 7:
+				return 2.0;
+			case 8:
+				return 4.0;
+		}
+	}
+	
+	private static double getRandomScale() {
+		switch (RANDOM.nextInt(12)) {
 			default:
 			case 0:
 			case 1:
