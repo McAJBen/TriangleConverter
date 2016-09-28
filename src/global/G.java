@@ -77,10 +77,10 @@ public class G {
 		samples = rand.nextInt(samplesMax - samplesMin + 1) + samplesMin;
 		if (randomBlocksRandom) {
 			if (rand.nextBoolean()) {
-				blocksWide = rand.nextInt(getBlocksWide()) * getBlocksWide();
+				randomBlocks = rand.nextInt(getBlocksWide()) * getBlocksWide();
 			}
 			else {
-				blocksWide = 0;
+				randomBlocks = 0;
 			}
 		}
 		if (scaleRandom) {
