@@ -34,7 +34,7 @@ public class Block {
 
 	public Block(BufferedImage compareImg, Dimension size, ArrayList<Triangle> triangles) {
 		
-		compareChunk = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+		compareChunk = new BufferedImage(size.width, size.height, BufferedImage.TYPE_4BYTE_ABGR);
 		compareChunk.createGraphics().drawImage(compareImg, 0, 0, size.width, size.height, null);
 		
 		bestTriFile = new TrianglesFile(triangles, size);
@@ -45,7 +45,7 @@ public class Block {
 	
 	public Block(BufferedImage compareImg, BufferedImage baseImg, Dimension size, ArrayList<Triangle> triangles) {
 		
-		compareChunk = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+		compareChunk = new BufferedImage(size.width, size.height, BufferedImage.TYPE_3BYTE_BGR);
 		compareChunk.createGraphics().drawImage(compareImg, 0, 0, size.width, size.height, null);
 		
 		bestTriFile = new TrianglesFile(triangles, size, baseImg);

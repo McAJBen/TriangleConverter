@@ -116,32 +116,42 @@ public class TrianglesFile {
 		return 1-score;
 	}
 	
-	static double compare(BufferedImage original, BufferedImage newImg) {
-		double score = compareTotal(original, newImg);
-		score /= (newImg.getWidth() * newImg.getHeight() * MAX_SCORE);
-		return 1-score;
-	}
-	
-	private static double compareTotal(BufferedImage original, BufferedImage newImg) {
+	private double compareTotal(BufferedImage original, BufferedImage newImg) {
 		double score = 0;
 		
-		int[] newImgCol = new int[newImg.getWidth() * newImg.getHeight() * 4];
-		int[] originCol = new int[newImgCol.length];
-		newImg.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), newImgCol);
-		original.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
-		
-		for (int i = 0; i < newImgCol.length; i += 4) {
-			if (newImgCol[i + 3] != 255) {
-				score += MAX_SCORE;
+		if (baseImg == null) {
+			int[] newImgCol = new int[newImg.getWidth() * newImg.getHeight() * 4];
+			int[] originCol = new int[newImgCol.length];
+			newImg.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), newImgCol);
+			original.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
+			
+			for (int i = 0; i < newImgCol.length; i += 4) {
+				if (newImgCol[i + 3] != 255 && baseImg == null) {
+					score += MAX_SCORE;
+				}
+				else {
+					score += Math.sqrt(
+						Math.pow(originCol[i] - newImgCol[i], 2) +
+						Math.pow(originCol[i + 1] - newImgCol[i + 1], 2) +
+						Math.pow(originCol[i + 2] - newImgCol[i + 2], 2));
+				}
 			}
-			else {
+			return score;
+		}
+		else {
+			int[] newImgCol = new int[newImg.getWidth() * newImg.getHeight() * 3];
+			int[] originCol = new int[newImgCol.length];
+			newImg.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), newImgCol);
+			original.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
+			
+			for (int i = 0; i < newImgCol.length; i += 3) {
 				score += Math.sqrt(
 					Math.pow(originCol[i] - newImgCol[i], 2) +
 					Math.pow(originCol[i + 1] - newImgCol[i + 1], 2) +
 					Math.pow(originCol[i + 2] - newImgCol[i + 2], 2));
 			}
+			return score;
 		}
-		return score;
 	}
 	
 	private boolean hasAlpha(BufferedImage b) {
@@ -155,7 +165,7 @@ public class TrianglesFile {
 		return false;
 	}
 
-	public boolean hasAlpha() {
+	public boolean hasAlpha() { // TODO test BufferdImg transparacy
 		if (baseImg == null) {
 			createImg();
 			return hasAlpha(image);
@@ -206,11 +216,13 @@ public class TrianglesFile {
 	
 	private BufferedImage makeImg(int width, int height) {
 		
-		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage img = baseImg == null ?
+				new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR):
+				new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 	    Graphics2D g2d = img.createGraphics();
 	    
 	    if (baseImg != null) {
-	    	g2d.drawImage(baseImg, 0, 0, width, height, null); // TODO convert to raster
+	    	g2d.drawImage(baseImg, 0, 0, width, height, null);
 	    }
 	    
 		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);

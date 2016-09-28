@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.RasterFormatException;
 import java.io.File;
 
 import blockStructure.BlockThreadHandler;
@@ -25,6 +26,19 @@ public class Conversion {
 
 	public void startConversion() {
 		BufferedImage originalImg = FileHandler.getImage(file);
+		if (originalImg.getType() == BufferedImage.TYPE_4BYTE_ABGR) {
+			int[] pix3 = new int[originalImg.getWidth() * originalImg.getHeight() * 3];
+			int[] pix4 = new int[originalImg.getWidth() * originalImg.getHeight() * 4];
+			originalImg.getRaster().getPixels(0, 0, originalImg.getWidth(), originalImg.getHeight(), pix4);
+			
+			for (int i = 0; i < originalImg.getWidth() * originalImg.getHeight(); i++) {
+				pix3[i * 3    ] = pix4[i * 4];
+				pix3[i * 3 + 1] = pix4[i * 4 + 1];
+				pix3[i * 3 + 2] = pix4[i * 4 + 2];
+	    	}
+	    	originalImg = new BufferedImage(originalImg.getWidth(), originalImg.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+	    	originalImg.getRaster().setPixels(0, 0, originalImg.getWidth(), originalImg.getHeight(), pix3);
+		}
 		
 		newImg = new BufferedImage(
 				(int) (originalImg.getWidth() * G.getTotalScale()),
@@ -34,8 +48,12 @@ public class Conversion {
         blockThread = new btGrid(originalImg, newImg);
 		blockThread.startConversion();
 		
+		long startTime = System.currentTimeMillis();
+		
         blockThread = new btRandom(originalImg, newImg);
         blockThread.startConversion();
+        
+        System.out.println(System.currentTimeMillis() - startTime);
         
 		FileHandler.putImageInFile(file, "New", newImg, G.getShortTitle());
 		
