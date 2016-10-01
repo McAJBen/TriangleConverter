@@ -61,8 +61,8 @@ public class TrianglesFile {
 			return;
 		}
 		int i = getRandomTri();
-		double xp[] = triangles.get(i).getXpoints();
-		double yp[] = triangles.get(i).getYpoints();
+		float xp[] = triangles.get(i).getXpoints();
+		float yp[] = triangles.get(i).getYpoints();
 		for (int j = 0; j < 3; j++) {
 			xp[j] += G.getRandDouble() / 5 - 0.1;
 			yp[j] += G.getRandDouble() / 5 - 0.1;
@@ -79,11 +79,11 @@ public class TrianglesFile {
 			return;
 		}
 		int i = getRandomTri();
-		double xp[] = triangles.get(i).getXpoints();
-		double yp[] = triangles.get(i).getYpoints();
+		float xp[] = triangles.get(i).getXpoints();
+		float yp[] = triangles.get(i).getYpoints();
 		for (int j = 0; j < 3; j++) {
-			xp[j] = G.getRandDouble();
-			yp[j] = G.getRandDouble();
+			xp[j] = G.getRandFloat();
+			yp[j] = G.getRandFloat();
 		}
 		triangles.set(i, new Triangle(xp, yp, triangles.get(i).getColor()));
 	}
@@ -238,7 +238,7 @@ public class TrianglesFile {
 		return (int) Math.pow(G.getRandInt((int) Math.pow(triangles.size(), FACT)), FACT_INVERSE);
 	}
 	
-	private double checkBounds(double n, int max) {
+	private float checkBounds(float n, int max) {
 		if (n > max) {
 			return max;
 		}

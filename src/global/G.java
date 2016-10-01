@@ -187,4 +187,8 @@ public class G {
 	public static int getPaintWait() {
 		return repaintWait;
 	}
+
+	public static float getRandFloat() {
+		return RANDOM.nextFloat();
+	}
 }

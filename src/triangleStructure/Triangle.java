@@ -2,37 +2,26 @@ package triangleStructure;
 
 import java.awt.Color;
 import java.awt.Polygon;
-import java.util.ArrayList;
 
 import global.G;
 
 public class Triangle {
 	private static final int SIDES = 3;
-	private double[] Xpoints = new double[SIDES];
-	private double[] Ypoints = new double[SIDES];
+	private float[] Xpoints = new float[SIDES];
+	private float[] Ypoints = new float[SIDES];
 	private Color color;
 	
 	public Triangle() {
 		for (int i = 0; i < SIDES; i++) {
-			Xpoints[i] = G.getRandDouble();
-			Ypoints[i] = G.getRandDouble();
+			Xpoints[i] = G.getRandFloat();
+			Ypoints[i] = G.getRandFloat();
 		}
 		color = new Color(G.getRandInt(256), G.getRandInt(256), G.getRandInt(256));
 	}
 	
-	Triangle(double[] px, double[] py, Color c) {
+	Triangle(float[] px, float[] py, Color c) {
 		Xpoints = px.clone();
 		Ypoints = py.clone();
-		setColor(c);
-	}
-	
-	Triangle(ArrayList<Double> px, ArrayList<Double> py, Color c) {
-		Xpoints = new double[SIDES];
-		Ypoints = new double[SIDES];
-		for (int i = 0; i < SIDES; i++) {
-			Xpoints[i] = px.get(i);
-			Ypoints[i] = py.get(i);
-		}
 		setColor(c);
 	}
 	
@@ -52,11 +41,11 @@ public class Triangle {
 		return new Polygon(xp, yp, SIDES);
 	}
 	
-	double[] getXpoints() {
+	float[] getXpoints() {
 		return Xpoints.clone();
 	}
 	
-	double[] getYpoints() {
+	float[] getYpoints() {
 		return Ypoints.clone();
 	}
 	
