@@ -27,8 +27,8 @@ public class Settings {
 		POST_SCALE_ID = "POST_SCALE",
 		FINAL_SCALE_ID = "FINAL_SCALE",
 		// FORMAT
-		IDENTIFIER_SYMBOL = ":",
-		COMMENT_SYMBOL = "#",
+		ID_SYMB = ":",
+		COMENT_SYMB = "#",
 		RANDOM_ID = "RANDOM",
 		MIN_ID = "_MIN",
 		MAX_ID = "_MAX";
@@ -66,9 +66,9 @@ public class Settings {
 			}
 			// if line == null continue to check if there are any more lines
 			// if line begins with comment symbol, ignore the line
-			if (settingsString != null && !settingsString.startsWith(COMMENT_SYMBOL)) {
+			if (settingsString != null && !settingsString.startsWith(COMENT_SYMB)) {
 				
-				String[] split = settingsString.split(IDENTIFIER_SYMBOL);
+				String[] split = settingsString.split(ID_SYMB);
 				// if line does not have identifier ignore it
 				if (split.length != 2) {
 					continue;
@@ -166,30 +166,30 @@ public class Settings {
 	private static void createSettingsFile() {
 		// create default settings strings
 		String settingsString = 
-				COMMENT_SYMBOL + "All Comments must begin with " + COMMENT_SYMBOL 	+ "\n\n" +
+				COMENT_SYMB + "All Comments must begin with " + COMENT_SYMB 	+ "\n\n" +
 		
-				COMMENT_SYMBOL + "Integer variables\n" +
-				BLOCKS_WIDE_ID + MIN_ID		+ IDENTIFIER_SYMBOL + G.blocksWideMin	+ "\n" +
-				BLOCKS_WIDE_ID + MAX_ID		+ IDENTIFIER_SYMBOL + G.blocksWideMax	+ "\n" +
-				MAX_TRIANGLES_ID + MIN_ID	+ IDENTIFIER_SYMBOL + G.trianglesMin	+ "\n" +
-				MAX_TRIANGLES_ID + MAX_ID	+ IDENTIFIER_SYMBOL + G.trianglesMax 	+ "\n" +
-				SAMPLES_ID + MIN_ID			+ IDENTIFIER_SYMBOL + G.samplesMin		+ "\n" +
-				SAMPLES_ID + MAX_ID			+ IDENTIFIER_SYMBOL + G.samplesMax		+ "\n" +
-				RANDOM_BLOCKS_ID	+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
-				COMMENT_SYMBOL + "Thread count can be set to 'AUTO' \n" +
-				THREAD_COUNT_ID		+ IDENTIFIER_SYMBOL + "AUTO"			+ "\n" +
-				REPAINT_WAIT_ID		+ IDENTIFIER_SYMBOL + G.repaintWait		+ "\n" +
-				ATTEMPTS_ID			+ IDENTIFIER_SYMBOL + G.attempts		+ "\n\n" +
+				COMENT_SYMB + "Integer variables\n" +
+				BLOCKS_WIDE_ID + MIN_ID		+ ID_SYMB + G.blocksWideMin	+ "\n" +
+				BLOCKS_WIDE_ID + MAX_ID		+ ID_SYMB + G.blocksWideMax	+ "\n" +
+				MAX_TRIANGLES_ID + MIN_ID	+ ID_SYMB + G.trianglesMin	+ "\n" +
+				MAX_TRIANGLES_ID + MAX_ID	+ ID_SYMB + G.trianglesMax 	+ "\n" +
+				SAMPLES_ID + MIN_ID			+ ID_SYMB + G.samplesMin		+ "\n" +
+				SAMPLES_ID + MAX_ID			+ ID_SYMB + G.samplesMax		+ "\n" +
+				RANDOM_BLOCKS_ID	+ ID_SYMB + RANDOM_ID			+ "\n" +
+				COMENT_SYMB + "Thread count can be set to 'AUTO' \n" +
+				THREAD_COUNT_ID		+ ID_SYMB + "AUTO"			+ "\n" +
+				REPAINT_WAIT_ID		+ ID_SYMB + G.repaintWait		+ "\n" +
+				ATTEMPTS_ID			+ ID_SYMB + G.attempts		+ "\n\n" +
 				
-				COMMENT_SYMBOL + "Double variables\n" +
-				SCALE_ID			+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
-				POST_SCALE_ID		+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
-				FINAL_SCALE_ID		+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n\n" +
+				COMENT_SYMB + "Double variables\n" +
+				SCALE_ID			+ ID_SYMB + RANDOM_ID			+ "\n" +
+				POST_SCALE_ID		+ ID_SYMB + RANDOM_ID			+ "\n" +
+				FINAL_SCALE_ID		+ ID_SYMB + RANDOM_ID			+ "\n\n" +
 				
-				COMMENT_SYMBOL + "Boolean variables\n" +
-				POST_PROCESSING_ID	+ IDENTIFIER_SYMBOL + RANDOM_ID			+ "\n" +
-				PREDRAW_ID			+ IDENTIFIER_SYMBOL + G.preDraw			+ "\n" +
-				DISPLAY_ID			+ IDENTIFIER_SYMBOL + G.display;
+				COMENT_SYMB + "Boolean variables\n" +
+				POST_PROCESSING_ID	+ ID_SYMB + RANDOM_ID			+ "\n" +
+				PREDRAW_ID			+ ID_SYMB + G.preDraw			+ "\n" +
+				DISPLAY_ID			+ ID_SYMB + G.display;
 		// write default settings to file
 		try {
 			File settingsFile = new File(
