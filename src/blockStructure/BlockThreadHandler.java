@@ -31,7 +31,11 @@ public abstract class BlockThreadHandler {
 	abstract BlockLocation getNewBlockLocation();
 	abstract void removeBlockLocation(BlockLocation blockLocation);
 	abstract boolean usePreviousImage();
-	public abstract String getPercentDone();
+	public abstract double getPercent();
+	
+	public String getPercentDone() {
+		return String.format("%s %2.0f %%", getClass().getSimpleName(), getPercent() * 100);
+	}
 
 	public void startConversion() {
 		
@@ -152,4 +156,7 @@ public abstract class BlockThreadHandler {
 		}
 	}
 
+	public int getPercent(int width) {
+		return (int) (width * getPercent());
+	}
 }

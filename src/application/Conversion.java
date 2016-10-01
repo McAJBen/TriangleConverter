@@ -67,7 +67,11 @@ public class Conversion {
         g2d.drawImage(newImg, 0, 0, size.width, size.height - 14, null);
         
 		if (file != null && blockThread != null) {
+			g2d.setColor(Color.GREEN);
+			g2d.fillRect(0, size.height - 14, blockThread.getPercent(size.width), 14);
+			g2d.setColor(Color.BLACK);
 			g2d.drawString(file.getName() + " " + blockThread.getPercentDone(), 2, size.height - 2);
+			
 			if (G.getPreDraw()) {
 				size.height -= 14;
 				if (newImg != null) {
