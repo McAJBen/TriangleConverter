@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-
 import blockStructure.BlockThreadHandler;
 import blockStructure.btGrid;
 import blockStructure.btRandom;
@@ -16,7 +15,7 @@ import global.G;
 public class Conversion {
 	
 	private BufferedImage newImg;
-	private File file;
+	private final File file;
 	private BlockThreadHandler blockThread;
 	
 	public Conversion(File f) {
@@ -44,15 +43,11 @@ public class Conversion {
 				(int) (originalImg.getHeight() * G.getTotalScale()),
 				BufferedImage.TYPE_3BYTE_BGR);
 		
-		long startTime = System.currentTimeMillis();
-		
         blockThread = new btGrid(originalImg, newImg);
 		blockThread.startConversion();
 		
         blockThread = new btRandom(originalImg, newImg);
         blockThread.startConversion();
-        
-        System.out.println(System.currentTimeMillis() - startTime);
         
 		FileHandler.putImageInFile(file, "New", newImg, G.getShortTitle());
 		
@@ -62,25 +57,44 @@ public class Conversion {
 	public void paint(Graphics g, Dimension size) {
         Graphics2D g2d = (Graphics2D) g;
         
-        g2d.drawImage(newImg, 0, 0, size.width, size.height - 14, null);
+        g2d.drawImage(newImg, 0, 0, size.width, size.height, null);
         
-		if (file != null && blockThread != null) {
-			g2d.setColor(Color.GREEN);
-			g2d.fillRect(0, size.height - 14, blockThread.getPercent(size.width), 14);
-			g2d.setColor(Color.BLACK);
-			g2d.drawString(file.getName() + " " + blockThread.getPercentDone(), 1, size.height - 3);
-			
+		try {
 			if (G.getPreDraw()) {
-				size.height -= 14;
-				if (newImg != null) {
-					blockThread.paint(g2d, size);
-					g2d.setColor(Color.BLACK);
-				}
+				blockThread.paint(g2d, size);
+				g2d.setColor(Color.BLACK);
 			}
+		} catch (NullPointerException e) {
+			// blockThread not created
 		}
     }
+	
+	public String getInfo() {
+		try {
+			
+			return file.getName() + " " + 
+					blockThread.getPercentDone() +
+					" Run Time: " + blockThread.getRunTime() +
+					" End?: " + blockThread.getEstimatedEndTime();
+			
+		} catch (NullPointerException e) {
+			return file.getName();
+		}
+	}
+	
+	public File getFile() {
+		return file;
+	}
 
 	public String getPercentDone() {
 		return blockThread.getPercentDone();
+	}
+
+	public int getPercent(int width) {
+		try {
+			return (int) (blockThread.getPercent() * width);
+		} catch (NullPointerException e) {
+			return 0;
+		}
 	}
 }

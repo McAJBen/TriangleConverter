@@ -1,5 +1,6 @@
 package window;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -66,7 +67,15 @@ public class DisplayWindow extends JFrame {
 			super.paint(g);
 			if (conversion != null) {
 				try {
-					conversion.paint(g, getSize());
+					Dimension size = getSize();
+					g.setColor(Color.GREEN);
+					g.fillRect(0, size.height - 14, conversion.getPercent(size.width), 14);
+					g.setColor(Color.BLACK);
+					g.drawString(conversion.getInfo(), 1, size.height - 3);
+					
+					size.height -= 14;
+					conversion.paint(g, size);
+					
 				} catch (OutOfMemoryError e) {
 					g.drawString("Out of memory, not able to display :(", 5, 15);
 					g.drawString(conversion.getPercentDone(), 5, 30);

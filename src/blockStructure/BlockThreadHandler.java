@@ -13,13 +13,11 @@ public abstract class BlockThreadHandler {
 	
 	private static final Color PINK = new Color(255, 0, 255);
 	
-	private BufferedImage
-			originalImg, // original image being compared to
-			newImg; // image being changed
-	
+	private BufferedImage originalImg; // original image being compared to
+	private BufferedImage newImg; // image being changed
 	private BT[] BTArray;
-	
 	protected boolean allowAlpha;
+	private long startTime = -1;
 	
 	BlockThreadHandler(BufferedImage originalImg, BufferedImage newImg) {
 		this.originalImg = originalImg;
@@ -34,14 +32,29 @@ public abstract class BlockThreadHandler {
 	public abstract double getPercent();
 	
 	public String getPercentDone() {
-		return String.format("%s %2.0f %%", getClass().getSimpleName(), getPercent() * 100);
+		return String.format("%s %02.0f%%", getClass().getSimpleName(), getPercent() * 100);
+	}
+	
+	private long getSecondsFromStart() {
+		return (System.currentTimeMillis() - startTime) / 1000;
+	}
+	
+	public String getRunTime() {
+		long time = getSecondsFromStart();
+		return String.format("%01d:%02d:%02d", time / 3600, (time / 60) % 60, time % 60);
+	}
+	
+	public String getEstimatedEndTime() {
+		long runtime = getSecondsFromStart();
+		long endTime = (long) (runtime / getPercent()) - runtime;
+		return String.format("%01d:%02d:%02d", endTime / 3600, (endTime / 60) % 60, endTime % 60);
 	}
 
 	public void startConversion() {
-		
         for (int i = 0; i < BTArray.length; i++) {
            	BTArray[i] = new BT("" + i);
         }
+        startTime = System.currentTimeMillis();
         for (BT b: BTArray) {
         	b.start();
         }
@@ -154,9 +167,5 @@ public abstract class BlockThreadHandler {
 						rect.width, rect.height);
 			}
 		}
-	}
-
-	public int getPercent(int width) {
-		return (int) (width * getPercent());
 	}
 }
