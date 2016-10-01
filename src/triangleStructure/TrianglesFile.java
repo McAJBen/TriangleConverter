@@ -126,7 +126,7 @@ public class TrianglesFile {
 			original.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
 			
 			for (int i = 0; i < newImgCol.length; i += 4) {
-				if (newImgCol[i + 3] != 255 && baseImg == null) {
+				if (newImgCol[i + 3] != 255) {
 					score += MAX_SCORE;
 				}
 				else {

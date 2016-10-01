@@ -20,13 +20,13 @@ public class Triangle {
 	}
 	
 	Triangle(float[] px, float[] py, Color c) {
-		Xpoints = px.clone();
-		Ypoints = py.clone();
-		setColor(c);
+		Xpoints = px;
+		Ypoints = py;
+		color = c;
 	}
 	
 	Color getColor() {
-		return new Color(color.getRed(), color.getGreen(), color.getBlue());
+		return color;
 	}
 	
 	Polygon getPolygon(int width, int height) {
@@ -55,10 +55,7 @@ public class Triangle {
 	
 	@Override
 	public Triangle clone() {
-		return new Triangle(Xpoints.clone(), Ypoints.clone(), getColor());
+		return new Triangle(Xpoints.clone(), Ypoints.clone(), new Color(color.getRed(), color.getGreen(), color.getBlue()));
 	}
 
-	private void setColor(Color c) {
-		color = new Color(c.getRed(), c.getGreen(), c.getBlue());
-	}
 }
