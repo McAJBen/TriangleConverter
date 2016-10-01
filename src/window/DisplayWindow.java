@@ -4,10 +4,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
 import application.Conversion;
 import global.FileHandler;
 import global.G;
@@ -15,16 +13,13 @@ import global.G;
 @SuppressWarnings("serial")
 public class DisplayWindow extends JFrame {
 	
-	private static final Dimension
-		SCREEN_SIZE = new Dimension(500, 500),
-		SCREEN_OFFSET = new Dimension(7, 30);
+	private static final Dimension SCREEN_SIZE = new Dimension(500, 500);
+	private static final Dimension SCREEN_OFFSET = new Dimension(7, 30);
 	private Window window;
 	
 	public DisplayWindow() {
 		super();
-		
 		window = new Window();
-		
     	add(window);
     	setSize(SCREEN_SIZE.width + SCREEN_OFFSET.width, SCREEN_SIZE.height + SCREEN_OFFSET.height);
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,13 +31,10 @@ public class DisplayWindow extends JFrame {
 		while (true) {
         	File file = FileHandler.getFile();
         	if (file != null) {
-        		
         		BufferedImage originalImg = FileHandler.getImage(file);
-        		
         		for (int attempt = 1; attempt <= G.getMaxAttempts(); attempt++) {
 		        	global.G.reset();
 		        	setTitle(G.getTitle(attempt));
-		        	
 		        	window.startConversion(file);
         		}
         		file.delete();
@@ -64,11 +56,9 @@ public class DisplayWindow extends JFrame {
 		private void startConversion(File file) {
 			Thread repaintThread = getPaintThread();
 			conversion = new Conversion(file);
-			
         	repaintThread.start();
         	conversion.startConversion();
         	repaintThread.interrupt();
-        	
         	conversion = null;
 		}
 		

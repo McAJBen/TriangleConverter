@@ -57,5 +57,4 @@ public class Triangle {
 	public Triangle clone() {
 		return new Triangle(Xpoints.clone(), Ypoints.clone(), new Color(color.getRed(), color.getGreen(), color.getBlue()));
 	}
-
 }

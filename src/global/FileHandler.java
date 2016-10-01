@@ -52,9 +52,7 @@ public class FileHandler {
 	}
 	
 	public static void putImageInFile(File f, String folder, BufferedImage image, String append) {
-		
 		File fi = toFile(f, folder, append);
-		
 	    try {
 	    	if (!fi.exists()) {
 	    		fi.mkdirs();

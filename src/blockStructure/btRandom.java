@@ -12,20 +12,14 @@ public class btRandom extends BlockThreadHandler {
 	private int randomPlacementsDone;
 	private final Dimension defaultSize;
 	private Dimension imageSize;
-	
 	private ArrayList<Rectangle> alreadyTakenBlocks;
 	
 	public btRandom(BufferedImage originalImg, BufferedImage newImg) {
 		super(originalImg, newImg);
-		
 		allowAlpha = true;
-		
 		randomPlacementsDone = 0;
-		
 		imageSize = new Dimension(originalImg.getWidth(), originalImg.getHeight());
-		
 		defaultSize = new Dimension(imageSize.width / G.getBlocksWide(), imageSize.height / G.getBlocksWide());
-		
 		alreadyTakenBlocks = new ArrayList<>();
 	}
 

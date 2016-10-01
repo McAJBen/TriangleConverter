@@ -49,8 +49,6 @@ public class Conversion {
         blockThread = new btGrid(originalImg, newImg);
 		blockThread.startConversion();
 		
-		
-		
         blockThread = new btRandom(originalImg, newImg);
         blockThread.startConversion();
         
@@ -70,7 +68,7 @@ public class Conversion {
 			g2d.setColor(Color.GREEN);
 			g2d.fillRect(0, size.height - 14, blockThread.getPercent(size.width), 14);
 			g2d.setColor(Color.BLACK);
-			g2d.drawString(file.getName() + " " + blockThread.getPercentDone(), 2, size.height - 2);
+			g2d.drawString(file.getName() + " " + blockThread.getPercentDone(), 1, size.height - 3);
 			
 			if (G.getPreDraw()) {
 				size.height -= 14;

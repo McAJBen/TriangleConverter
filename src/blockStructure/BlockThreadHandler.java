@@ -103,8 +103,8 @@ public abstract class BlockThreadHandler {
 				}
 				if (G.getPostProcessing()) {
 					Block block = allowAlpha ? 
-							new Block(compareImage, baseImg, blockLocation.first.getSize(), bestBlock.getTriangles()):
-							new Block(compareImage, blockLocation.first.getSize(), bestBlock.getTriangles());
+							new Block(compareImage, baseImg, blockLocation.second.getSize(), bestBlock.getTriangles()):
+							new Block(compareImage, blockLocation.second.getSize(), bestBlock.getTriangles());
 					compute(block);
 					bestBlock = block;
 				}

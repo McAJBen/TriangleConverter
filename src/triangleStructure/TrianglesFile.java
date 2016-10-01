@@ -3,31 +3,24 @@ package triangleStructure;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
 import global.G;
 
 public class TrianglesFile {
 	
 	private static final int FACT = 3;
-	private static final double FACT_INVERSE = 1.0 / FACT, 
-			MAX_SCORE = Math.pow(195075, 0.5);
-	
+	private static final double FACT_INVERSE = 1.0 / FACT;
+	private static final double	MAX_SCORE = Math.pow(195075, 0.5);
+	private ArrayList<Triangle> triangles;
+	private BufferedImage image;
+	private BufferedImage baseImg;
 	private Dimension imageSize;
-	private ArrayList<Triangle> triangles = new ArrayList<Triangle>();
-	private BufferedImage
-					image,
-					baseImg;
-	private boolean imageMade = false;
 	private double totalPossibleScore;
-	
-	public TrianglesFile(TrianglesFile tf) {
-		this(tf.getTriangles(), tf.imageSize, tf.baseImg);
-	}
+	private boolean imageMade = false;
 	
 	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension) {
+		triangles = new ArrayList<Triangle>();
 		for (int i = 0; i < trArray.size(); i++) {
 			this.triangles.add(trArray.get(i));
 		}
@@ -36,12 +29,12 @@ public class TrianglesFile {
 		baseImg = null;
 	}
 	
+	public TrianglesFile(TrianglesFile tf) {
+		this(tf.getTriangles(), tf.imageSize, tf.baseImg);
+	}
+	
 	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension, BufferedImage baseChunk) {
-		for (int i = 0; i < trArray.size(); i++) {
-			this.triangles.add(trArray.get(i));
-		}
-		imageSize = dimension.getSize();
-		totalPossibleScore = MAX_SCORE * imageSize.getWidth() * imageSize.getHeight();
+		this(trArray, dimension);
 		baseImg = baseChunk;
 	}
 	
@@ -66,7 +59,6 @@ public class TrianglesFile {
 		for (int j = 0; j < 3; j++) {
 			xp[j] += G.getRandDouble() / 5 - 0.1;
 			yp[j] += G.getRandDouble() / 5 - 0.1;
-			
 			xp[j] = checkBounds(xp[j], 1);
 			yp[j] = checkBounds(yp[j], 1);
 		}
@@ -124,7 +116,6 @@ public class TrianglesFile {
 			int[] originCol = new int[newImgCol.length];
 			newImg.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), newImgCol);
 			original.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
-			
 			for (int i = 0; i < newImgCol.length; i += 4) {
 				if (newImgCol[i + 3] != 255) {
 					score += MAX_SCORE;
@@ -143,7 +134,6 @@ public class TrianglesFile {
 			int[] originCol = new int[newImgCol.length];
 			newImg.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), newImgCol);
 			original.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
-			
 			for (int i = 0; i < newImgCol.length; i += 3) {
 				score += Math.sqrt(
 					Math.pow(originCol[i] - newImgCol[i], 2) +
@@ -215,17 +205,13 @@ public class TrianglesFile {
 	}
 	
 	private BufferedImage makeImg(int width, int height) {
-		
 		BufferedImage img = baseImg == null ?
 				new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR):
 				new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 	    Graphics2D g2d = img.createGraphics();
-	    
 	    if (baseImg != null) {
 	    	g2d.drawImage(baseImg, 0, 0, width, height, null);
 	    }
-	    
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		for (int i = 0; i < triangles.size(); i++) {
 			g2d.setColor(triangles.get(i).getColor());
 			g2d.fillPolygon(triangles.get(i).getPolygon(width, height));
