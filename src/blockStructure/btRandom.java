@@ -29,7 +29,7 @@ public class btRandom extends BlockThreadHandler {
 	}
 
 	@Override
-	synchronized BlockLocation getNewBlockLocation() {
+	BlockLocation getNewBlockLocation() {
 		randomPlacementsDone++;
 		Rectangle orig,
 				first,
@@ -38,14 +38,10 @@ public class btRandom extends BlockThreadHandler {
 		BlockLocation bl;
 		do {
 			Dimension size = getBlock();
-			
-			do {
-				orig = new Rectangle(
-						G.getRandInt(imageSize.width - size.width),
-						G.getRandInt(imageSize.height - size.height),
-						size.width,
-						size.height);
-			} while (collides(orig) || orig.width <= 0 || orig.height <= 0);
+			orig = getRandomRect(size);
+			while (collides(orig) || orig.width <= 0 || orig.height <= 0) {
+				orig = getRandomRect(size);
+			}
 			
 			first = toRectangle(orig, G.getScale());
 			second = toRectangle(first, G.getPostScale());
@@ -57,9 +53,15 @@ public class btRandom extends BlockThreadHandler {
 				second.width <= 0 || second.height <= 0 ||
 				third.width <= 0 || third.height <= 0);
 		
-		alreadyTakenBlocks.add(bl.original);
-		
 		return bl;
+	}
+	
+	private Rectangle getRandomRect(Dimension size) {
+		return new Rectangle(
+				G.getRandInt(imageSize.width - size.width),
+				G.getRandInt(imageSize.height - size.height),
+				size.width,
+				size.height);
 	}
 	
 	private static Rectangle toRectangle(Rectangle r, double scale) {
@@ -72,7 +74,7 @@ public class btRandom extends BlockThreadHandler {
 
 	@Override
 	void removeBlockLocation(BlockLocation blockLocation) {
-		synchronized(this) {
+		synchronized(alreadyTakenBlocks) {
 			alreadyTakenBlocks.remove(blockLocation.original);
 		}
 	}
@@ -85,13 +87,16 @@ public class btRandom extends BlockThreadHandler {
 		return r;
 	}
 	
-	private synchronized boolean collides(Rectangle rect) {
-		for (int i = 0; i < alreadyTakenBlocks.size(); i++) {
-			if (alreadyTakenBlocks.get(i).intersects(rect)) {
-				return true;
+	private boolean collides(Rectangle rect) {
+		synchronized (alreadyTakenBlocks) {
+			for (Rectangle bl: alreadyTakenBlocks) {
+				if (bl.intersects(rect)) {
+					return true;
+				}
 			}
+			alreadyTakenBlocks.add(rect);
+			return false;
 		}
-		return false;
 	}
 	
 	@Override

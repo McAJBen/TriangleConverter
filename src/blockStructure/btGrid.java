@@ -109,14 +109,16 @@ public class btGrid extends BlockThreadHandler {
 		}
 	}
 
-	private synchronized Point getNextPos() {
-		Point p = (Point) nextPos.clone();
-		nextPos.x++;
-		if (nextPos.x >= G.getBlocksWide()) {
-			nextPos.y++;
-			nextPos.x = 0;
+	private Point getNextPos() {
+		synchronized (nextPos) {
+			Point p = (Point) nextPos.clone();
+			nextPos.x++;
+			if (nextPos.x >= G.getBlocksWide()) {
+				nextPos.y++;
+				nextPos.x = 0;
+			}
+			return p;
 		}
-		return p;
 	}
 	
 	@Override

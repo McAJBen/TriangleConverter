@@ -76,8 +76,10 @@ public abstract class BlockThreadHandler {
 		}
 	}
 	
-	private synchronized void paintTo(BufferedImage b, Rectangle rect) {
-		newImg.createGraphics().drawImage(b, rect.x, rect.y, rect.width, rect.height, null);
+	private void paintTo(BufferedImage b, Rectangle rect) {
+		synchronized (newImg) {
+			newImg.createGraphics().drawImage(b, rect.x, rect.y, rect.width, rect.height, null);
+		}
 	}
 
 	private static BufferedImage getSubImage(BufferedImage b, Rectangle r) {
@@ -88,15 +90,18 @@ public abstract class BlockThreadHandler {
 
 		private BufferedImage currentTestImage;
 		private BlockLocation blockLocation;
+		private boolean active;
 		
 		public void run() {
 			while (!isDone()) {
 				
 				Block bestBlock = null;
 				blockLocation = getNewBlockLocation();
+				active = true;
 				BufferedImage compareImage = getSubImage(originalImg, blockLocation.original);
 				BufferedImage baseImg = getSubImage(newImg, blockLocation.third);
 				if (blockLocation == null) {
+					active = false;
 					break;
 				}
 				{
@@ -120,8 +125,7 @@ public abstract class BlockThreadHandler {
 					compute(block);
 					bestBlock = block;
 				}
-				
-				
+				active = false;
 				paintTo(bestBlock.getImage(blockLocation.third.getSize()), blockLocation.third);
 				removeBlockLocation(blockLocation);
 			}
@@ -140,10 +144,11 @@ public abstract class BlockThreadHandler {
 		private BT(String string) {
 			super(string);
 			currentTestImage = null;
+			active = false;
 		}
 		
 		private void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
-			if (currentTestImage != null && blockLocation != null) {
+			if (active && currentTestImage != null) {
 				
 				Rectangle rect = new Rectangle(
 						blockLocation.third.x * windowSize.width / origW,
