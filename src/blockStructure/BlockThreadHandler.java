@@ -157,7 +157,7 @@ public abstract class BlockThreadHandler {
 						blockLocation.third.height * windowSize.height / origH);
 				
 				g.drawImage(currentTestImage,
-						rect.x, rect.y,
+						rect.x + 1, rect.y + 1,
 						rect.width, rect.height, null);
 				
 				g.setColor(PINK);
