@@ -31,10 +31,10 @@ public class btRandom extends BlockThreadHandler {
 	@Override
 	synchronized BlockLocation getNewBlockLocation() {
 		randomPlacementsDone++;
-		Rectangle orig = new Rectangle(),
-				first = new Rectangle(),
-				second = new Rectangle(),
-				third = new Rectangle();
+		Rectangle orig,
+				first,
+				second,
+				third;
 		BlockLocation bl;
 		do {
 			Dimension size = getBlock();
@@ -47,24 +47,9 @@ public class btRandom extends BlockThreadHandler {
 						size.height);
 			} while (collides(orig) || orig.width <= 0 || orig.height <= 0);
 			
-			first = new Rectangle(
-					(int)(orig.x * G.getScale()),
-					(int)(orig.y * G.getScale()),
-					(int)(orig.width * G.getScale()),
-					(int)(orig.height * G.getScale()));
-			
-			second = new Rectangle(
-					(int)(first.x * G.getPostScale()),
-					(int)(first.y * G.getPostScale()),
-					(int)(first.width * G.getPostScale()),
-					(int)(first.height * G.getPostScale()));
-			
-			third = new Rectangle(
-					(int)(second.x * G.getFinalScale()),
-					(int)(second.y * G.getFinalScale()),
-					(int)(second.width * G.getFinalScale()),
-					(int)(second.height * G.getFinalScale()));
-			
+			first = toRectangle(orig, G.getScale());
+			second = toRectangle(first, G.getPostScale());
+			third = toRectangle(second, G.getFinalScale());
 			bl = new BlockLocation(orig, first, second, third);
 			
 		} while (
@@ -75,6 +60,14 @@ public class btRandom extends BlockThreadHandler {
 		alreadyTakenBlocks.add(bl.original);
 		
 		return bl;
+	}
+	
+	private static Rectangle toRectangle(Rectangle r, double scale) {
+		return new Rectangle(
+				(int)(r.x * scale),
+				(int)(r.y * scale),
+				(int)(r.width * scale),
+				(int)(r.height * scale));
 	}
 
 	@Override
@@ -99,11 +92,6 @@ public class btRandom extends BlockThreadHandler {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	boolean usePreviousImage() {
-		return true;
 	}
 	
 	@Override

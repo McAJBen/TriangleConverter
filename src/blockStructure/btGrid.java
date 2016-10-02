@@ -51,47 +51,39 @@ public class btGrid extends BlockThreadHandler {
 	@Override
 	public BlockLocation getNewBlockLocation() {
 		
-		Rectangle orig = new Rectangle();
-		Rectangle first = new Rectangle();
-		Rectangle second = new Rectangle();
-		Rectangle third = new Rectangle();
+		Rectangle orig;
+		Rectangle first;
+		Rectangle second;
+		Rectangle third;
 		
 		do {
 			Point position = getNextPos();
 			if (position == null || position.y >= G.getBlocksWide()) {
 				return null;
 			}
-			orig.setLocation(
-					(int)(position.x * standardSize.getWidth()),
-					(int)(position.y * standardSize.getHeight()));
-			orig.setSize(
-					(int)((position.x + 1) * standardSize.getWidth()) - orig.x,
-					(int)((position.y + 1) * standardSize.getHeight()) - orig.y);
-			first.setLocation(
-					(int)(position.x * midStandardSize.getWidth()),
-					(int)(position.y * midStandardSize.getHeight()));
-			first.setSize(
-					(int)((position.x + 1) * midStandardSize.getWidth()) - first.x,
-					(int)((position.y + 1) * midStandardSize.getHeight()) - first.y);
-			second.setLocation(
-					(int)(position.x * scaledStandardSize.getWidth()),
-					(int)(position.y * scaledStandardSize.getHeight()));
-			second.setSize(
-					(int)((position.x + 1) * scaledStandardSize.getWidth()) - second.x,
-					(int)((position.y + 1) * scaledStandardSize.getHeight()) - second.y);
+			orig = toRectangle(position, standardSize);
+			first = toRectangle(position, midStandardSize);
+			second = toRectangle(position, scaledStandardSize);
+			third = toRectangle(position, finalStandardSize);
 			
-			third.setLocation(
-					(int)(position.x * finalStandardSize.getWidth()),
-					(int)(position.y * finalStandardSize.getHeight()));
-			third.setSize(
-					(int)((position.x + 1) * finalStandardSize.getWidth()) - third.x,
-					(int)((position.y + 1) * finalStandardSize.getHeight()) - third.y);
-		
 		} while (orig.width <= 0 || orig.height <= 0 ||
 				 first.width <= 0 || first.height <= 0 ||
 				 second.width <= 0 || second.height <= 0 ||
 				 third.width <= 0 || third.height <= 0);
 		return new BlockLocation(orig, first, second, third);
+	}
+	
+	private static Rectangle toRectangle(Point pos, D2D size) {
+		Rectangle r = new Rectangle();
+		
+		r.setLocation(
+				(int)(pos.x * size.getWidth()),
+				(int)(pos.y * size.getHeight()));
+		r.setSize(
+				(int)((pos.x + 1) * size.getWidth()) - r.x,
+				(int)((pos.y + 1) * size.getHeight()) - r.y);
+		
+		return r;
 	}
 	
 	@Override
@@ -125,11 +117,6 @@ public class btGrid extends BlockThreadHandler {
 			nextPos.x = 0;
 		}
 		return p;
-	}
-
-	@Override
-	boolean usePreviousImage() {
-		return false;
 	}
 	
 	@Override
