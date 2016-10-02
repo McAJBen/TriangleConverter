@@ -134,6 +134,6 @@ public class btGrid extends BlockThreadHandler {
 	
 	@Override
 	public double getPercent() {
-		return (nextPos.getX() / G.getBlocksWide() + nextPos.y) / G.getBlocksWide();
+		return ((nextPos.getX() - G.getThreadCount()) / G.getBlocksWide() + nextPos.y) / G.getBlocksWide();
 	}
 }
