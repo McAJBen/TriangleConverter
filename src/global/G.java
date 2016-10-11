@@ -9,7 +9,8 @@ public class G {
 	static boolean
 		preDraw = true,
 		postProcessing = true,
-		display = true;
+		display = true,
+		trueColor = false;
 	static int 
 		blocksWide = 10,
 		blocksWideMin = 5,
@@ -42,6 +43,7 @@ public class G {
 	public static boolean getPreDraw()	{ return preDraw; }
 	public static boolean getPostProcessing()	{ return postProcessing; }
 	public static boolean getDisplay()	{ return display; }
+	public static boolean getTrueColor()	{ return trueColor; }
 	public static int getBlocksWide()	{ return blocksWide; }
 	public static int getTriangles()	{ return triangles; }
 	public static int getMaxSamples()	{ return samples; }
@@ -130,7 +132,8 @@ public class G {
         		" Sc:" + G.scale +
         		" > "  + G.postScale +
         		" > "  + G.finalScale +
-        		" RB:" + G.randomBlocks;
+        		" RB:" + G.randomBlocks +
+        		(G.trueColor ? " TruCol" : " LinCol");
 	}
 	
 	public static String getShortTitle() {
@@ -140,6 +143,7 @@ public class G {
         		"_" + G.scale +
         		"_"  + G.postScale +
         		"_"  + G.finalScale +
-        		"_" + G.randomBlocks;
+        		"_" + G.randomBlocks +
+        		"_" + (G.trueColor ? "T" : "F");
 	}
 }

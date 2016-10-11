@@ -11,7 +11,7 @@ public class TrianglesFile {
 	
 	private static final int FACT = 3;
 	private static final double FACT_INVERSE = 1.0 / FACT;
-	private static final double	MAX_SCORE = Math.pow(195075, 0.5);
+	private static final double	MAX_SCORE = 765; //Math.pow(195075, 0.5);
 	private ArrayList<Triangle> triangles;
 	private BufferedImage image;
 	private BufferedImage baseImg;
@@ -121,10 +121,7 @@ public class TrianglesFile {
 					score += MAX_SCORE;
 				}
 				else {
-					score += Math.sqrt(
-						Math.pow(originCol[i] - newImgCol[i], 2) +
-						Math.pow(originCol[i + 1] - newImgCol[i + 1], 2) +
-						Math.pow(originCol[i + 2] - newImgCol[i + 2], 2));
+					score += toScore(i, originCol, newImgCol);
 				}
 			}
 			return score;
@@ -135,12 +132,20 @@ public class TrianglesFile {
 			newImg.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), newImgCol);
 			original.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
 			for (int i = 0; i < newImgCol.length; i += 3) {
-				score += Math.sqrt(
-					Math.pow(originCol[i] - newImgCol[i], 2) +
-					Math.pow(originCol[i + 1] - newImgCol[i + 1], 2) +
-					Math.pow(originCol[i + 2] - newImgCol[i + 2], 2));
+				score += toScore(i, originCol, newImgCol);
 			}
 			return score;
+		}
+	}
+	
+	private double toScore(int i, int[] a, int[] b) {
+		if (G.getTrueColor()) {
+			// square root(r^2 + g^2 + b^2)
+			return	Math.sqrt(Math.pow(a[i] - b[i], 2) + Math.pow(a[i + 1] - b[i + 1], 2) + Math.pow(a[i + 2] - b[i + 2], 2));
+		}
+		else {
+			// |r| + |g| + |b|
+			return	Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]);
 		}
 	}
 	
