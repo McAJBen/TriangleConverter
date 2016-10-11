@@ -56,7 +56,6 @@ public class Block {
 
 	// checks triangleMode to modify bestTriFile and see if it improves
 	public void move() {
-		System.out.print(triangleMode + "\t" + stagnantCount + "\t");
 		TrianglesFile modifyTriFile = new TrianglesFile(bestTriFile);
 		// changes modifyTri based on triangleMode
 		switch (triangleMode) {
@@ -100,15 +99,12 @@ public class Block {
 			// if triangleMode is at the end try adding another triangle
 			if (triangleMode == TriangleMode.RANDOM) {
 				bestTriFile.addTriangle();
-				System.out.print("Added" + "\t");
 				while (bestTriFile.getSize() > G.getTriangles()) {
 					bestTriFile.removeBackTriangle();
-					System.out.print("Removed" + "\t");
 				}
 				maxScore = bestTriFile.compare(compareChunk);
 			}
 		}
-		System.out.println(triangleMode + "\t" + stagnantCount + "\t" + maxScore);
 	}
 	
 	public boolean isDone() {
