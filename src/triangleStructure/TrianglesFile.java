@@ -11,7 +11,8 @@ public class TrianglesFile {
 	
 	private static final int FACT = 3;
 	private static final double FACT_INVERSE = 1.0 / FACT;
-	private static final double	MAX_SCORE = 765; //Math.pow(195075, 0.5);
+	private static final double	MAX_SCORE_TRUE = Math.pow(195075, 0.5);
+	private static final double	MAX_SCORE_FALSE = 765;
 	private ArrayList<Triangle> triangles;
 	private BufferedImage image;
 	private BufferedImage baseImg;
@@ -25,7 +26,12 @@ public class TrianglesFile {
 			this.triangles.add(trArray.get(i));
 		}
 		imageSize = dimension.getSize();
-		totalPossibleScore = MAX_SCORE * imageSize.getWidth() * imageSize.getHeight();
+		if (G.getTrueColor()) {
+			totalPossibleScore = MAX_SCORE_TRUE * imageSize.getWidth() * imageSize.getHeight();
+		}
+		else {
+			totalPossibleScore = MAX_SCORE_FALSE * imageSize.getWidth() * imageSize.getHeight();
+		}
 		baseImg = null;
 	}
 	
@@ -118,7 +124,7 @@ public class TrianglesFile {
 			original.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
 			for (int i = 0; i < newImgCol.length; i += 4) {
 				if (newImgCol[i + 3] != 255) {
-					score += MAX_SCORE;
+					score += G.getTrueColor() ? MAX_SCORE_TRUE : MAX_SCORE_FALSE;
 				}
 				else {
 					score += toScore(i, originCol, newImgCol);
