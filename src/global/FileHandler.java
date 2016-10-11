@@ -3,26 +3,10 @@ package global;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 public class FileHandler {
 	
-	private static ArrayList<File> files = new ArrayList<File>();
-	
-	private static ArrayList<File> getFiles() {
-		ArrayList<File> fileList = new ArrayList<File>();
-		File directory = new File(System.getProperty("user.dir"));
-		File[] dirList = directory.listFiles();
-		if (dirList != null) {
-			for (File file: dirList) {
-				if (file.isFile() && isValidFile(file)) {
-					fileList.add(file);
-	            }
-	        }
-		}
-		return fileList;
-	}
 	
 	private static boolean isValidFile(File f) {
 		return 
@@ -40,15 +24,19 @@ public class FileHandler {
 	}
 	
 	public static File getFile() {
-		if (files.size() == 0) {
-			files = getFiles();
+		while (true) {
+			try {
+				for (File file: (new File(System.getProperty("user.dir"))).listFiles()) {
+					if (file.isFile() && isValidFile(file)) {
+						return file;
+		            }
+		        }
+			} catch (NullPointerException e) { }
+			
+			try {
+				Thread.sleep(10_000);
+			} catch (InterruptedException e) { }
 		}
-		if (files.size() > 0) {
-			File f = files.get(0);
-			files.remove(0);
-			return f;
-		}
-	    return null;
 	}
 	
 	public static void putImageInFile(File f, String folder, BufferedImage image, String append) {
