@@ -168,6 +168,7 @@ public class Settings {
 				BLOCKS_WIDE_ID		+ ID_SYMB + G.blocksWide	+ "\n" +
 				MAX_TRIANGLES_ID	+ ID_SYMB + G.triangles		+ "\n" +
 				SAMPLES_ID			+ ID_SYMB + G.samples		+ "\n" +
+				COMENT_SYMB + "Random can be set to 'x##' as a multiplier" +
 				RANDOM_BLOCKS_ID	+ ID_SYMB + RANDOM_ID		+ "\n" +
 				COMENT_SYMB + "Thread count can be set to 'AUTO' \n" +
 				THREAD_COUNT_ID		+ ID_SYMB + "AUTO"			+ "\n" +
