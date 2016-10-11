@@ -16,27 +16,20 @@ public class Main {
 			displayWindow.start();
 		}
 		else {
-			while (true) {
-	        	File file = FileHandler.getFile();
-	        	if (file != null) {
-	        		for (int attempt = 1; attempt <= G.getMaxAttempts(); attempt++) {
-			        	G.reset();
-			        	System.out.println(file.getName() + "\t" + G.getTitle(attempt));
-			        	Conversion conversion = new Conversion(file);
-			        	long startTime = System.currentTimeMillis();
-			        	conversion.startConversion();
-			        	System.out.println("\t" + (System.currentTimeMillis() - startTime));
-	        		}
-	        		BufferedImage originalImg = FileHandler.getImage(file);
-	        		file.delete();
-	        		FileHandler.putImageInFile(file, "Original", originalImg, "");
-	        	}
-	        	else {
-		    		try {
-						Thread.sleep(10_000);
-					} catch (InterruptedException e) { }
-	        	}
-	        }
+        	File file = FileHandler.getFile();
+        	if (file != null) {
+        		for (int attempt = 1; attempt <= G.getMaxAttempts(); attempt++) {
+		        	G.reset();
+		        	System.out.println(file.getName() + "\t" + G.getTitle(attempt));
+		        	Conversion conversion = new Conversion(file);
+		        	long startTime = System.currentTimeMillis();
+		        	conversion.startConversion();
+		        	System.out.println("\t" + (System.currentTimeMillis() - startTime));
+        		}
+        		BufferedImage originalImg = FileHandler.getImage(file);
+        		file.delete();
+        		FileHandler.putImageInFile(file, "Original", originalImg, "");
+        	}
 		}
 	}
 }
