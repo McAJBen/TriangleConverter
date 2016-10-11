@@ -169,8 +169,8 @@ public class Settings {
 				MAX_TRIANGLES_ID	+ ID_SYMB + G.triangles		+ "\n" +
 				SAMPLES_ID			+ ID_SYMB + G.samples		+ "\n\n" +
 				COMENT_SYMB + "Random can be set to 'x##' as a multiplier\n" +
-				RANDOM_BLOCKS_ID	+ ID_SYMB + RANDOM_ID		+ "\n" +
-				COMENT_SYMB + "Thread count can be set to 'AUTO'\n\n" +
+				RANDOM_BLOCKS_ID	+ ID_SYMB + RANDOM_ID		+ "\n\n" +
+				COMENT_SYMB + "Thread count can be set to 'AUTO'\n" +
 				THREAD_COUNT_ID		+ ID_SYMB + "AUTO"			+ "\n" +
 				REPAINT_WAIT_ID		+ ID_SYMB + G.repaintWait	+ "\n" +
 				ATTEMPTS_ID			+ ID_SYMB + G.attempts		+ "\n\n" +
