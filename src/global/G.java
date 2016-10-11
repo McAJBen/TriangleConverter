@@ -18,7 +18,8 @@ public class G {
 		threadCount = Runtime.getRuntime().availableProcessors(),
 		repaintWait = 500,
 		attempts = 3,
-		randomBlocks = 100;
+		randomBlocks = 0,
+		randomBlockMult = -1;
 	static double
 		scale = 1.0,
 		postScale = 1.0,
@@ -61,6 +62,9 @@ public class G {
 			else {
 				randomBlocks = 0;
 			}
+		}
+		else if (randomBlockMult > 0) {
+			randomBlocks = blocksWide * blocksWide * randomBlockMult;
 		}
 		if (scaleRandom) {
 			scale = getRandomScale();

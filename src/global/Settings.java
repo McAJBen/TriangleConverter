@@ -111,7 +111,10 @@ public class Settings {
 						}
 						break;
 					case RANDOM_BLOCKS_ID:
-						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
+						if (split[1].startsWith("x") || split[1].startsWith("X")) {
+							G.randomBlockMult = Integer.parseInt(split[1].substring(1));
+						}
+						else if (split[1].equalsIgnoreCase(RANDOM_ID)) {
 							G.randomBlocksRandom = true;
 						}
 						else {
