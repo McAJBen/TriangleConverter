@@ -13,14 +13,8 @@ public class G {
 		trueColor = false;
 	static int 
 		blocksWide = 10,
-		blocksWideMin = 5,
-		blocksWideMax = 100,
 		triangles = 2,
-		trianglesMin = 2,
-		trianglesMax = 5,
 		samples = 1,
-		samplesMin = 1,
-		samplesMax = 5,
 		threadCount = Runtime.getRuntime().availableProcessors(),
 		repaintWait = 500,
 		attempts = 3,
@@ -37,22 +31,22 @@ public class G {
 		finalScaleRandom = false;
 	
 	public static double getRandDouble()	{ return RANDOM.nextDouble(); }
-	public static float getRandFloat()	{ return RANDOM.nextFloat(); }
-	public static int getRandInt(int i)	{ return RANDOM.nextInt(i); }
+	public static float getRandFloat()		{ return RANDOM.nextFloat(); }
+	public static int getRandInt(int i)		{ return RANDOM.nextInt(i); }
 	
-	public static boolean getPreDraw()	{ return preDraw; }
+	public static boolean getPreDraw()		{ return preDraw; }
 	public static boolean getPostProcessing()	{ return postProcessing; }
-	public static boolean getDisplay()	{ return display; }
+	public static boolean getDisplay()		{ return display; }
 	public static boolean getTrueColor()	{ return trueColor; }
-	public static int getBlocksWide()	{ return blocksWide; }
-	public static int getTriangles()	{ return triangles; }
-	public static int getMaxSamples()	{ return samples; }
-	public static int getThreadCount()	{ return threadCount; }
-	public static int getPaintWait()	{ return repaintWait; }
-	public static int getMaxAttempts()	{ return attempts; }
-	public static int getRandomBlocks()	{ return randomBlocks; }
-	public static double getScale()	{ return scale; }
-	public static double getPostScale()	{ return postScale; }
+	public static int getBlocksWide()		{ return blocksWide; }
+	public static int getTriangles()		{ return triangles; }
+	public static int getMaxSamples()		{ return samples; }
+	public static int getThreadCount()		{ return threadCount; }
+	public static int getPaintWait()		{ return repaintWait; }
+	public static int getMaxAttempts()		{ return attempts; }
+	public static int getRandomBlocks()		{ return randomBlocks; }
+	public static double getScale()			{ return scale; }
+	public static double getPostScale()		{ return postScale; }
 	public static double getFinalScale()	{ return finalScale; }
 	public static double getTotalScale()	{ return scale * postScale * finalScale; }
 	
@@ -60,9 +54,6 @@ public class G {
 		if (postProcessingRandom) {
 			postProcessing = RANDOM.nextBoolean();
 		}
-		blocksWide = RANDOM.nextInt(blocksWideMax - blocksWideMin + 1) + blocksWideMin;
-		triangles = RANDOM.nextInt(trianglesMax - trianglesMin + 1) + trianglesMin;
-		samples = RANDOM.nextInt(samplesMax - samplesMin + 1) + samplesMin;
 		if (randomBlocksRandom) {
 			if (RANDOM.nextBoolean()) {
 				randomBlocks = RANDOM.nextInt(getBlocksWide()) * getBlocksWide() * 3;

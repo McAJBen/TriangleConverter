@@ -30,9 +30,7 @@ public class Settings {
 		// FORMAT
 		ID_SYMB = ":",
 		COMENT_SYMB = "#",
-		RANDOM_ID = "RANDOM",
-		MIN_ID = "_MIN",
-		MAX_ID = "_MAX";
+		RANDOM_ID = "RANDOM";
 	
 	@SuppressWarnings("resource")
 	static void load() {
@@ -95,23 +93,14 @@ public class Settings {
 						G.trueColor = Boolean.parseBoolean(split[1]);
 						break;
 					// INTEGERS
-					case BLOCKS_WIDE_ID + MIN_ID:
-						G.blocksWideMin = Integer.parseInt(split[1]);
+					case BLOCKS_WIDE_ID:
+						G.blocksWide = Integer.parseInt(split[1]);
 						break;
-					case BLOCKS_WIDE_ID + MAX_ID:
-						G.blocksWideMax = Integer.parseInt(split[1]);
+					case MAX_TRIANGLES_ID:
+						G.triangles = Integer.parseInt(split[1]);
 						break;
-					case MAX_TRIANGLES_ID + MIN_ID:
-						G.trianglesMin = Integer.parseInt(split[1]);
-						break;
-					case MAX_TRIANGLES_ID + MAX_ID:
-						G.trianglesMax = Integer.parseInt(split[1]);
-						break;
-					case SAMPLES_ID + MIN_ID:
-						G.samplesMin = Integer.parseInt(split[1]);
-						break;
-					case SAMPLES_ID + MAX_ID:
-						G.samplesMax = Integer.parseInt(split[1]);
+					case SAMPLES_ID:
+						G.samples = Integer.parseInt(split[1]);
 						break;
 					case THREAD_COUNT_ID:
 						if (split[1].equalsIgnoreCase("AUTO")) {
@@ -173,27 +162,22 @@ public class Settings {
 				COMENT_SYMB + "All Comments must begin with " + COMENT_SYMB 	+ "\n\n" +
 		
 				COMENT_SYMB + "Integer variables\n" +
-				BLOCKS_WIDE_ID + MIN_ID		+ ID_SYMB + G.blocksWideMin	+ "\n" +
-				BLOCKS_WIDE_ID + MAX_ID		+ ID_SYMB + G.blocksWideMax	+ "\n" +
-				MAX_TRIANGLES_ID + MIN_ID	+ ID_SYMB + G.trianglesMin	+ "\n" +
-				MAX_TRIANGLES_ID + MAX_ID	+ ID_SYMB + G.trianglesMax 	+ "\n" +
-				SAMPLES_ID + MIN_ID			+ ID_SYMB + G.samplesMin		+ "\n" +
-				SAMPLES_ID + MAX_ID			+ ID_SYMB + G.samplesMax		+ "\n" +
-				RANDOM_BLOCKS_ID	+ ID_SYMB + RANDOM_ID			+ "\n" +
+				BLOCKS_WIDE_ID		+ ID_SYMB + G.blocksWide	+ "\n" +
+				MAX_TRIANGLES_ID	+ ID_SYMB + G.triangles		+ "\n" +
+				SAMPLES_ID			+ ID_SYMB + G.samples		+ "\n" +
+				RANDOM_BLOCKS_ID	+ ID_SYMB + RANDOM_ID		+ "\n" +
 				COMENT_SYMB + "Thread count can be set to 'AUTO' \n" +
 				THREAD_COUNT_ID		+ ID_SYMB + "AUTO"			+ "\n" +
-				REPAINT_WAIT_ID		+ ID_SYMB + G.repaintWait		+ "\n" +
+				REPAINT_WAIT_ID		+ ID_SYMB + G.repaintWait	+ "\n" +
 				ATTEMPTS_ID			+ ID_SYMB + G.attempts		+ "\n\n" +
-				
 				COMENT_SYMB + "Double variables\n" +
-				SCALE_ID			+ ID_SYMB + RANDOM_ID			+ "\n" +
-				POST_SCALE_ID		+ ID_SYMB + RANDOM_ID			+ "\n" +
-				FINAL_SCALE_ID		+ ID_SYMB + RANDOM_ID			+ "\n\n" +
-				
+				SCALE_ID			+ ID_SYMB + RANDOM_ID		+ "\n" +
+				POST_SCALE_ID		+ ID_SYMB + RANDOM_ID		+ "\n" +
+				FINAL_SCALE_ID		+ ID_SYMB + RANDOM_ID		+ "\n\n" +
 				COMENT_SYMB + "Boolean variables\n" +
-				POST_PROCESSING_ID	+ ID_SYMB + RANDOM_ID			+ "\n" +
-				PREDRAW_ID			+ ID_SYMB + G.preDraw			+ "\n" +
-				DISPLAY_ID			+ ID_SYMB + G.display			+ "\n" +
+				POST_PROCESSING_ID	+ ID_SYMB + RANDOM_ID		+ "\n" +
+				PREDRAW_ID			+ ID_SYMB + G.preDraw		+ "\n" +
+				DISPLAY_ID			+ ID_SYMB + G.display		+ "\n" +
 				TRUE_COLOR_ID		+ ID_SYMB + G.trueColor;
 		// write default settings to file
 		try {
