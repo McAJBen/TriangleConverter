@@ -19,13 +19,13 @@ public class Main {
 	        	File file = FileHandler.getFile();
 	        	if (file != null) {
 	        		for (int attempt = 1; attempt <= G.getMaxAttempts(); attempt++) {
-	        			System.out.println("Found file: " + file);
+	        			
 			        	G.reset();
-			        	System.out.println(G.getTitle(attempt));
+			        	System.out.println(file.getName() + "\t" + G.getTitle(attempt));
 			        	Conversion conversion = new Conversion(file);
 			        	long startTime = System.currentTimeMillis();
 			        	conversion.startConversion();
-			        	System.out.println(System.currentTimeMillis() - startTime);
+			        	System.out.println("\t" + (System.currentTimeMillis() - startTime));
 	        		}
 	        	}
 	        	else {

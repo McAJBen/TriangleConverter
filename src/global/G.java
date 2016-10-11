@@ -122,7 +122,7 @@ public class G {
 	}
 	
 	public static String getTitle(int attempt) {
-		return  " TC Wi:" + G.blocksWide +
+		return  "TC Wi:" + G.blocksWide +
         		" Tr:" + G.triangles +
         		" Sa:" + G.samples +
         		" Th:" + G.threadCount +
