@@ -114,17 +114,20 @@ public class TrianglesFile {
 		return 1-score;
 	}
 	
-	// Images should be same dimensions and same BufferedImage.TYPE_3BYTE_BGR
 	public static double compare(BufferedImage original, BufferedImage newImg) {
+		
+		BufferedImage compareChunk = new BufferedImage(newImg.getWidth(), newImg.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+		compareChunk.createGraphics().drawImage(original, 0, 0, newImg.getWidth(), newImg.getHeight(), null);
+		
 		double score = 0;
 		int[] newImgCol = new int[newImg.getWidth() * newImg.getHeight() * 3];
 		int[] originCol = new int[newImgCol.length];
 		newImg.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), newImgCol);
-		original.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
+		compareChunk.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
 		for (int i = 0; i < newImgCol.length; i += 3) {
 			score += toScore(i, originCol, newImgCol);
 		}
-		return 1 - (score / getTotalPossibleScore(original.getWidth(), original.getHeight()));
+		return 1 - (score / getTotalPossibleScore(compareChunk.getWidth(), compareChunk.getHeight()));
 	}
 	
 	private double compareTotal(BufferedImage original, BufferedImage newImg) {

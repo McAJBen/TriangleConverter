@@ -98,6 +98,7 @@ public abstract class BlockThreadHandler {
 				
 				Block bestBlock = null;
 				blockLocation = getNewBlockLocation();
+				currentTestImage = null;
 				active = true;
 				BufferedImage compareImage = getSubImage(originalImg, blockLocation.original);
 				BufferedImage baseImg = getSubImage(newImg, blockLocation.third);
@@ -151,7 +152,7 @@ public abstract class BlockThreadHandler {
 		}
 		
 		private void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
-			if (active && currentTestImage != null) {
+			if (active) {
 				
 				Rectangle rect = new Rectangle(
 						blockLocation.third.x * windowSize.width / origW,
@@ -159,14 +160,16 @@ public abstract class BlockThreadHandler {
 						blockLocation.third.width * windowSize.width / origW,
 						blockLocation.third.height * windowSize.height / origH);
 				
-				g.drawImage(currentTestImage,
-						rect.x + 1, rect.y + 1,
-						rect.width, rect.height, null);
+				if (currentTestImage != null) {
+					g.drawImage(currentTestImage,
+							rect.x + 1, rect.y + 1,
+							rect.width, rect.height, null);
+				}
 				
 				g.setColor(PINK);
 				
 				g.drawString(getName(),
-						rect.x + 1, 
+						rect.x + 1,
 						rect.y + 11);
 				
 				g.drawRect(

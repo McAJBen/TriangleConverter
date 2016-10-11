@@ -44,8 +44,10 @@ public class btRandom extends BlockThreadHandler {
 			}
 			
 			first = toRectangle(orig, G.getScale());
-			second = toRectangle(first, G.getPostScale());
-			third = toRectangle(second, G.getFinalScale());
+			second = toRectangle(orig, G.getScale() * G.getPostScale());
+			third = toRectangle(orig, G.getScale() * G.getPostScale() * G.getFinalScale());
+			
+			
 			bl = new BlockLocation(orig, first, second, third);
 			
 		} while (
@@ -66,10 +68,10 @@ public class btRandom extends BlockThreadHandler {
 	
 	private static Rectangle toRectangle(Rectangle r, double scale) {
 		return new Rectangle(
-				Math.toIntExact(Math.round(r.x * scale)),
-				Math.toIntExact(Math.round(r.y * scale)),
-				Math.toIntExact(Math.round(r.width * scale)),
-				Math.toIntExact(Math.round(r.height * scale)));
+				(int)(r.x * scale),
+				(int)(r.y * scale),
+				(int)(r.width * scale),
+				(int)(r.height * scale));
 	}
 
 	@Override
