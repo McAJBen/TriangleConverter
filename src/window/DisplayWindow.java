@@ -32,12 +32,12 @@ public class DisplayWindow extends JFrame {
 		while (true) {
         	File file = FileHandler.getFile();
         	if (file != null) {
-        		BufferedImage originalImg = FileHandler.getImage(file);
         		for (int attempt = 1; attempt <= G.getMaxAttempts(); attempt++) {
 		        	global.G.reset();
 		        	setTitle(G.getTitle(attempt));
 		        	window.startConversion(file);
         		}
+        		BufferedImage originalImg = FileHandler.getImage(file);
         		file.delete();
         		FileHandler.putImageInFile(file, "Original", originalImg, "");
         	}
