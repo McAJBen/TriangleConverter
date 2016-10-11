@@ -66,10 +66,10 @@ public class btRandom extends BlockThreadHandler {
 	
 	private static Rectangle toRectangle(Rectangle r, double scale) {
 		return new Rectangle(
-				(int)(r.x * scale),
-				(int)(r.y * scale),
-				(int)(r.width * scale),
-				(int)(r.height * scale));
+				Math.toIntExact(Math.round(r.x * scale)),
+				Math.toIntExact(Math.round(r.y * scale)),
+				Math.toIntExact(Math.round(r.width * scale)),
+				Math.toIntExact(Math.round(r.height * scale)));
 	}
 
 	@Override

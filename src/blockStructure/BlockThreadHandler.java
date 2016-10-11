@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 
 import application.Block;
 import global.G;
+import triangleStructure.TrianglesFile;
 
 public abstract class BlockThreadHandler {
 	
@@ -125,8 +126,10 @@ public abstract class BlockThreadHandler {
 					compute(block);
 					bestBlock = block;
 				}
+				if (bestBlock.getMaxScore() >= TrianglesFile.compare(compareImage, baseImg)) {
+					paintTo(bestBlock.getImage(blockLocation.third.getSize()), blockLocation.third);
+				}
 				active = false;
-				paintTo(bestBlock.getImage(blockLocation.third.getSize()), blockLocation.third);
 				removeBlockLocation(blockLocation);
 			}
 		}

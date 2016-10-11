@@ -26,15 +26,11 @@ public class TrianglesFile {
 			this.triangles.add(trArray.get(i));
 		}
 		imageSize = dimension.getSize();
-		if (G.getTrueColor()) {
-			totalPossibleScore = MAX_SCORE_TRUE * imageSize.getWidth() * imageSize.getHeight();
-		}
-		else {
-			totalPossibleScore = MAX_SCORE_FALSE * imageSize.getWidth() * imageSize.getHeight();
-		}
+		
+		totalPossibleScore = getTotalPossibleScore(imageSize.width, imageSize.height);
 		baseImg = null;
 	}
-	
+
 	public TrianglesFile(TrianglesFile tf) {
 		this(tf.getTriangles(), tf.imageSize, tf.baseImg);
 	}
@@ -42,6 +38,10 @@ public class TrianglesFile {
 	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension, BufferedImage baseChunk) {
 		this(trArray, dimension);
 		baseImg = baseChunk;
+	}
+	
+	private static double getTotalPossibleScore(int width, int height) {
+		return (G.getTrueColor() ? MAX_SCORE_TRUE : MAX_SCORE_FALSE) * width * height;
 	}
 	
 	public void modifyRandom() {
@@ -114,6 +114,19 @@ public class TrianglesFile {
 		return 1-score;
 	}
 	
+	// Images should be same dimensions and same BufferedImage.TYPE_3BYTE_BGR
+	public static double compare(BufferedImage original, BufferedImage newImg) {
+		double score = 0;
+		int[] newImgCol = new int[newImg.getWidth() * newImg.getHeight() * 3];
+		int[] originCol = new int[newImgCol.length];
+		newImg.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), newImgCol);
+		original.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
+		for (int i = 0; i < newImgCol.length; i += 3) {
+			score += toScore(i, originCol, newImgCol);
+		}
+		return 1 - (score / getTotalPossibleScore(original.getWidth(), original.getHeight()));
+	}
+	
 	private double compareTotal(BufferedImage original, BufferedImage newImg) {
 		double score = 0;
 		
@@ -144,7 +157,7 @@ public class TrianglesFile {
 		}
 	}
 	
-	private double toScore(int i, int[] a, int[] b) {
+	private static double toScore(int i, int[] a, int[] b) {
 		if (G.getTrueColor()) {
 			// square root(r^2 + g^2 + b^2)
 			return	Math.sqrt(Math.pow(a[i] - b[i], 2) + Math.pow(a[i + 1] - b[i + 1], 2) + Math.pow(a[i + 2] - b[i + 2], 2));
