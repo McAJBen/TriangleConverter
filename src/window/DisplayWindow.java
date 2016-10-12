@@ -30,17 +30,19 @@ public class DisplayWindow extends JFrame {
 	
 	public void start() {
 		setTitle("Finding File ...");
-    	File file = FileHandler.getFile();
-    	if (file != null) {
-    		for (int attempt = 1; attempt <= G.getMaxAttempts(); attempt++) {
-	        	global.G.reset();
-	        	setTitle(G.getTitle(attempt));
-	        	window.startConversion(file);
-    		}
-    		BufferedImage originalImg = FileHandler.getImage(file);
-    		file.delete();
-    		FileHandler.putImageInFile(file, "Original", originalImg, "");
-    	}
+		while (true) {
+	    	File file = FileHandler.getFile();
+	    	if (file != null) {
+	    		for (int attempt = 1; attempt <= G.getMaxAttempts(); attempt++) {
+		        	global.G.reset();
+		        	setTitle(G.getTitle(attempt));
+		        	window.startConversion(file);
+	    		}
+	    		BufferedImage originalImg = FileHandler.getImage(file);
+	    		file.delete();
+	    		FileHandler.putImageInFile(file, "Original", originalImg, "");
+	    	}
+		}
 	}
 	
 	private static class Window extends JPanel {
@@ -83,7 +85,7 @@ public class DisplayWindow extends JFrame {
 						repaint();
 						try {
 							sleep(G.getPaintWait());
-						} catch (InterruptedException e) {}
+						} catch (InterruptedException e) {break;}
 					}
 				}
 			};
