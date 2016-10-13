@@ -11,7 +11,7 @@ public class Triangle {
 	private float[] Ypoints = new float[SIDES];
 	private Color color;
 	
-	public Triangle() {
+	Triangle() {
 		for (int i = 0; i < SIDES; i++) {
 			Xpoints[i] = G.getRandFloat();
 			Ypoints[i] = G.getRandFloat();
@@ -53,8 +53,7 @@ public class Triangle {
 		return new int[] {color.getRed(), color.getGreen(), color.getBlue()};
 	}
 	
-	@Override
-	public Triangle clone() {
+	protected Triangle clone() {
 		return new Triangle(Xpoints.clone(), Ypoints.clone(), new Color(color.getRed(), color.getGreen(), color.getBlue()));
 	}
 }

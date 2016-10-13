@@ -33,21 +33,19 @@ public class Settings {
 		RANDOM_ID = "RANDOM";
 	
 	@SuppressWarnings("resource")
-	static void load() {
+	public static void load() {
 		String settingsString = null;
 		BufferedReader br = null;
 		try {
-			File settingsFile = new File(
-					System.getProperty("user.dir") + "\\TriangleConverter.settings");
+			File settingsFile = new File(G.USER_DIR + G.BK_SLASH + G.SETTINGS_FILE);
 			// check if settings exist and read first line
 			if (settingsFile.exists()) {
 				br = new BufferedReader(new FileReader(settingsFile));
 			}
 			// if the settings file does not exist, go to catch
-			else throw new IOException("Settings File does not exist");
+			else throw new IOException(G.NO_SETTINGS_FILE);
 			
 		} catch (IOException e1) {
-			System.out.println("Default settings have been set");
 			createSettingsFile();
 			return;
 		}
@@ -57,7 +55,7 @@ public class Settings {
 			try {
 				settingsString = br.readLine();
 				if (settingsString == null) {
-					throw new IOException("No Line To Read");
+					throw new IOException();
 				}
 			} catch (IOException e) {
 				// can't read another line, the file must be done
@@ -103,7 +101,7 @@ public class Settings {
 						G.samples = Integer.parseInt(split[1]);
 						break;
 					case THREAD_COUNT_ID:
-						if (split[1].equalsIgnoreCase("AUTO")) {
+						if (split[1].equalsIgnoreCase(G.AUTO)) {
 							G.threadCount = Runtime.getRuntime().availableProcessors();
 						}
 						else {
@@ -111,7 +109,7 @@ public class Settings {
 						}
 						break;
 					case RANDOM_BLOCKS_ID:
-						if (split[1].startsWith("x") || split[1].startsWith("X")) {
+						if (split[1].startsWith(G.LOWER_X) || split[1].startsWith(G.UPPER_X)) {
 							G.randomBlockMult = Integer.parseInt(split[1].substring(1));
 						}
 						else if (split[1].equalsIgnoreCase(RANDOM_ID)) {
@@ -161,7 +159,7 @@ public class Settings {
 
 	private static void createSettingsFile() {
 		// create default settings strings
-		String settingsString = 
+		final String settingsString = 
 				COMENT_SYMB + "All Comments must begin with " + COMENT_SYMB 	+ "\n\n" +
 		
 				COMENT_SYMB + "Integer variables\n" +
@@ -185,9 +183,8 @@ public class Settings {
 				TRUE_COLOR_ID		+ ID_SYMB + G.trueColor;
 		// write default settings to file
 		try {
-			File settingsFile = new File(
-					System.getProperty("user.dir") + "\\TriangleConverter.settings");
-			BufferedWriter writer = new BufferedWriter(new FileWriter(settingsFile));
+			final File settingsFile = new File(G.USER_DIR + G.BK_SLASH + G.SETTINGS_FILE);
+			final BufferedWriter writer = new BufferedWriter(new FileWriter(settingsFile));
 			writer.write(settingsString);
 			writer.close();
 		} catch (IOException e) {

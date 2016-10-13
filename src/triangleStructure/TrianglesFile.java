@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
 import global.G;
 
 public class TrianglesFile {
@@ -13,12 +14,28 @@ public class TrianglesFile {
 	private static final double FACT_INVERSE = 1.0 / FACT;
 	private static final double	MAX_SCORE_TRUE = Math.pow(195075, 0.5);
 	private static final double	MAX_SCORE_FALSE = 765;
+	private final Dimension imageSize;
 	private ArrayList<Triangle> triangles;
 	private BufferedImage image;
 	private BufferedImage baseImg;
-	private Dimension imageSize;
 	private double totalPossibleScore;
 	private boolean imageMade = false;
+	
+	public static double compare(BufferedImage original, BufferedImage newImg) {
+		
+		BufferedImage compareChunk = new BufferedImage(newImg.getWidth(), newImg.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+		compareChunk.createGraphics().drawImage(original, 0, 0, newImg.getWidth(), newImg.getHeight(), null);
+		
+		double score = 0;
+		int[] newImgCol = new int[newImg.getWidth() * newImg.getHeight() * 3];
+		int[] originCol = new int[newImgCol.length];
+		newImg.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), newImgCol);
+		compareChunk.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
+		for (int i = 0; i < newImgCol.length; i += 3) {
+			score += toScore(i, originCol, newImgCol);
+		}
+		return 1 - (score / getTotalPossibleScore(compareChunk.getWidth(), compareChunk.getHeight()));
+	}
 	
 	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension) {
 		triangles = new ArrayList<Triangle>(G.getTriangles());
@@ -40,11 +57,7 @@ public class TrianglesFile {
 		baseImg = baseChunk;
 	}
 	
-	private static double getTotalPossibleScore(int width, int height) {
-		return (G.getTrueColor() ? MAX_SCORE_TRUE : MAX_SCORE_FALSE) * width * height;
-	}
-	
-	public void modifyRandom() {
+	void modifyRandom() {
 		imageMade = false;
 		if (triangles.size() <= 0) {
 			return;
@@ -54,7 +67,7 @@ public class TrianglesFile {
 		triangles.add(new Triangle());
 	}
 	
-	public void modifyShape10() {
+	void modifyShape10() {
 		imageMade = false;
 		if (triangles.size() <= 0) {
 			return;
@@ -71,7 +84,7 @@ public class TrianglesFile {
 		triangles.set(i, new Triangle(xp, yp, triangles.get(i).getColor()));
 	}
 	
-	public void modifyShapeFull() {
+	void modifyShapeFull() {
 		imageMade = false;
 		if (triangles.size() <= 0) {
 			return;
@@ -86,7 +99,7 @@ public class TrianglesFile {
 		triangles.set(i, new Triangle(xp, yp, triangles.get(i).getColor()));
 	}
 	
-	public void modifyColor10() {
+	void modifyColor10() {
 		imageMade = false;
 		if (triangles.size() <= 0) {
 			return;
@@ -100,34 +113,74 @@ public class TrianglesFile {
 		triangles.set(i, new Triangle(triangles.get(i).getXpoints(), triangles.get(i).getYpoints(), new Color(col[0], col[1], col[2])));
 	}
 	
-	public void modifyRemove() {
+	void modifyRemove() {
 		imageMade = false;
 		if (triangles.size() > 2) {
 			triangles.remove(G.getRandInt(triangles.size()));
 		}
 	}
 	
-	public double compare(BufferedImage img) {
+	double compare(BufferedImage img) {
 		createImg();
 		double score = compareTotal(img, image);
 		score /= totalPossibleScore;
 		return 1-score;
 	}
-	
-	public static double compare(BufferedImage original, BufferedImage newImg) {
-		
-		BufferedImage compareChunk = new BufferedImage(newImg.getWidth(), newImg.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
-		compareChunk.createGraphics().drawImage(original, 0, 0, newImg.getWidth(), newImg.getHeight(), null);
-		
-		double score = 0;
-		int[] newImgCol = new int[newImg.getWidth() * newImg.getHeight() * 3];
-		int[] originCol = new int[newImgCol.length];
-		newImg.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), newImgCol);
-		compareChunk.getRaster().getPixels(0, 0, newImg.getWidth(), newImg.getHeight(), originCol);
-		for (int i = 0; i < newImgCol.length; i += 3) {
-			score += toScore(i, originCol, newImgCol);
+
+	boolean hasAlpha() {
+		if (baseImg == null) {
+			createImg();
+			return hasAlpha(image);
 		}
-		return 1 - (score / getTotalPossibleScore(compareChunk.getWidth(), compareChunk.getHeight()));
+		return false;
+	}
+	
+	BufferedImage getImage() {
+		createImg();
+		return image;
+	}
+	
+	int getSize() {
+		return triangles.size();
+	}
+	
+	void addTriangle() {
+		imageMade = false;
+		triangles.add(new Triangle());
+	}
+	
+	void removeBackTriangle() {
+		imageMade = false;
+		if (getSize() > 0) {
+			triangles.remove(0);
+		}
+	}
+	
+	ArrayList<Triangle> getTriangles() {
+		ArrayList<Triangle> tr = new ArrayList<Triangle>(G.getTriangles());
+		for (int i = 0; i < triangles.size(); i++) {
+			tr.add(triangles.get(i).clone());
+		}
+		return triangles;
+	}
+	
+	BufferedImage getImage(Dimension newBlockPixelSize) {
+		return makeImg(newBlockPixelSize.width, newBlockPixelSize.height);
+	}
+	
+	private static double getTotalPossibleScore(int width, int height) {
+		return (G.getTrueColor() ? MAX_SCORE_TRUE : MAX_SCORE_FALSE) * width * height;
+	}
+	
+	private static double toScore(int i, int[] a, int[] b) {
+		if (G.getTrueColor()) {
+			// square root(r^2 + g^2 + b^2)
+			return	Math.sqrt(Math.pow(a[i] - b[i], 2) + Math.pow(a[i + 1] - b[i + 1], 2) + Math.pow(a[i + 2] - b[i + 2], 2));
+		}
+		else {
+			// |r| + |g| + |b|
+			return	Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]);
+		}
 	}
 	
 	private double compareTotal(BufferedImage original, BufferedImage newImg) {
@@ -160,17 +213,6 @@ public class TrianglesFile {
 		}
 	}
 	
-	private static double toScore(int i, int[] a, int[] b) {
-		if (G.getTrueColor()) {
-			// square root(r^2 + g^2 + b^2)
-			return	Math.sqrt(Math.pow(a[i] - b[i], 2) + Math.pow(a[i + 1] - b[i + 1], 2) + Math.pow(a[i + 2] - b[i + 2], 2));
-		}
-		else {
-			// |r| + |g| + |b|
-			return	Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]);
-		}
-	}
-	
 	private boolean hasAlpha(BufferedImage b) {
 		for (int i = 0; i < b.getWidth(); i++) {
 			for (int j = 0; j < b.getHeight(); j++) {
@@ -180,47 +222,6 @@ public class TrianglesFile {
 			}
 		}
 		return false;
-	}
-
-	public boolean hasAlpha() {
-		if (baseImg == null) {
-			createImg();
-			return hasAlpha(image);
-		}
-		return false;
-	}
-	
-	public BufferedImage getImage() {
-		createImg();
-		return image;
-	}
-	
-	public int getSize() {
-		return triangles.size();
-	}
-	
-	public void addTriangle() {
-		imageMade = false;
-		triangles.add(new Triangle());
-	}
-	
-	public void removeBackTriangle() {
-		imageMade = false;
-		if (getSize() > 0) {
-			triangles.remove(0);
-		}
-	}
-	
-	public ArrayList<Triangle> getTriangles() {
-		ArrayList<Triangle> tr = new ArrayList<Triangle>(G.getTriangles());
-		for (int i = 0; i < triangles.size(); i++) {
-			tr.add(triangles.get(i).clone());
-		}
-		return triangles;
-	}
-	
-	public BufferedImage getImage(Dimension newBlockPixelSize) {
-		return makeImg(newBlockPixelSize.width, newBlockPixelSize.height);
 	}
 
 	private void createImg() {

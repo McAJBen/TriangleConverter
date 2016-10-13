@@ -1,4 +1,4 @@
-package application;
+package triangleStructure;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import global.G;
-import triangleStructure.Triangle;
-import triangleStructure.TrianglesFile;
 
 public class Block {
 	private static final double MAX_STAGNANT_VAL = 100;

@@ -14,15 +14,15 @@ import global.G;
 
 public class Conversion {
 	
-	private BufferedImage newImg;
 	private final File file;
+	private BufferedImage newImg;
 	private BlockThreadHandler blockThread;
 	
-	public Conversion(File f) {
+	Conversion(File f) {
 		file = f;
 	}
 
-	public void startConversion() {
+	void startConversion() {
 		BufferedImage originalImg = FileHandler.getImage(file);
 		if (originalImg.getType() == BufferedImage.TYPE_4BYTE_ABGR || originalImg.getType() == BufferedImage.TYPE_INT_ARGB) {
 			int[] pix3 = new int[originalImg.getWidth() * originalImg.getHeight() * 3];
@@ -44,17 +44,17 @@ public class Conversion {
 				BufferedImage.TYPE_3BYTE_BGR);
 		
         blockThread = new btGrid(originalImg, newImg);
-		blockThread.startConversion();
+        blockThread.start();
 		
         blockThread = new btRandom(originalImg, newImg);
-        blockThread.startConversion();
+        blockThread.start();
         
-		FileHandler.putImageInFile(file, "New", newImg, G.getShortTitle());
+		FileHandler.putImageInFile(file, G.NEW, newImg, G.getShortTitle());
 		
 		blockThread = null;
 	}
 	
-	public void paint(Graphics g, Dimension size) {
+	void paint(Graphics g, Dimension size) {
         Graphics2D g2d = (Graphics2D) g;
         
         g2d.drawImage(newImg, 0, 0, size.width, size.height, null);
@@ -69,28 +69,27 @@ public class Conversion {
 		}
     }
 	
-	public String getInfo() {
+	String getInfo() {
 		try {
-			
-			return file.getName() + " " + 
+			return file.getName() + G.SPACE + 
 					blockThread.getPercentDone() +
-					" Run Time: " + blockThread.getRunTime() +
-					" End?: " + blockThread.getEstimatedEndTime();
+					G.RUN_TIME + blockThread.getRunTime() +
+					G.END + blockThread.getEstimatedEndTime();
 			
 		} catch (NullPointerException e) {
 			return file.getName();
 		}
 	}
 	
-	public File getFile() {
+	File getFile() {
 		return file;
 	}
 
-	public String getPercentDone() {
+	String getPercentDone() {
 		return blockThread.getPercentDone();
 	}
 
-	public int getPercent(int width) {
+	int getPercent(int width) {
 		try {
 			return (int) (blockThread.getPercent() * width);
 		} catch (NullPointerException e) {

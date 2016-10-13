@@ -2,54 +2,46 @@ package blockStructure;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 
 import global.G;
 
 public class btGrid extends BlockThreadHandler {
 
-	private D2D standardSize;
-	private D2D midStandardSize;
-	private D2D scaledStandardSize;
-	private D2D finalStandardSize;
+	private final D2D standardSize;
+	private final D2D midStandardSize;
+	private final D2D scaledStandardSize;
+	private final D2D finalStandardSize;
 	
 	private Point nextPos;
 
 	public btGrid(BufferedImage originalImg, BufferedImage newImg) {
 		super(originalImg, newImg);
 		
-		standardSize = new D2D();
-		midStandardSize = new D2D();
-		scaledStandardSize = new D2D();
-		finalStandardSize = new D2D();
-		
-		standardSize.setSize(
+		standardSize = new D2D(
 			(double)originalImg.getWidth() / G.getBlocksWide(),
 			(double)originalImg.getHeight() / G.getBlocksWide());
 		
-		midStandardSize.setSize(
+		midStandardSize = new D2D(
 			standardSize.getWidth() * G.getScale(),
 			standardSize.getHeight() * G.getScale());
 		
-		scaledStandardSize.setSize(
+		scaledStandardSize = new D2D(
 			midStandardSize.getWidth() * G.getPostScale(),
 			midStandardSize.getHeight() * G.getPostScale());
 		
-		finalStandardSize.setSize(
-				scaledStandardSize.getWidth() * G.getFinalScale(),
-				scaledStandardSize.getHeight() * G.getFinalScale());
+		finalStandardSize = new D2D(
+			scaledStandardSize.getWidth() * G.getFinalScale(),
+			scaledStandardSize.getHeight() * G.getFinalScale());
 		
 		nextPos = new Point(0, 0);
 	}
 
-	@Override
-	public boolean isDone() {
+	boolean isDone() {
 		return nextPos.y >= G.getBlocksWide();
 	}
 
-	@Override
-	public BlockLocation getNewBlockLocation() {
+	BlockLocation getNewBlockLocation() {
 		
 		Rectangle orig;
 		Rectangle first;
@@ -86,26 +78,23 @@ public class btGrid extends BlockThreadHandler {
 		return r;
 	}
 	
-	@Override
-	public void removeBlockLocation(BlockLocation blockLocation) {}
+	void removeBlockLocation(BlockLocation blockLocation) {}
 	
-	private class D2D extends Dimension2D {
-		private double width;
-		private double height;
-		@Override
+	private class D2D {
+		private final double width;
+		private final double height;
+		
+		public D2D(double width, double height) {
+			this.width = width;
+			this.height = height;
+		}
+		
 		public double getHeight() {
 			return height;
 		}
 
-		@Override
 		public double getWidth() {
 			return width;
-		}
-
-		@Override
-		public void setSize(double width, double height) {
-			this.width = width;
-			this.height = height;
 		}
 	}
 
@@ -121,8 +110,11 @@ public class btGrid extends BlockThreadHandler {
 		}
 	}
 	
-	@Override
 	public double getPercent() {
 		return (nextPos.getX() / G.getBlocksWide() + nextPos.y) / G.getBlocksWide();
+	}
+	
+	int getTotalTriangles() {
+		return G.getBlocksWide() * G.getBlocksWide() * G.getTriangles();
 	}
 }

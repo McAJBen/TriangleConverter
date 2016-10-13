@@ -7,26 +7,10 @@ import javax.imageio.ImageIO;
 
 public class FileHandler {
 	
-	
-	private static boolean isValidFile(File f) {
-		return 
-			equalsFileExtension(f.getName(), ".png") ||
-			equalsFileExtension(f.getName(), ".jpg") ||
-			equalsFileExtension(f.getName(), ".bmp");
-	}
-	
-	private static boolean equalsFileExtension(String fileName, String extension) {
-		int lastIndex = fileName.lastIndexOf('.');
-		if (lastIndex == -1) {
-			return false;
-		}
-		return extension.equals(fileName.substring(lastIndex));
-	}
-	
 	public static File getFile() {
 		while (true) {
 			try {
-				for (File file: (new File(System.getProperty("user.dir"))).listFiles()) {
+				for (File file: (new File(G.USER_DIR)).listFiles()) {
 					if (file.isFile() && isValidFile(file)) {
 						return file;
 		            }
@@ -39,31 +23,44 @@ public class FileHandler {
 		}
 	}
 	
-	public static void putImageInFile(File f, String folder, BufferedImage image, String append) {
-		File fi = toFile(f, folder, append);
-	    try {
-	    	if (!fi.exists()) {
-	    		fi.mkdirs();
-	    	}
-	    	ImageIO.write(image, "png", fi);
-	    } catch (IOException e) {
-	        throw new RuntimeException(e);
-	    }
-	}
-	
-	private static File toFile(File f, String folder, String append) {
-		return new File(f.getParent() + "\\" + folder + "\\" + f.getName().substring(0, f.getName().length() - 4) + append + ".png");
-	}
-
 	public static BufferedImage getImage(File file) {
 		BufferedImage b = null;
 		do {
     		try {
     			b =  ImageIO.read(file);
     		} catch (IOException e) {
-    			System.out.println("ERROR: Could not read file " + file.getName());
+    			System.out.println(G.FILE_ERROR + file.getName());
     		}
     	} while (b == null);
 		return b;
+	}
+	
+	public static void putImageInFile(File f, String folder, BufferedImage image, String append) {
+		File fi = toFile(f, folder, append);
+	    try {
+	    	if (!fi.exists()) {
+	    		fi.mkdirs();
+	    	}
+	    	ImageIO.write(image, G.PNG, fi);
+	    } catch (IOException e) {
+	        throw new RuntimeException(e);
+	    }
+	}
+	
+	private static boolean isValidFile(File f) {
+		
+		final String ending = f.getName().substring(f.getName().lastIndexOf('.'));
+		
+		switch (ending) {
+		case G.DOT_PNG:
+		case G.DOT_JPG:
+		case G.DOT_BMP:
+			return true;
+		}
+		return false;
+	}
+	
+	private static File toFile(File f, String folder, String append) {
+		return new File(f.getParent() + G.BK_SLASH + folder + G.BK_SLASH + f.getName().substring(0, f.getName().length() - 4) + append + G.DOT_PNG);
 	}
 }

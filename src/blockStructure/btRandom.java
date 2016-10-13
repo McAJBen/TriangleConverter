@@ -11,7 +11,7 @@ public class btRandom extends BlockThreadHandler {
 
 	private int randomPlacementsDone;
 	private final Dimension defaultSize;
-	private Dimension imageSize;
+	private final Dimension imageSize;
 	private ArrayList<Rectangle> alreadyTakenBlocks;
 	
 	public btRandom(BufferedImage originalImg, BufferedImage newImg) {
@@ -20,15 +20,13 @@ public class btRandom extends BlockThreadHandler {
 		randomPlacementsDone = 0;
 		imageSize = new Dimension(originalImg.getWidth(), originalImg.getHeight());
 		defaultSize = new Dimension(imageSize.width / G.getBlocksWide(), imageSize.height / G.getBlocksWide());
-		alreadyTakenBlocks = new ArrayList<>();
+		alreadyTakenBlocks = new ArrayList<>(G.getThreadCount());
 	}
 
-	@Override
 	public boolean isDone() {
 		return randomPlacementsDone >= G.getRandomBlocks();
 	}
 
-	@Override
 	BlockLocation getNewBlockLocation() {
 		randomPlacementsDone++;
 		Rectangle orig,
@@ -74,7 +72,6 @@ public class btRandom extends BlockThreadHandler {
 				(int)(r.height * scale));
 	}
 
-	@Override
 	void removeBlockLocation(BlockLocation blockLocation) {
 		synchronized(alreadyTakenBlocks) {
 			alreadyTakenBlocks.remove(blockLocation.original);
@@ -101,9 +98,12 @@ public class btRandom extends BlockThreadHandler {
 		}
 	}
 	
-	@Override
 	public double getPercent() {
 		return (double)randomPlacementsDone / G.getRandomBlocks();
+	}
+	
+	int getTotalTriangles() {
+		return G.getTriangles() * G.getRandomBlocks();
 	}
 	
 }

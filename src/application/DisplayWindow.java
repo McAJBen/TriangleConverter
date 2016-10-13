@@ -1,4 +1,4 @@
-package window;
+package application;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import application.Conversion;
+
 import global.FileHandler;
 import global.G;
 
@@ -16,9 +16,9 @@ public class DisplayWindow extends JFrame {
 	
 	private static final Dimension SCREEN_SIZE = new Dimension(500, 500);
 	private static final Dimension SCREEN_OFFSET = new Dimension(7, 30);
-	private Window window;
+	private final Window window;
 	
-	public DisplayWindow() {
+	DisplayWindow() {
 		super();
 		window = new Window();
     	add(window);
@@ -28,9 +28,9 @@ public class DisplayWindow extends JFrame {
     	setVisible(true);
 	}
 	
-	public void start() {
+	void start() {
 		while (true) {
-			setTitle("Finding File ...");
+			setTitle(G.FINDING_FILE);
 	    	File file = FileHandler.getFile();
 	    	if (file != null) {
 	    		for (int attempt = 1; attempt <= G.getMaxAttempts(); attempt++) {
@@ -40,7 +40,7 @@ public class DisplayWindow extends JFrame {
 	    		}
 	    		BufferedImage originalImg = FileHandler.getImage(file);
 	    		file.delete();
-	    		FileHandler.putImageInFile(file, "Original", originalImg, "");
+	    		FileHandler.putImageInFile(file, G.ORIGINAL, originalImg, G.BLANK);
 	    	}
 		}
 	}
@@ -48,16 +48,6 @@ public class DisplayWindow extends JFrame {
 	private static class Window extends JPanel {
 		
 		private Conversion conversion;
-		
-		private void startConversion(File file) {
-			Thread repaintThread = getPaintThread();
-			conversion = new Conversion(file);
-        	repaintThread.start();
-        	conversion.startConversion();
-        	repaintThread.interrupt();
-        	conversion = null;
-        	repaint();
-		}
 		
 		public void paint(Graphics g) {
 			super.paint(g);
@@ -73,18 +63,28 @@ public class DisplayWindow extends JFrame {
 					conversion.paint(g, size);
 					
 				} catch (OutOfMemoryError e) {
-					g.drawString("Out of memory, not able to display :(", 5, 15);
+					g.drawString(G.OUT_OF_MEMORY, 5, 15);
 					g.drawString(conversion.getPercentDone(), 5, 30);
 				}
 			}
 			else {
 				g.setColor(Color.BLACK);
-				g.drawString("Finding File ...", 1, size.height - 3);
+				g.drawString(G.FINDING_FILE, 1, size.height - 3);
 			}
 		}
 		
+		private void startConversion(File file) {
+			Thread repaintThread = getPaintThread();
+			conversion = new Conversion(file);
+        	repaintThread.start();
+        	conversion.startConversion();
+        	repaintThread.interrupt();
+        	conversion = null;
+        	repaint();
+		}
+		
 		private Thread getPaintThread() {
-			return new Thread("paintThread") {
+			return new Thread(G.PAINT_THREAD) {
 				public void run() {
 					while (!isInterrupted()) {
 						repaint();

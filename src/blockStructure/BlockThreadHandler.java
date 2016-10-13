@@ -6,37 +6,25 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import application.Block;
 import global.G;
+import triangleStructure.Block;
 import triangleStructure.TrianglesFile;
 
 public abstract class BlockThreadHandler {
 	
 	private static final Color PINK = new Color(255, 0, 255);
 	
+	boolean allowAlpha;
+	
 	private BufferedImage originalImg; // original image being compared to
 	private BufferedImage newImg; // image being changed
-	private BT[] BTArray;
-	protected boolean allowAlpha;
-	private long startTime = -1;
+	private final BT[] BTArray;
+	private final long startTime;
 	
-	BlockThreadHandler(BufferedImage originalImg, BufferedImage newImg) {
-		this.originalImg = originalImg;
-		this.newImg = newImg;
-		BTArray = new BT[G.getThreadCount()];
-	}
-
-	abstract boolean isDone();
-	abstract BlockLocation getNewBlockLocation();
-	abstract void removeBlockLocation(BlockLocation blockLocation);
 	public abstract double getPercent();
 	
 	public String getPercentDone() {
 		return String.format("%s %02.0f%%", getClass().getSimpleName(), getPercent() * 100);
-	}
-	
-	private long getSecondsFromStart() {
-		return (System.currentTimeMillis() - startTime) / 1000;
 	}
 	
 	public String getRunTime() {
@@ -50,12 +38,29 @@ public abstract class BlockThreadHandler {
 		return String.format("%01d:%02d:%02d", endTime / 3600, (endTime / 60) % 60, endTime % 60);
 	}
 
-	public void startConversion() {
-        for (int i = 0; i < BTArray.length; i++) {
+	public void paint(Graphics2D g2d, Dimension size) {
+		if (BTArray != null) {
+			for (BT b: BTArray) {
+				if (b != null) {
+					b.paint(g2d, newImg.getWidth(), newImg.getHeight(), size);
+				}
+			}
+		}
+	}
+	
+	BlockThreadHandler(BufferedImage originalImg, BufferedImage newImg) {
+		this.originalImg = originalImg;
+		this.newImg = newImg;
+		BTArray = new BT[G.getThreadCount()];
+		startTime = System.currentTimeMillis();
+		
+		for (int i = 0; i < BTArray.length; i++) {
            	BTArray[i] = new BT("" + i);
         }
-        startTime = System.currentTimeMillis();
-        for (BT b: BTArray) {
+	}
+	
+	public void start() {
+		for (BT b: BTArray) {
         	b.start();
         }
         for (BT b: BTArray) {
@@ -66,15 +71,14 @@ public abstract class BlockThreadHandler {
 			}
         }
 	}
+
+	abstract boolean isDone();
+	abstract BlockLocation getNewBlockLocation();
+	abstract void removeBlockLocation(BlockLocation blockLocation);
+	abstract int getTotalTriangles();
 	
-	public void paint(Graphics2D g2d, Dimension size) {
-		if (BTArray != null) {
-			for (BT b: BTArray) {
-				if (b != null) {
-					b.paint(g2d, newImg.getWidth(), newImg.getHeight(), size);
-				}
-			}
-		}
+	private long getSecondsFromStart() {
+		return (System.currentTimeMillis() - startTime) / 1000;
 	}
 	
 	private void paintTo(BufferedImage b, Rectangle rect) {
