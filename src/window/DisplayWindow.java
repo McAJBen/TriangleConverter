@@ -29,8 +29,8 @@ public class DisplayWindow extends JFrame {
 	}
 	
 	public void start() {
-		setTitle("Finding File ...");
 		while (true) {
+			setTitle("Finding File ...");
 	    	File file = FileHandler.getFile();
 	    	if (file != null) {
 	    		for (int attempt = 1; attempt <= G.getMaxAttempts(); attempt++) {
@@ -56,6 +56,7 @@ public class DisplayWindow extends JFrame {
         	conversion.startConversion();
         	repaintThread.interrupt();
         	conversion = null;
+        	repaint();
 		}
 		
 		public void paint(Graphics g) {
