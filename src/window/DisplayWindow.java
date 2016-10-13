@@ -61,9 +61,9 @@ public class DisplayWindow extends JFrame {
 		
 		public void paint(Graphics g) {
 			super.paint(g);
+			Dimension size = getSize();
 			if (conversion != null) {
 				try {
-					Dimension size = getSize();
 					g.setColor(Color.GREEN);
 					g.fillRect(0, size.height - 14, conversion.getPercent(size.width), 14);
 					g.setColor(Color.BLACK);
@@ -76,6 +76,10 @@ public class DisplayWindow extends JFrame {
 					g.drawString("Out of memory, not able to display :(", 5, 15);
 					g.drawString(conversion.getPercentDone(), 5, 30);
 				}
+			}
+			else {
+				g.setColor(Color.BLACK);
+				g.drawString("Finding File ...", 1, size.height - 3);
 			}
 		}
 		
