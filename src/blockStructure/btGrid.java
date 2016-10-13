@@ -36,6 +36,10 @@ public class btGrid extends BlockThreadHandler {
 		
 		nextPos = new Point(0, 0);
 	}
+	
+	public double getPercent() {
+		return (nextPos.getX() / G.getBlocksWide() + nextPos.y) / G.getBlocksWide();
+	}
 
 	boolean isDone() {
 		return nextPos.y >= G.getBlocksWide();
@@ -65,6 +69,8 @@ public class btGrid extends BlockThreadHandler {
 		return new BlockLocation(orig, first, second, third);
 	}
 	
+	void removeBlockLocation(BlockLocation blockLocation) {}
+	
 	private static Rectangle toRectangle(Point pos, D2D size) {
 		Rectangle r = new Rectangle();
 		
@@ -78,7 +84,17 @@ public class btGrid extends BlockThreadHandler {
 		return r;
 	}
 	
-	void removeBlockLocation(BlockLocation blockLocation) {}
+	private Point getNextPos() {
+		synchronized (nextPos) {
+			Point p = (Point) nextPos.clone();
+			nextPos.x++;
+			if (nextPos.x >= G.getBlocksWide()) {
+				nextPos.y++;
+				nextPos.x = 0;
+			}
+			return p;
+		}
+	}
 	
 	private class D2D {
 		private final double width;
@@ -96,25 +112,5 @@ public class btGrid extends BlockThreadHandler {
 		public double getWidth() {
 			return width;
 		}
-	}
-
-	private Point getNextPos() {
-		synchronized (nextPos) {
-			Point p = (Point) nextPos.clone();
-			nextPos.x++;
-			if (nextPos.x >= G.getBlocksWide()) {
-				nextPos.y++;
-				nextPos.x = 0;
-			}
-			return p;
-		}
-	}
-	
-	public double getPercent() {
-		return (nextPos.getX() / G.getBlocksWide() + nextPos.y) / G.getBlocksWide();
-	}
-	
-	int getTotalTriangles() {
-		return G.getBlocksWide() * G.getBlocksWide() * G.getTriangles();
 	}
 }

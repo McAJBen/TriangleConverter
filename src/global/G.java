@@ -4,27 +4,29 @@ import java.util.Random;
 
 public class G {
 	
-	public static final String TAB = "\t";
-	public static final String BLANK = "";
-	public static final String ORIGINAL = "Original";
-	public static final String NEW = "New";
-	public static final String SPACE = " ";
-	public static final String RUN_TIME = " Run Time: ";
-	public static final String END = " End?: ";
-	public static final String FINDING_FILE = "Finding File ...";
-	public static final String OUT_OF_MEMORY = "Out of memory, not able to display :(";
-	public static final String PAINT_THREAD = "paintThread";
-	public static final String USER_DIR = System.getProperty("user.dir");
-	public static final String FILE_ERROR = "ERROR: Could not read file ";
-	public static final String PNG = "png";
-	public static final String DOT_PNG = ".png";
-	public static final String DOT_JPG = ".jpg";
-	public static final String DOT_BMP = ".bmp";
-	public static final String BK_SLASH = "\\";
-	public static final String SETTINGS_FILE = "TriangleConverter.settings";
-	public static final String NO_SETTINGS_FILE = "Settings File does not exist";
-	
-	
+	public static final String 
+		TAB = "\t",
+		BLANK = "",
+		ORIGINAL = "Original",
+		NEW = "New",
+		SPACE = " ",
+		RUN_TIME = SPACE + "Run Time:" + SPACE,
+		END = SPACE + "End?:" + SPACE,
+		FINDING_FILE = "Finding File ...",
+		OUT_OF_MEMORY = "Out of memory, not able to display",
+		PAINT_THREAD = "paintThread",
+		USER_DIR = System.getProperty("user.dir"),
+		FILE_ERROR = "ERROR: Could not read file" + SPACE,
+		PNG = "png",
+		DOT_PNG = "." + PNG,
+		DOT_JPG = ".jpg",
+		DOT_BMP = ".bmp",
+		BK_SLASH = "\\",
+		SETTINGS_FILE = "TriangleConverter.settings",
+		NO_SETTINGS_FILE = "Settings File does not exist",
+		LOWER_X = "x",
+		UPPER_X = "X",
+		AUTO = "AUTO";
 	
 	static boolean
 		preDraw = true,
@@ -52,10 +54,6 @@ public class G {
 		finalScaleRandom = false;
 	
 	private static final Random RANDOM = new Random();
-	public static final String LOWER_X = "x";
-	public static final String UPPER_X = "X";
-	public static final String AUTO = "AUTO";
-	
 	
 	public static void reset() {
 		if (postProcessingRandom) {

@@ -12,10 +12,9 @@ import triangleStructure.TrianglesFile;
 
 public abstract class BlockThreadHandler {
 	
-	private static final Color PINK = new Color(255, 0, 255);
-	
 	boolean allowAlpha;
 	
+	private static final Color PINK = new Color(255, 0, 255);
 	private BufferedImage originalImg; // original image being compared to
 	private BufferedImage newImg; // image being changed
 	private final BT[] BTArray;
@@ -48,17 +47,6 @@ public abstract class BlockThreadHandler {
 		}
 	}
 	
-	BlockThreadHandler(BufferedImage originalImg, BufferedImage newImg) {
-		this.originalImg = originalImg;
-		this.newImg = newImg;
-		BTArray = new BT[G.getThreadCount()];
-		startTime = System.currentTimeMillis();
-		
-		for (int i = 0; i < BTArray.length; i++) {
-           	BTArray[i] = new BT("" + i);
-        }
-	}
-	
 	public void start() {
 		for (BT b: BTArray) {
         	b.start();
@@ -71,11 +59,21 @@ public abstract class BlockThreadHandler {
 			}
         }
 	}
-
+	
+	BlockThreadHandler(BufferedImage originalImg, BufferedImage newImg) {
+		this.originalImg = originalImg;
+		this.newImg = newImg;
+		BTArray = new BT[G.getThreadCount()];
+		startTime = System.currentTimeMillis();
+		
+		for (int i = 0; i < BTArray.length; i++) {
+           	BTArray[i] = new BT("" + i);
+        }
+	}
+	
 	abstract boolean isDone();
 	abstract BlockLocation getNewBlockLocation();
 	abstract void removeBlockLocation(BlockLocation blockLocation);
-	abstract int getTotalTriangles();
 	
 	private long getSecondsFromStart() {
 		return (System.currentTimeMillis() - startTime) / 1000;

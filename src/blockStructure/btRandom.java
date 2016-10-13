@@ -26,6 +26,10 @@ public class btRandom extends BlockThreadHandler {
 	public boolean isDone() {
 		return randomPlacementsDone >= G.getRandomBlocks();
 	}
+	
+	public double getPercent() {
+		return (double)randomPlacementsDone / G.getRandomBlocks();
+	}
 
 	BlockLocation getNewBlockLocation() {
 		randomPlacementsDone++;
@@ -56,12 +60,10 @@ public class btRandom extends BlockThreadHandler {
 		return bl;
 	}
 	
-	private Rectangle getRandomRect(Dimension size) {
-		return new Rectangle(
-				G.getRandInt(imageSize.width - size.width),
-				G.getRandInt(imageSize.height - size.height),
-				size.width,
-				size.height);
+	void removeBlockLocation(BlockLocation blockLocation) {
+		synchronized(alreadyTakenBlocks) {
+			alreadyTakenBlocks.remove(blockLocation.original);
+		}
 	}
 	
 	private static Rectangle toRectangle(Rectangle r, double scale) {
@@ -71,13 +73,15 @@ public class btRandom extends BlockThreadHandler {
 				(int)(r.width * scale),
 				(int)(r.height * scale));
 	}
-
-	void removeBlockLocation(BlockLocation blockLocation) {
-		synchronized(alreadyTakenBlocks) {
-			alreadyTakenBlocks.remove(blockLocation.original);
-		}
-	}
 	
+	private Rectangle getRandomRect(Dimension size) {
+		return new Rectangle(
+				G.getRandInt(imageSize.width - size.width),
+				G.getRandInt(imageSize.height - size.height),
+				size.width,
+				size.height);
+	}
+
 	private Dimension getBlock() {
 		Dimension r = defaultSize.getSize();
 		
@@ -97,13 +101,4 @@ public class btRandom extends BlockThreadHandler {
 			return false;
 		}
 	}
-	
-	public double getPercent() {
-		return (double)randomPlacementsDone / G.getRandomBlocks();
-	}
-	
-	int getTotalTriangles() {
-		return G.getTriangles() * G.getRandomBlocks();
-	}
-	
 }
