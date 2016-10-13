@@ -14,8 +14,8 @@ import global.G;
 @SuppressWarnings("serial")
 public class DisplayWindow extends JFrame {
 	
-	private static final Dimension SCREEN_SIZE = new Dimension(500, 500);
-	private static final Dimension SCREEN_OFFSET = new Dimension(7, 30);
+	private static final Dimension SCREEN_SIZE = new Dimension(600, 600);
+	private static final Dimension SCREEN_OFFSET = new Dimension(16, 53);
 	private final Window window;
 	
 	DisplayWindow() {
@@ -54,11 +54,12 @@ public class DisplayWindow extends JFrame {
 			Dimension size = getSize();
 			if (conversion != null) {
 				try {
+					g.setColor(Color.WHITE);
+					g.fillRect(0, size.height - 14, size.width, 14);
 					g.setColor(Color.GREEN);
 					g.fillRect(0, size.height - 14, conversion.getPercent(size.width), 14);
 					g.setColor(Color.BLACK);
 					g.drawString(conversion.getInfo(), 1, size.height - 3);
-					
 					size.height -= 14;
 					conversion.paint(g, size);
 					

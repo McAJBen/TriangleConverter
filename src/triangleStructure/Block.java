@@ -21,29 +21,13 @@ public class Block {
 	private TriangleMode 
 			triangleMode = TriangleMode.RANDOM;
 	
-	
-	public Block(BufferedImage compareImg, Dimension size) {
-		this(compareImg, size, new ArrayList<Triangle>(Arrays.asList(new Triangle())));
-	}
-	
 	public Block(BufferedImage compareImg, BufferedImage baseImg, Dimension size) {
 		this(compareImg, baseImg, size, new ArrayList<Triangle>(Arrays.asList(new Triangle())));
 	}
 
-	public Block(BufferedImage compareImg, Dimension size, ArrayList<Triangle> triangles) {
-		
-		compareChunk = new BufferedImage(size.width, size.height, BufferedImage.TYPE_4BYTE_ABGR);
-		compareChunk.createGraphics().drawImage(compareImg, 0, 0, size.width, size.height, null);
-		
-		bestTriFile = new TrianglesFile(triangles, size);
-		
-		maxScore = bestTriFile.compare(compareChunk);
-		lastBestImgChunk = bestTriFile.getImage();
-	}
-	
 	public Block(BufferedImage compareImg, BufferedImage baseImg, Dimension size, ArrayList<Triangle> triangles) {
 		
-		compareChunk = new BufferedImage(size.width, size.height, BufferedImage.TYPE_3BYTE_BGR);
+		compareChunk = new BufferedImage(size.width, size.height, BufferedImage.TYPE_4BYTE_ABGR);
 		compareChunk.createGraphics().drawImage(compareImg, 0, 0, size.width, size.height, null);
 		
 		bestTriFile = new TrianglesFile(triangles, size, baseImg);

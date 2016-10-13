@@ -12,13 +12,11 @@ import triangleStructure.TrianglesFile;
 
 public abstract class BlockThreadHandler {
 	
-	boolean allowAlpha;
-	
 	private static final Color PINK = new Color(255, 0, 255);
-	private BufferedImage originalImg; // original image being compared to
-	private BufferedImage newImg; // image being changed
 	private final BT[] BTArray;
 	private final long startTime;
+	private BufferedImage originalImg; // original image being compared to
+	private BufferedImage newImg; // image being changed
 	
 	public abstract double getPercent();
 	
@@ -41,7 +39,10 @@ public abstract class BlockThreadHandler {
 		if (BTArray != null) {
 			for (BT b: BTArray) {
 				if (b != null) {
-					b.paint(g2d, newImg.getWidth(), newImg.getHeight(), size);
+					double xScale = size.getWidth() / newImg.getWidth();
+					double yScale = size.getHeight() / newImg.getHeight();
+					
+					b.paint(g2d, xScale, yScale);
 				}
 			}
 		}
@@ -64,16 +65,19 @@ public abstract class BlockThreadHandler {
 		this.originalImg = originalImg;
 		this.newImg = newImg;
 		BTArray = new BT[G.getThreadCount()];
-		startTime = System.currentTimeMillis();
-		
 		for (int i = 0; i < BTArray.length; i++) {
            	BTArray[i] = new BT("" + i);
         }
+		startTime = System.currentTimeMillis();
 	}
 	
 	abstract boolean isDone();
 	abstract BlockLocation getNewBlockLocation();
 	abstract void removeBlockLocation(BlockLocation blockLocation);
+	
+	private static BufferedImage getSubImage(BufferedImage b, Rectangle r) {
+		return b.getSubimage(r.x, r.y, r.width, r.height);
+	}
 	
 	private long getSecondsFromStart() {
 		return (System.currentTimeMillis() - startTime) / 1000;
@@ -85,10 +89,6 @@ public abstract class BlockThreadHandler {
 		}
 	}
 
-	private static BufferedImage getSubImage(BufferedImage b, Rectangle r) {
-		return b.getSubimage(r.x, r.y, r.width, r.height);
-	}
-	
 	private class BT extends Thread {
 
 		private BufferedImage currentTestImage;
@@ -108,33 +108,32 @@ public abstract class BlockThreadHandler {
 					active = false;
 					break;
 				}
-				{
-					double bestScore = 0;
-					for (int sample = 0; sample < G.getMaxSamples(); sample++) {
-						Block block = allowAlpha ? 
-								new Block(compareImage, baseImg, blockLocation.first.getSize()):
-								new Block(compareImage, blockLocation.first.getSize());
-						
-						compute(block);
-						if (bestScore < block.getMaxScore()) {
-							bestBlock = block;
-							bestScore = block.getMaxScore();
-						}
+				double bestScore = 0;
+				for (int sample = 0; sample < G.getMaxSamples(); sample++) {
+					Block block = new Block(compareImage, baseImg, blockLocation.first.getSize());
+					compute(block);
+					if (bestScore < block.getMaxScore()) {
+						bestBlock = block;
+						bestScore = block.getMaxScore();
 					}
 				}
 				if (G.getPostProcessing()) {
-					Block block = allowAlpha ? 
-							new Block(compareImage, baseImg, blockLocation.second.getSize(), bestBlock.getTriangles()):
-							new Block(compareImage, blockLocation.second.getSize(), bestBlock.getTriangles());
+					Block block = new Block(compareImage, baseImg, blockLocation.second.getSize(), bestBlock.getTriangles());
 					compute(block);
 					bestBlock = block;
 				}
-				if (!allowAlpha || bestBlock.getMaxScore() >= TrianglesFile.compare(compareImage, baseImg)) {
+				if (bestBlock.getMaxScore() >= TrianglesFile.compare(compareImage, baseImg)) {
 					paintTo(bestBlock.getImage(blockLocation.third.getSize()), blockLocation.third);
 				}
 				active = false;
 				removeBlockLocation(blockLocation);
 			}
+		}
+		
+		private BT(String string) {
+			super(string);
+			currentTestImage = null;
+			active = false;
 		}
 		
 		private void compute(Block block) {
@@ -147,36 +146,30 @@ public abstract class BlockThreadHandler {
 			currentTestImage = block.getImage();
 		}
 		
-		private BT(String string) {
-			super(string);
-			currentTestImage = null;
-			active = false;
-		}
-		
-		private void paint(Graphics2D g, int origW, int origH, Dimension windowSize) {
+		private void paint(Graphics2D g, double xScale, double yScale) {
 			if (active) {
 				
 				Rectangle rect = new Rectangle(
-						blockLocation.third.x * windowSize.width / origW,
-						blockLocation.third.y * windowSize.height / origH,
-						blockLocation.third.width * windowSize.width / origW,
-						blockLocation.third.height * windowSize.height / origH);
+						(int)(blockLocation.third.x * xScale),
+						(int)(blockLocation.third.y * yScale),
+						(int)(blockLocation.third.width * xScale),
+						(int)(blockLocation.third.height * yScale));
 				
 				if (currentTestImage != null) {
 					g.drawImage(currentTestImage,
-							rect.x + 1, rect.y + 1,
-							rect.width, rect.height, null);
+						rect.x, rect.y,
+						rect.width, rect.height, null);
 				}
 				
 				g.setColor(PINK);
 				
 				g.drawString(getName(),
-						rect.x + 1,
-						rect.y + 11);
+					rect.x + 1,
+					rect.y + 11);
 				
 				g.drawRect(
-						rect.x, rect.y,
-						rect.width, rect.height);
+					rect.x, rect.y,
+					rect.width - 1, rect.height - 1);
 			}
 		}
 	}
