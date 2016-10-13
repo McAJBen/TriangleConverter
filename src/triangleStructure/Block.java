@@ -106,14 +106,11 @@ public class Block {
 	}
 	
 	public boolean isDone() {
-		if (bestTriFile.hasAlpha()) {
-			return false;
-		}
-		else if (maxScore > 0.99) {
-			return true;
-		}
-		if (bestTriFile.getSize() == G.getTriangles()) {
-			if (triangleMode == TriangleMode.REMOVE) {
+		if (!bestTriFile.hasAlpha()) {
+			if (maxScore > 0.99) {
+				return true;
+			}
+			if (triangleMode == TriangleMode.REMOVE && bestTriFile.getSize() == G.getTriangles()) {
 				return true;
 			}
 		}
