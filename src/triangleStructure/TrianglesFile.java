@@ -21,7 +21,7 @@ public class TrianglesFile {
 	private boolean imageMade = false;
 	
 	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension) {
-		triangles = new ArrayList<Triangle>();
+		triangles = new ArrayList<Triangle>(G.getTriangles());
 		for (int i = 0; i < trArray.size(); i++) {
 			this.triangles.add(trArray.get(i));
 		}
@@ -212,7 +212,7 @@ public class TrianglesFile {
 	}
 	
 	public ArrayList<Triangle> getTriangles() {
-		ArrayList<Triangle> tr = new ArrayList<Triangle>();
+		ArrayList<Triangle> tr = new ArrayList<Triangle>(G.getTriangles());
 		for (int i = 0; i < triangles.size(); i++) {
 			tr.add(triangles.get(i).clone());
 		}
