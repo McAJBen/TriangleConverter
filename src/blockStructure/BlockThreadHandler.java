@@ -139,7 +139,7 @@ public abstract class BlockThreadHandler {
 					compute(block);
 					bestBlock = block;
 				}
-				if (bestBlock.getMaxScore() >= TrianglesFile.compare(compareImage, baseImg)) {
+				if (!ignoreAlpha || bestBlock.getMaxScore() >= TrianglesFile.compare(compareImage, baseImg)) {
 					paintTo(bestBlock.getImage(blockLocation.third.getSize()), blockLocation.third);
 				}
 				active = false;
