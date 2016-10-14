@@ -89,8 +89,8 @@ public class Block {
 		}
 	}
 	
-	public boolean isDone() {
-		if (!bestTriFile.hasAlpha()) {
+	public boolean isDone(boolean ignoreAlpha) {
+		if (ignoreAlpha || !bestTriFile.hasAlpha()) {
 			if (maxScore > 0.99) {
 				return true;
 			}

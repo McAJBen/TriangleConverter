@@ -15,6 +15,7 @@ public abstract class BlockThreadHandler {
 	private static final Color PINK = new Color(255, 0, 255);
 	private final BT[] BTArray;
 	private final long startTime;
+	private final boolean ignoreAlpha;
 	private BufferedImage originalImg; // original image being compared to
 	private BufferedImage newImg; // image being changed
 	
@@ -64,6 +65,7 @@ public abstract class BlockThreadHandler {
 	BlockThreadHandler(BufferedImage originalImg, BufferedImage newImg) {
 		this.originalImg = originalImg;
 		this.newImg = newImg;
+		ignoreAlpha = !hasAlpha(newImg);
 		BTArray = new BT[G.getThreadCount()];
 		for (int i = 0; i < BTArray.length; i++) {
            	BTArray[i] = new BT("" + i);
@@ -79,6 +81,20 @@ public abstract class BlockThreadHandler {
 		return b.getSubimage(r.x, r.y, r.width, r.height);
 	}
 	
+	private boolean hasAlpha(BufferedImage b) {
+		if (ignoreAlpha) {
+			return false;
+		}
+		for (int i = 0; i < b.getWidth(); i++) {
+			for (int j = 0; j < b.getHeight(); j++) {
+				if (b.getRGB(i, j) == 0) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	private long getSecondsFromStart() {
 		return (System.currentTimeMillis() - startTime) / 1000;
 	}
@@ -88,22 +104,23 @@ public abstract class BlockThreadHandler {
 			newImg.createGraphics().drawImage(b, rect.x, rect.y, rect.width, rect.height, null);
 		}
 	}
-
+	
 	private class BT extends Thread {
 
 		private BufferedImage currentTestImage;
 		private BlockLocation blockLocation;
 		private boolean active;
+		private boolean ignoreAlphaChunk;
 		
 		public void run() {
 			while (!isDone()) {
-				
 				Block bestBlock = null;
 				blockLocation = getNewBlockLocation();
 				currentTestImage = null;
 				active = true;
 				BufferedImage compareImage = getSubImage(originalImg, blockLocation.original);
 				BufferedImage baseImg = getSubImage(newImg, blockLocation.third);
+				ignoreAlphaChunk = !hasAlpha(baseImg);
 				if (blockLocation == null) {
 					active = false;
 					break;
@@ -129,7 +146,7 @@ public abstract class BlockThreadHandler {
 				removeBlockLocation(blockLocation);
 			}
 		}
-		
+
 		private BT(String string) {
 			super(string);
 			currentTestImage = null;
@@ -137,7 +154,7 @@ public abstract class BlockThreadHandler {
 		}
 		
 		private void compute(Block block) {
-			while (!block.isDone()) {
+			while (!block.isDone(ignoreAlphaChunk)) {
 				block.move();
 				if (G.getPreDraw()) {
 					currentTestImage = block.getImage();

@@ -20,8 +20,12 @@ public class TrianglesFile {
 	private BufferedImage baseImg;
 	private double totalPossibleScore;
 	private boolean imageMade = false;
+
+	public TrianglesFile(TrianglesFile tf) {
+		this(tf.getTriangles(), tf.imageSize, tf.baseImg);
+	}
 	
-	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension) {
+	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension, BufferedImage baseChunk) {
 		triangles = new ArrayList<Triangle>(G.getTriangles());
 		for (int i = 0; i < trArray.size(); i++) {
 			this.triangles.add(trArray.get(i));
@@ -29,15 +33,6 @@ public class TrianglesFile {
 		imageSize = dimension.getSize();
 		
 		totalPossibleScore = getTotalPossibleScore(imageSize.width, imageSize.height);
-		baseImg = null;
-	}
-
-	public TrianglesFile(TrianglesFile tf) {
-		this(tf.getTriangles(), tf.imageSize, tf.baseImg);
-	}
-	
-	public TrianglesFile(ArrayList<Triangle> trArray, Dimension dimension, BufferedImage baseChunk) {
-		this(trArray, dimension);
 		baseImg = baseChunk;
 	}
 	
