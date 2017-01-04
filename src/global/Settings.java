@@ -6,35 +6,20 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Settings {
 	
 	private static final String
-		// BOOLEANS
-		PREDRAW_ID = "PREDRAW",
-		POST_PROCESSING_ID = "POST_PROCESSING",
-		DISPLAY_ID = "DISPLAY",
-		TRUE_COLOR_ID = "TRUE_COLOR",
-		// INTEGERS
-		BLOCKS_WIDE_ID = "BLOCKS_WIDE",
-		MAX_TRIANGLES_ID = "MAX_TRIANGLES",
-		SAMPLES_ID = "SAMPLES",
-		THREAD_COUNT_ID = "THREAD_COUNT",
-		REPAINT_WAIT_ID = "REAPINT_WAIT_MS",
-		ATTEMPTS_ID = "ATTEMPTS",
-		RANDOM_BLOCKS_ID = "RANDOM_BLOCKS",
-		// DOUBLES
-		SCALE_ID = "SCALE",
-		POST_SCALE_ID = "POST_SCALE",
-		FINAL_SCALE_ID = "FINAL_SCALE",
-		// FORMAT
 		ID_SYMB = ":",
 		COMENT_SYMB = "#",
-		RANDOM_ID = "RANDOM";
+		END_SYMB = "END";
+	
+	private static ArrayList<Integer> blocksWide, maxTriangles, samples, randomBlocks;
+	private static ArrayList<Double> scales, postScales, finalScales;
 	
 	@SuppressWarnings("resource")
 	public static void load() {
-		String settingsString = null;
 		BufferedReader br = null;
 		try {
 			File settingsFile = new File(G.USER_DIR + G.BK_SLASH + G.SETTINGS_FILE);
@@ -50,111 +35,179 @@ public class Settings {
 			return;
 		}
 		
+		blocksWide = new ArrayList<>();
+		maxTriangles = new ArrayList<>();
+		samples = new ArrayList<>();
+		randomBlocks = new ArrayList<>();
+		scales = new ArrayList<>();
+		postScales = new ArrayList<>();
+		finalScales = new ArrayList<>();
+		
 		while (true) {
 			// read a line
 			try {
-				settingsString = br.readLine();
+				String settingsString = br.readLine();
 				if (settingsString == null) {
 					throw new IOException();
+				}
+				if (!setVar(settingsString)) {
+					break;
 				}
 			} catch (IOException e) {
 				// can't read another line, the file must be done
 				break;
 			}
-			// if line == null continue to check if there are any more lines
-			// if line begins with comment symbol, ignore the line
-			if (settingsString != null && !settingsString.startsWith(COMENT_SYMB)) {
-				
-				String[] split = settingsString.split(ID_SYMB);
-				// if line does not have identifier ignore it
-				if (split.length != 2) {
-					continue;
+		}
+		
+		while (G.sequential) {
+			try {
+				String seqString = br.readLine();
+				if (seqString == null) {
+					throw new IOException();
 				}
-				switch (split[0]) {
-					// BOOLEANS
-					case PREDRAW_ID:
-						G.preDraw = Boolean.parseBoolean(split[1]);
-						break;
-					case POST_PROCESSING_ID:
-						
-						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
-							G.postProcessingRandom = true;
-						}
-						else {
-							G.postProcessing = Boolean.parseBoolean(split[1]);
-						}
-						break;
-					case DISPLAY_ID:
-						G.display = Boolean.parseBoolean(split[1]);
-						break;
-					case TRUE_COLOR_ID:
-						G.trueColor = Boolean.parseBoolean(split[1]);
-						break;
-					// INTEGERS
-					case BLOCKS_WIDE_ID:
-						G.blocksWide = Integer.parseInt(split[1]);
-						break;
-					case MAX_TRIANGLES_ID:
-						G.triangles = Integer.parseInt(split[1]);
-						break;
-					case SAMPLES_ID:
-						G.samples = Integer.parseInt(split[1]);
-						break;
-					case THREAD_COUNT_ID:
-						if (split[1].equalsIgnoreCase(G.AUTO)) {
-							G.threadCount = Runtime.getRuntime().availableProcessors();
-						}
-						else {
-							G.threadCount = Integer.parseInt(split[1]);
-						}
-						break;
-					case RANDOM_BLOCKS_ID:
-						if (split[1].startsWith(G.LOWER_X) || split[1].startsWith(G.UPPER_X)) {
-							G.randomBlockMult = Integer.parseInt(split[1].substring(1));
-						}
-						else if (split[1].equalsIgnoreCase(RANDOM_ID)) {
-							G.randomBlocksRandom = true;
-						}
-						else {
-							G.randomBlocks = Integer.parseInt(split[1]);
-						}
-						break;
-					case REPAINT_WAIT_ID:
-						G.repaintWait = Integer.parseInt(split[1]);
-						break;
-					case ATTEMPTS_ID:
-						G.attempts = Integer.parseInt(split[1]);
-						break;
-					// DOUBLES
-					case SCALE_ID:
-						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
-							G.scaleRandom = true;
-						}
-						else {
-							G.scale = Double.parseDouble(split[1]);
-						}
-						break;
-					case POST_SCALE_ID:
-						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
-							G.postScaleRandom = true;
-						}
-						else {
-							G.postScale = Double.parseDouble(split[1]);
-						}
-						break;
-					case FINAL_SCALE_ID:
-						if (split[1].equalsIgnoreCase(RANDOM_ID)) {
-							G.finalScaleRandom = true;
-						}
-						else {
-							G.finalScale = Double.parseDouble(split[1]);
-						}
-						break;
-					default: // any unknown ID is ignored
-						break;
+				if (!setSeq(seqString)) {
+					break;
 				}
+			} catch (IOException e) {
+				break;
 			}
 		}
+		
+		blocksWide.trimToSize();
+		maxTriangles.trimToSize();
+		samples.trimToSize();
+		randomBlocks.trimToSize();
+		scales.trimToSize();
+		postScales.trimToSize();
+		finalScales.trimToSize();
+		if (G.sequential) {
+			G.attempts = seqSize();
+		}
+	}
+	
+	// return true if correctly dealt with line
+	// return false if sequential is ending
+	private static boolean setSeq(String line) {
+		if (line.equals(END_SYMB)) {
+			return false;
+		}
+		else if (!line.startsWith(COMENT_SYMB)) {
+			String[] split = line.split(ID_SYMB);
+			// if line does not have identifier ignore it
+			if (split.length != 2) {
+				return true;
+			}
+			switch (Setting.valueOf(split[0])) {
+				case BLOCKS_WIDE:
+					blocksWide.add(Integer.parseInt(split[1]));
+					break;
+				case MAX_TRIANGLES:
+					maxTriangles.add(Integer.parseInt(split[1]));
+					break;
+				case SAMPLES:
+					samples.add(Integer.parseInt(split[1]));
+					break;
+				case RANDOM_BLOCKS:
+					randomBlocks.add(Integer.parseInt(split[1]));
+					break;
+				// DOUBLES
+				case SCALE:
+					scales.add(Double.parseDouble(split[1]));
+					break;
+				case POST_SCALE:
+					postScales.add(Double.parseDouble(split[1]));
+					break;
+				case FINAL_SCALE:
+					finalScales.add(Double.parseDouble(split[1]));
+					break;
+				default: // any unknown ID is ignored
+					break;
+			}
+		}
+		return true;
+	}
+	
+	static int seqSize() {
+		return blocksWide.size() * maxTriangles.size() * samples.size() *
+			randomBlocks.size() * scales.size() * postScales.size() * finalScales.size();
+	}
+
+	// return true if correctly dealt with line
+	// return false if sequential is starting
+	private static boolean setVar(String line) {
+		if (!line.startsWith(COMENT_SYMB)) {
+			
+			String[] split = line.split(ID_SYMB);
+			// if line does not have identifier ignore it
+			if (split.length != 2) {
+				return true;
+			}
+			switch (Setting.valueOf(split[0])) {
+				// BOOLEANS
+				case PREDRAW:
+					G.preDraw = Boolean.parseBoolean(split[1]);
+					break;
+				case POST_PROCESSING:
+					G.postProcessing = Boolean.parseBoolean(split[1]);
+					break;
+				case DISPLAY:
+					G.display = Boolean.parseBoolean(split[1]);
+					break;
+				case TRUE_COLOR:
+					G.trueColor = Boolean.parseBoolean(split[1]);
+					break;
+				case SEQUENTIAL:
+					G.sequential = Boolean.parseBoolean(split[1]);
+					break;
+				// INTEGERS
+				case BLOCKS_WIDE:
+					G.blocksWide = Integer.parseInt(split[1]);
+					blocksWide.add(G.blocksWide);
+					break;
+				case MAX_TRIANGLES:
+					G.triangles = Integer.parseInt(split[1]);
+					maxTriangles.add(G.triangles);
+					break;
+				case SAMPLES:
+					G.samples = Integer.parseInt(split[1]);
+					samples.add(G.samples);
+					break;
+				case THREAD_COUNT:
+					if (split[1].equalsIgnoreCase(G.AUTO)) {
+						G.threadCount = Runtime.getRuntime().availableProcessors();
+					}
+					else {
+						G.threadCount = Integer.parseInt(split[1]);
+					}
+					break;
+				case RANDOM_BLOCKS:
+					G.randomBlockMult = Integer.parseInt(split[1]);
+					randomBlocks.add(G.randomBlockMult);
+					break;
+				case REPAINT_WAIT_MS:
+					G.repaintWait = Integer.parseInt(split[1]);
+					break;
+				case ATTEMPTS:
+					G.attempts = Integer.parseInt(split[1]);
+					break;
+				// DOUBLES
+				case SCALE:
+					G.scale = Double.parseDouble(split[1]);
+					scales.add(G.scale);
+					break;
+				case POST_SCALE:
+					G.postScale = Double.parseDouble(split[1]);
+					postScales.add(G.postScale);
+					break;
+				case FINAL_SCALE:
+					G.finalScale = Double.parseDouble(split[1]);
+					finalScales.add(G.finalScale);
+					break;
+				default: // any unknown ID is ignored
+					break;
+			}
+		}
+		return true;
 	}
 
 	private static void createSettingsFile() {
@@ -163,24 +216,29 @@ public class Settings {
 				COMENT_SYMB + "All Comments must begin with " + COMENT_SYMB 	+ "\n\n" +
 		
 				COMENT_SYMB + "Integer variables\n" +
-				BLOCKS_WIDE_ID		+ ID_SYMB + G.blocksWide	+ "\n" +
-				MAX_TRIANGLES_ID	+ ID_SYMB + G.triangles		+ "\n" +
-				SAMPLES_ID			+ ID_SYMB + G.samples		+ "\n\n" +
-				COMENT_SYMB + "Random can be set to 'x##' as a multiplier\n" +
-				RANDOM_BLOCKS_ID	+ ID_SYMB + RANDOM_ID		+ "\n\n" +
+				Setting.BLOCKS_WIDE		+ ID_SYMB + G.blocksWide	+ "\n" +
+				Setting.MAX_TRIANGLES	+ ID_SYMB + G.triangles		+ "\n" +
+				Setting.SAMPLES			+ ID_SYMB + G.samples		+ "\n\n" +
+				COMENT_SYMB + "a multiplier of base blocks\n" +
+				Setting.RANDOM_BLOCKS	+ ID_SYMB + G.randomBlockMult+ "\n\n" +
 				COMENT_SYMB + "Thread count can be set to 'AUTO'\n" +
-				THREAD_COUNT_ID		+ ID_SYMB + "AUTO"			+ "\n" +
-				REPAINT_WAIT_ID		+ ID_SYMB + G.repaintWait	+ "\n" +
-				ATTEMPTS_ID			+ ID_SYMB + G.attempts		+ "\n\n" +
+				Setting.THREAD_COUNT	+ ID_SYMB + "AUTO"			+ "\n" +
+				Setting.REPAINT_WAIT_MS	+ ID_SYMB + G.repaintWait	+ "\n" +
+				Setting.ATTEMPTS		+ ID_SYMB + G.attempts		+ "\n\n" +
 				COMENT_SYMB + "Double variables\n" +
-				SCALE_ID			+ ID_SYMB + RANDOM_ID		+ "\n" +
-				POST_SCALE_ID		+ ID_SYMB + RANDOM_ID		+ "\n" +
-				FINAL_SCALE_ID		+ ID_SYMB + RANDOM_ID		+ "\n\n" +
+				Setting.SCALE			+ ID_SYMB + G.scale			+ "\n" +
+				Setting.POST_SCALE		+ ID_SYMB + G.postScale		+ "\n" +
+				Setting.FINAL_SCALE		+ ID_SYMB + G.finalScale	+ "\n\n" +
 				COMENT_SYMB + "Boolean variables\n" +
-				POST_PROCESSING_ID	+ ID_SYMB + RANDOM_ID		+ "\n" +
-				PREDRAW_ID			+ ID_SYMB + G.preDraw		+ "\n" +
-				DISPLAY_ID			+ ID_SYMB + G.display		+ "\n" +
-				TRUE_COLOR_ID		+ ID_SYMB + G.trueColor;
+				Setting.POST_PROCESSING	+ ID_SYMB + G.postProcessing+ "\n" +
+				Setting.PREDRAW			+ ID_SYMB + G.preDraw		+ "\n" +
+				Setting.DISPLAY			+ ID_SYMB + G.display		+ "\n" +
+				Setting.TRUE_COLOR		+ ID_SYMB + G.trueColor		+ "\n\n" +
+				COMENT_SYMB + "Start of sequential operations, order like...\n" +
+				COMENT_SYMB + "ID OPTION:VARIABLE\n" +
+				Setting.SEQUENTIAL		+ ID_SYMB + G.sequential	+ "\n" +
+				END_SYMB;
+				
 		// write default settings to file
 		try {
 			final File settingsFile = new File(G.USER_DIR + G.BK_SLASH + G.SETTINGS_FILE);
@@ -191,5 +249,9 @@ public class Settings {
 			e.printStackTrace();
 			// can't create the settings file?
 		}
+	}
+
+	public static void reset(int i) {
+		
 	}
 }

@@ -24,8 +24,6 @@ public class G {
 		BK_SLASH = "\\",
 		SETTINGS_FILE = "TriangleConverter.settings",
 		NO_SETTINGS_FILE = "Settings File does not exist",
-		LOWER_X = "x",
-		UPPER_X = "X",
 		AUTO = "AUTO";
 	
 	static boolean
@@ -38,46 +36,29 @@ public class G {
 		triangles = 2,
 		samples = 1,
 		threadCount = Runtime.getRuntime().availableProcessors(),
-		repaintWait = 500,
-		attempts = 3,
+		repaintWait = 250,
+		attempts = 10,
 		randomBlocks = 0,
-		randomBlockMult = -1;
+		randomBlockMult = 0;
 	static double
-		scale = 1.0,
-		postScale = 1.0,
+		scale = 0.5,
+		postScale = 2.0,
 		finalScale = 1.0;
-	static boolean 
-		scaleRandom = false,
-		postScaleRandom = false,
-		randomBlocksRandom = false,
-		postProcessingRandom = false,
-		finalScaleRandom = false;
+	static boolean
+		sequential = false;
+	static int seqCount = 0;
 	
 	private static final Random RANDOM = new Random();
 	
 	public static void reset() {
-		if (postProcessingRandom) {
-			postProcessing = RANDOM.nextBoolean();
-		}
-		if (randomBlocksRandom) {
-			if (RANDOM.nextBoolean()) {
-				randomBlocks = RANDOM.nextInt(getBlocksWide()) * getBlocksWide() * 3;
-			}
-			else {
-				randomBlocks = 0;
+		if (sequential) {
+			Settings.reset(seqCount++);
+			if (seqCount >= Settings.seqSize()) {
+				seqCount = 0;
 			}
 		}
-		else if (randomBlockMult > 0) {
+		else {
 			randomBlocks = blocksWide * blocksWide * randomBlockMult;
-		}
-		if (scaleRandom) {
-			scale = getRandomScale();
-		}
-		if (postScaleRandom) {
-			postScale = getRandomScalePos();
-		}
-		if (finalScaleRandom) {
-			finalScale = getRandomScalePos();
 		}
 	}
 	
@@ -122,46 +103,5 @@ public class G {
         		"_"  + G.finalScale +
         		"_" + G.randomBlocks +
         		"_" + (G.trueColor ? "T" : "F");
-	}
-	
-	private static double getRandomScalePos() {
-		switch (RANDOM.nextInt(9)) {
-			default:
-			case 0:
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-				return 1.0;
-			case 6:
-			case 7:
-				return 2.0;
-			case 8:
-				return 4.0;
-		}
-	}
-	
-	private static double getRandomScale() {
-		switch (RANDOM.nextInt(12)) {
-			default:
-			case 0:
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-				return 1.0;
-			case 6:
-			case 7:
-				return 2.0;
-			case 8:
-			case 9:
-				return 0.5;
-			case 10:
-				return 4.0;
-			case 11:
-				return 0.25;
-		}
 	}
 }
