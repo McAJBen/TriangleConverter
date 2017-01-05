@@ -193,19 +193,19 @@ public class Settings {
 
 	public static void reset(int i) {
 		
-		G.blocksWide = blocksWide.get(i % blocksWide.size());
-		i /= blocksWide.size();
-		G.triangles = maxTriangles.get(i % maxTriangles.size());
-		i /= maxTriangles.size();
-		G.samples = samples.get(i % samples.size());
-		i /= samples.size();
 		G.randomBlockMult = randomBlocks.get(i % randomBlocks.size());
 		i /= randomBlocks.size();
-		G.scale = scales.get(i % scales.size());
-		i /= scales.size();
+		G.finalScale = finalScales.get(i % finalScales.size());
+		i /= finalScales.size();
 		G.postScale = postScales.get(i % postScales.size());
 		i /= postScales.size();
-		G.finalScale = finalScales.get(i % finalScales.size());
+		G.scale = scales.get(i % scales.size());
+		i /= scales.size();
+		G.samples = samples.get(i % samples.size());
+		i /= samples.size();
+		G.triangles = maxTriangles.get(i % maxTriangles.size());
+		i /= maxTriangles.size();
+		G.blocksWide = blocksWide.get(i % blocksWide.size());
 		//System.out.println(G.getShortTitle());
 		
 	}
