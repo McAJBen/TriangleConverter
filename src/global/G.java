@@ -57,9 +57,7 @@ public class G {
 				seqCount = 0;
 			}
 		}
-		else {
-			randomBlocks = blocksWide * blocksWide * randomBlockMult;
-		}
+		randomBlocks = blocksWide * blocksWide * randomBlockMult;
 	}
 	
 	public static double getRandDouble()	{ return RANDOM.nextDouble(); }
