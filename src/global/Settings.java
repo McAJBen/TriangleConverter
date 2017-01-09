@@ -56,6 +56,29 @@ public class Settings {
 			}
 		}
 		
+		if (blocksWide.isEmpty()) {
+			blocksWide.add(G.blocksWide);
+		}
+		if (maxTriangles.isEmpty()) {
+			maxTriangles.add(G.triangles);
+		}
+		if (samples.isEmpty()) {
+			samples.add(G.samples);
+		}
+		if (randomBlocks.isEmpty()) {
+			randomBlocks.add(G.randomBlockMult);
+		}
+		if (scales.isEmpty()) {
+			scales.add(G.scale);
+		}
+		if (postScales.isEmpty()) {
+			postScales.add(G.postScale);
+		}
+		if (finalScales.isEmpty()) {
+			finalScales.add(G.finalScale);
+		}
+		
+		
 		blocksWide.trimToSize();
 		maxTriangles.trimToSize();
 		samples.trimToSize();
