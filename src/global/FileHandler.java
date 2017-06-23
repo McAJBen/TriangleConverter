@@ -11,7 +11,7 @@ public class FileHandler {
 		while (true) {
 			try {
 				for (File file: (new File(G.USER_DIR)).listFiles()) {
-					if (file.isFile() && isValidFile(file)) {
+					if (isValidFile(file)) {
 						return file;
 		            }
 		        }
@@ -48,14 +48,16 @@ public class FileHandler {
 	}
 	
 	private static boolean isValidFile(File f) {
-		
-		final String ending = f.getName().substring(f.getName().lastIndexOf('.'));
-		
-		switch (ending) {
-		case G.DOT_PNG:
-		case G.DOT_JPG:
-		case G.DOT_BMP:
-			return true;
+		if (f.isFile()) {
+			
+			final String ending = f.getName().substring(f.getName().lastIndexOf('.'));
+			
+			switch (ending) {
+				case G.DOT_PNG:
+				case G.DOT_JPG:
+				case G.DOT_BMP:
+					return true;
+			}
 		}
 		return false;
 	}

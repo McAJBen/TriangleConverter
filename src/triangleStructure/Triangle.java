@@ -6,22 +6,23 @@ import java.awt.Polygon;
 import global.G;
 
 public class Triangle {
+	
 	private static final int SIDES = 3;
-	private float[] Xpoints = new float[SIDES];
-	private float[] Ypoints = new float[SIDES];
+	private float[] x = new float[SIDES];
+	private float[] y = new float[SIDES];
 	private Color color;
 	
 	Triangle() {
 		for (int i = 0; i < SIDES; i++) {
-			Xpoints[i] = G.getRandFloat();
-			Ypoints[i] = G.getRandFloat();
+			x[i] = G.getRandFloat();
+			y[i] = G.getRandFloat();
 		}
 		color = new Color(G.getRandInt(256), G.getRandInt(256), G.getRandInt(256));
 	}
 	
 	Triangle(float[] px, float[] py, Color c) {
-		Xpoints = px;
-		Ypoints = py;
+		x = px;
+		y = py;
 		color = c;
 	}
 	
@@ -35,18 +36,18 @@ public class Triangle {
 		int[] xp = new int[SIDES];
 		int[] yp = new int[SIDES];
 		for (int i = 0; i < SIDES; i++) {
-			xp[i] = (int) (Xpoints[i] * width);
-			yp[i] = (int) (Ypoints[i] * height);
+			xp[i] = (int) (x[i] * width);
+			yp[i] = (int) (y[i] * height);
 		}
 		return new Polygon(xp, yp, SIDES);
 	}
 	
-	float[] getXpoints() {
-		return Xpoints.clone();
+	float[] getX() {
+		return x.clone();
 	}
 	
-	float[] getYpoints() {
-		return Ypoints.clone();
+	float[] getY() {
+		return y.clone();
 	}
 	
 	int[] getColorArray() {
@@ -54,6 +55,6 @@ public class Triangle {
 	}
 	
 	protected Triangle clone() {
-		return new Triangle(Xpoints.clone(), Ypoints.clone(), new Color(color.getRed(), color.getGreen(), color.getBlue()));
+		return new Triangle(getX(), getY(), new Color(color.getRed(), color.getGreen(), color.getBlue()));
 	}
 }

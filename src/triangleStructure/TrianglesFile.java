@@ -68,8 +68,8 @@ public class TrianglesFile {
 			return;
 		}
 		int i = getRandomTri();
-		float xp[] = triangles.get(i).getXpoints();
-		float yp[] = triangles.get(i).getYpoints();
+		float xp[] = triangles.get(i).getX();
+		float yp[] = triangles.get(i).getY();
 		for (int j = 0; j < 3; j++) {
 			xp[j] += G.getRandDouble() / 5 - 0.1;
 			yp[j] += G.getRandDouble() / 5 - 0.1;
@@ -85,8 +85,8 @@ public class TrianglesFile {
 			return;
 		}
 		int i = getRandomTri();
-		float xp[] = triangles.get(i).getXpoints();
-		float yp[] = triangles.get(i).getYpoints();
+		float xp[] = triangles.get(i).getX();
+		float yp[] = triangles.get(i).getY();
 		for (int j = 0; j < 3; j++) {
 			xp[j] = G.getRandFloat();
 			yp[j] = G.getRandFloat();
@@ -105,7 +105,7 @@ public class TrianglesFile {
 			col[j] += G.getRandInt(51) - 25;
 			col[j] = checkBounds(col[j], 255);
 		}
-		triangles.set(i, new Triangle(triangles.get(i).getXpoints(), triangles.get(i).getYpoints(), new Color(col[0], col[1], col[2])));
+		triangles.set(i, new Triangle(triangles.get(i).getX(), triangles.get(i).getY(), new Color(col[0], col[1], col[2])));
 	}
 	
 	void modifyRemove() {

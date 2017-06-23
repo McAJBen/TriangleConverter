@@ -118,13 +118,14 @@ public abstract class BlockThreadHandler {
 				blockLocation = getNewBlockLocation();
 				currentTestImage = null;
 				active = true;
-				BufferedImage compareImage = getSubImage(originalImg, blockLocation.original);
-				BufferedImage baseImg = getSubImage(newImg, blockLocation.third);
-				ignoreAlphaChunk = !hasAlpha(baseImg);
 				if (blockLocation == null) {
 					active = false;
 					break;
 				}
+				BufferedImage compareImage = getSubImage(originalImg, blockLocation.original);
+				BufferedImage baseImg = getSubImage(newImg, blockLocation.third);
+				ignoreAlphaChunk = !hasAlpha(baseImg);
+				
 				double bestScore = 0;
 				for (int sample = 0; sample < G.getMaxSamples(); sample++) {
 					Block block = new Block(compareImage, baseImg, blockLocation.first.getSize());

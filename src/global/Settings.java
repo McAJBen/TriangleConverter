@@ -112,9 +112,6 @@ public class Settings {
 				case POST_PROCESSING:
 					G.postProcessing = Boolean.parseBoolean(split[1]);
 					break;
-				case DISPLAY:
-					G.display = Boolean.parseBoolean(split[1]);
-					break;
 				case TRUE_COLOR:
 					G.trueColor = Boolean.parseBoolean(split[1]);
 					break;
@@ -186,7 +183,6 @@ public class Settings {
 				COMENT_SYMB + "Boolean variables\n" +
 				Setting.POST_PROCESSING	+ ID_SYMB + G.postProcessing+ "\n" +
 				Setting.PREDRAW			+ ID_SYMB + G.preDraw		+ "\n" +
-				Setting.DISPLAY			+ ID_SYMB + G.display		+ "\n" +
 				Setting.TRUE_COLOR		+ ID_SYMB + G.trueColor		+ "\n" +
 				Setting.SEQUENTIAL		+ ID_SYMB + G.sequential	+ "\n\n" +
 				

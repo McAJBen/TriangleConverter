@@ -6,24 +6,28 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+
+import javax.swing.JPanel;
+
 import blockStructure.BlockThreadHandler;
 import blockStructure.btGrid;
 import blockStructure.btRandom;
 import global.FileHandler;
 import global.G;
 
-public class Conversion {
+@SuppressWarnings("serial")
+public class Conversion extends JPanel {
 	
-	private final File file;
+	private File file;
 	private BufferedImage newImg;
 	private BlockThreadHandler blockThread;
 	
-	Conversion(File f) {
-		file = f;
-	}
-
-	void startConversion() {
-		BufferedImage originalImg = to4Byte(FileHandler.getImage(file));
+	void startConversion(File file) {
+		Thread repaintThread = getPaintThread();
+		this.file = file;
+    	repaintThread.start();
+    	
+    	BufferedImage originalImg = to4Byte(FileHandler.getImage(file));
 		
 		newImg = getNew4Byte(
 				(int) (originalImg.getWidth() * G.getTotalScale()),
@@ -38,24 +42,50 @@ public class Conversion {
 		FileHandler.putImageInFile(file, G.NEW, newImg, G.getShortTitle());
 		
 		blockThread = null;
+		this.file = null;
+		
+    	repaintThread.interrupt();
+    	
+    	repaint();
 	}
 	
-	void paint(Graphics g, Dimension size) {
-        Graphics2D g2d = (Graphics2D) g;
-        
-        g2d.drawImage(newImg, 0, 0, size.width, size.height, null);
-        
-		try {
-			if (G.getPreDraw()) {
-				blockThread.paint(g2d, size);
-				g2d.setColor(Color.BLACK);
+	public void paint(Graphics g) {
+		super.paint(g);
+		Dimension size = getSize();
+		if (blockThread != null) {
+			try {
+				g.setColor(Color.WHITE);
+				g.fillRect(0, size.height - 14, size.width, 14);
+				g.setColor(Color.GREEN);
+				g.fillRect(0, size.height - 14, getPercent(size.width), 14);
+				g.setColor(Color.BLACK);
+				g.drawString(getInfo(), 1, size.height - 3);
+				size.height -= 14;
+				Graphics2D g2d = (Graphics2D) g;
+					        
+		        g2d.drawImage(newImg, 0, 0, size.width, size.height, null);
+		        
+				try {
+					if (G.getPreDraw()) {
+						blockThread.paint(g2d, size);
+						g2d.setColor(Color.BLACK);
+					}
+				} catch (NullPointerException e) {
+					// blockThread not created
+				}
+				
+			} catch (OutOfMemoryError e) {
+				g.drawString(G.OUT_OF_MEMORY, 5, 15);
+				g.drawString(getPercentDone(), 5, 30);
 			}
-		} catch (NullPointerException e) {
-			// blockThread not created
 		}
-    }
+		else {
+			g.setColor(Color.BLACK);
+			g.drawString(G.FINDING_FILE, 1, size.height - 3);
+		}
+	}
 	
-	String getInfo() {
+	private String getInfo() {
 		try {
 			return file.getName() + G.SPACE + 
 					blockThread.getPercentDone() +
@@ -67,15 +97,24 @@ public class Conversion {
 		}
 	}
 	
-	File getFile() {
-		return file;
+	private Thread getPaintThread() {
+		return new Thread(G.PAINT_THREAD) {
+			public void run() {
+				while (!isInterrupted()) {
+					repaint();
+					try {
+						sleep(G.getPaintWait());
+					} catch (InterruptedException e) {break;}
+				}
+			}
+		};
 	}
-
-	String getPercentDone() {
+	
+	private String getPercentDone() {
 		return blockThread.getPercentDone();
 	}
 
-	int getPercent(int width) {
+	private int getPercent(int width) {
 		try {
 			return (int) (blockThread.getPercent() * width);
 		} catch (NullPointerException e) {

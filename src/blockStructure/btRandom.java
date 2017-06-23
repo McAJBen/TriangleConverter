@@ -38,16 +38,10 @@ public class btRandom extends BlockThreadHandler {
 				third;
 		BlockLocation bl;
 		do {
-			Dimension size = getBlock();
-			orig = getRandomRect(size);
-			while (collides(orig) || orig.width <= 0 || orig.height <= 0) {
-				orig = getRandomRect(size);
-			}
-			
+			orig = getValidRect();
 			first = toRectangle(orig, G.getScale());
 			second = toRectangle(orig, G.getScale() * G.getPostScale());
 			third = toRectangle(orig, G.getScale() * G.getPostScale() * G.getFinalScale());
-			
 			
 			bl = new BlockLocation(orig, first, second, third);
 			
@@ -57,6 +51,23 @@ public class btRandom extends BlockThreadHandler {
 				third.width <= 0 || third.height <= 0);
 		
 		return bl;
+	}
+	
+	private Rectangle getValidRect() {
+		while (true) {
+			Dimension size = getBlock();
+			for (int i = 0; i < 100; i++) {
+				Rectangle orig = getRandomRect(size);
+				if (orig.width > 0 && orig.height > 0 && !collides(orig)) {
+					return orig;
+				}
+			}
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	void removeBlockLocation(BlockLocation blockLocation) {
@@ -82,10 +93,13 @@ public class btRandom extends BlockThreadHandler {
 	}
 
 	private Dimension getBlock() {
-		Dimension r = defaultSize.getSize();
+		Dimension r;
+		do {
+			r = defaultSize.getSize();
+			r.width *= G.getRandDouble() + 0.5;
+			r.height *= G.getRandDouble() + 0.5;
+		} while (r.width <= 0 || r.width >= defaultSize.width || r.height <= 0 || r.height >= defaultSize.height);
 		
-		r.width *= G.getRandDouble() + 0.5;
-		r.height *= G.getRandDouble() + 0.5;
 		return r;
 	}
 	
