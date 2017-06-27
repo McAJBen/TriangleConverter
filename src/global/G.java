@@ -15,6 +15,7 @@ public class G {
 		FINDING_FILE = "Finding File ...",
 		OUT_OF_MEMORY = "Out of memory, not able to display",
 		PAINT_THREAD = "paintThread",
+		LOAD_THREAD = "LoadingThread",
 		USER_DIR = System.getProperty("user.dir"),
 		FILE_ERROR = "ERROR: Could not read file" + SPACE,
 		PNG = "png",
@@ -94,7 +95,7 @@ public class G {
         		"_" + G.triangles +
         		"_" + G.samples +
         		"_" + G.scale +
-        		"_"  + G.postScale +
+        		"_" + G.postScale +
         		"_" + G.randomBlocks +
         		"_" + (G.trueColor ? "T" : "F");
 	}

@@ -22,7 +22,7 @@ public abstract class BlockThreadHandler {
 	public abstract double getPercent();
 	
 	public String getPercentDone() {
-		return String.format("%s %02.0f%%", getClass().getSimpleName(), getPercent() * 100);
+		return String.format("%03.0f%%", getPercent() * 100);
 	}
 	
 	public String getRunTime() {

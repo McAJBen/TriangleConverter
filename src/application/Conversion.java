@@ -21,11 +21,18 @@ public class Conversion extends JPanel {
 	private File file;
 	private BufferedImage newImg;
 	private BlockThreadHandler blockThread;
+	private LoadingBar loadingBar;
+	
+	public Conversion() {
+		loadingBar = new LoadingBar(this);
+	}
 	
 	void startConversion(File file) {
 		Thread repaintThread = getPaintThread();
+		Thread loadThread = getLoadThread();
 		this.file = file;
     	repaintThread.start();
+    	loadThread.start();
     	
     	BufferedImage originalImg = to4Byte(FileHandler.getImage(file));
 		
@@ -45,6 +52,7 @@ public class Conversion extends JPanel {
 		this.file = null;
 		
     	repaintThread.interrupt();
+    	loadThread.interrupt();
     	
     	repaint();
 	}
@@ -54,17 +62,8 @@ public class Conversion extends JPanel {
 		Dimension size = getSize();
 		if (blockThread != null) {
 			try {
-				g.setColor(Color.WHITE);
-				g.fillRect(0, size.height - 14, size.width, 14);
-				g.setColor(Color.GREEN);
-				g.fillRect(0, size.height - 14, getPercent(size.width), 14);
-				g.setColor(Color.BLACK);
-				g.drawString(getInfo(), 1, size.height - 3);
-				size.height -= 14;
 				Graphics2D g2d = (Graphics2D) g;
-					        
 		        g2d.drawImage(newImg, 0, 0, size.width, size.height, null);
-		        
 				try {
 					if (G.getPreDraw()) {
 						blockThread.paint(g2d, size);
@@ -76,7 +75,7 @@ public class Conversion extends JPanel {
 				
 			} catch (OutOfMemoryError e) {
 				g.drawString(G.OUT_OF_MEMORY, 5, 15);
-				g.drawString(getPercentDone(), 5, 30);
+				g.drawString(blockThread.getPercentDone(), 5, 30);
 			}
 		}
 		else {
@@ -85,15 +84,15 @@ public class Conversion extends JPanel {
 		}
 	}
 	
-	private String getInfo() {
+	String getInfo() {
 		try {
-			return file.getName() + G.SPACE + 
-					blockThread.getPercentDone() +
+			return blockThread.getPercentDone() +
 					G.RUN_TIME + blockThread.getRunTime() +
-					G.END + blockThread.getEstimatedEndTime();
+					G.END + blockThread.getEstimatedEndTime() +
+					G.SPACE + file.getName();
 			
 		} catch (NullPointerException e) {
-			return file.getName();
+			return "No Info";
 		}
 	}
 	
@@ -110,11 +109,20 @@ public class Conversion extends JPanel {
 		};
 	}
 	
-	private String getPercentDone() {
-		return blockThread.getPercentDone();
+	private Thread getLoadThread() {
+		return new Thread(G.LOAD_THREAD) {
+			public void run() {
+				while (!isInterrupted()) {
+					loadingBar.repaint();
+					try {
+						sleep(15);
+					} catch (InterruptedException e) {break;}
+				}
+			}
+		};
 	}
 
-	private int getPercent(int width) {
+	int getPercent(int width) {
 		try {
 			return (int) (blockThread.getPercent() * width);
 		} catch (NullPointerException e) {
@@ -141,5 +149,9 @@ public class Conversion extends JPanel {
 			b2.getGraphics().drawImage(b, 0, 0, null);
 	    	return b2;
 		}
+	}
+
+	public LoadingBar getLoadingBar() {
+		return loadingBar;
 	}
 }

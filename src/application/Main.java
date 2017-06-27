@@ -1,5 +1,6 @@
 package application;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -25,6 +26,7 @@ public class Main extends JFrame {
 		super();
 		final Conversion conversion = new Conversion();
     	add(conversion);
+    	add(conversion.getLoadingBar(), BorderLayout.SOUTH);
     	setSize(SCREEN_SIZE.width + SCREEN_OFFSET.width, SCREEN_SIZE.height + SCREEN_OFFSET.height);
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	setLocationRelativeTo(null);
