@@ -37,7 +37,9 @@ public class btGrid extends BlockThreadHandler {
 	}
 
 	boolean isDone() {
-		return nextPos.y >= G.getBlocksWide();
+		synchronized (nextPos) {
+			return nextPos.y >= G.getBlocksWide();
+		}
 	}
 
 	BlockLocation getNewBlockLocation() {
@@ -104,5 +106,10 @@ public class btGrid extends BlockThreadHandler {
 		public double getWidth() {
 			return width;
 		}
+	}
+
+	@Override
+	void addCompleted() {
+		
 	}
 }

@@ -76,6 +76,7 @@ public abstract class BlockThreadHandler {
 	abstract boolean isDone();
 	abstract BlockLocation getNewBlockLocation();
 	abstract void removeBlockLocation(BlockLocation blockLocation);
+	abstract void addCompleted();
 	
 	private static BufferedImage getSubImage(BufferedImage b, Rectangle r) {
 		return b.getSubimage(r.x, r.y, r.width, r.height);
@@ -144,6 +145,7 @@ public abstract class BlockThreadHandler {
 				// if (first drawing || better than last drawing)
 				if (!ignoreAlpha || bestBlock.getMaxScore() >= TrianglesFile.compare(compareImage, baseImg)) {
 					paintTo(bestBlock.getImage(blockLocation.post.getSize()), blockLocation.post);
+					addCompleted();
 				}
 				active = false;
 				removeBlockLocation(blockLocation);

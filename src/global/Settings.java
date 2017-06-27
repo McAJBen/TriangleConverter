@@ -104,6 +104,9 @@ public class Settings {
 				case PREDRAW:
 					G.preDraw = Boolean.parseBoolean(split[1]);
 					break;
+				case ALLOW_COLLISION:
+					G.allowCollision = Boolean.parseBoolean(split[1]);
+					break;
 				case TRUE_COLOR:
 					G.trueColor = Boolean.parseBoolean(split[1]);
 					break;
@@ -170,6 +173,7 @@ public class Settings {
 				
 				COMENT_SYMB + "Boolean variables\n" +
 				Setting.PREDRAW			+ ID_SYMB + G.preDraw		+ "\n" +
+				Setting.ALLOW_COLLISION	+ ID_SYMB + G.allowCollision+ "\n" +
 				Setting.TRUE_COLOR		+ ID_SYMB + G.trueColor		+ "\n" +
 				Setting.SEQUENTIAL		+ ID_SYMB + G.sequential	+ "\n\n" +
 				

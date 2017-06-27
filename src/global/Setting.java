@@ -3,7 +3,7 @@ package global;
 public enum Setting {
 	// BOOLEANS
 	PREDRAW,
-	POST_PROCESSING,
+	ALLOW_COLLISION,
 	DISPLAY,
 	TRUE_COLOR,
 	SEQUENTIAL,

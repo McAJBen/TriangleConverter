@@ -9,45 +9,52 @@ import global.G;
 
 public class btRandom extends BlockThreadHandler {
 
-	private int randomPlacementsDone;
+	private int randomPlacementsLeft;
 	private final Dimension defaultSize;
 	private final Dimension imageSize;
 	private ArrayList<Rectangle> alreadyTakenBlocks;
 	
 	public btRandom(BufferedImage originalImg, BufferedImage newImg) {
 		super(originalImg, newImg);
-		randomPlacementsDone = 0;
+		randomPlacementsLeft = G.getRandomBlocks();
 		imageSize = new Dimension(originalImg.getWidth(), originalImg.getHeight());
 		defaultSize = new Dimension(imageSize.width / G.getBlocksWide(), imageSize.height / G.getBlocksWide());
 		alreadyTakenBlocks = new ArrayList<>(G.getThreadCount());
 	}
 
 	public boolean isDone() {
-		return randomPlacementsDone >= G.getRandomBlocks();
+		synchronized (alreadyTakenBlocks) {
+			return randomPlacementsLeft <= 0;
+		}
 	}
 	
 	public double getPercent() {
-		return (double)randomPlacementsDone / G.getRandomBlocks();
+		return 1.0 - ((double)randomPlacementsLeft / G.getRandomBlocks());
 	}
 
 	BlockLocation getNewBlockLocation() {
-		randomPlacementsDone++;
-		Rectangle orig,
-				scaled,
-				post;
-		BlockLocation bl;
-		do {
-			orig = getValidRect();
-			scaled = toRectangle(orig, G.getScale());
-			post = toRectangle(orig, G.getScale() * G.getPostScale());
-			
-			bl = new BlockLocation(orig, scaled, post);
-			
-		} while (
-				scaled.width <= 0 || scaled.height <= 0 ||
-				post.width <= 0 || post.height <= 0);
-		
-		return bl;
+		synchronized (alreadyTakenBlocks) {
+			if (randomPlacementsLeft <= alreadyTakenBlocks.size()) {
+				return null;
+			}
+			Rectangle orig,
+					scaled,
+					post;
+			BlockLocation bl;
+			do {
+				orig = getValidRect();
+				scaled = toRectangle(orig, G.getScale());
+				post = toRectangle(orig, G.getScale() * G.getPostScale());
+				
+				bl = new BlockLocation(orig, scaled, post);
+				
+			} while (
+					scaled.width <= 0 || scaled.height <= 0 ||
+					post.width <= 0 || post.height <= 0);
+
+			alreadyTakenBlocks.add(orig);
+			return bl;
+		}
 	}
 	
 	private Rectangle getValidRect() {
@@ -55,8 +62,10 @@ public class btRandom extends BlockThreadHandler {
 			Dimension size = getBlock();
 			for (int i = 0; i < 100; i++) {
 				Rectangle orig = getRandomRect(size);
-				if (orig.width > 0 && orig.height > 0 && !collides(orig)) {
-					return orig;
+				if (orig.width > 0 && orig.height > 0) {
+					if (G.getAllowCollision() || !collides(orig)) {
+						return orig;
+					}
 				}
 			}
 			try {
@@ -93,22 +102,27 @@ public class btRandom extends BlockThreadHandler {
 		Dimension r;
 		do {
 			r = defaultSize.getSize();
-			r.width *= G.getRandDouble() + 0.5;
-			r.height *= G.getRandDouble() + 0.5;
+			r.width *= 0.9 + (G.getRandDouble() * 0.2);
+			r.height *= 0.9 + (G.getRandDouble() * 0.2);
 		} while (r.width <= 0 || r.width >= defaultSize.width || r.height <= 0 || r.height >= defaultSize.height);
 		
 		return r;
 	}
 	
 	private boolean collides(Rectangle rect) {
-		synchronized (alreadyTakenBlocks) {
-			for (Rectangle bl: alreadyTakenBlocks) {
-				if (bl.intersects(rect)) {
-					return true;
-				}
+		for (Rectangle bl: alreadyTakenBlocks) {
+			if (bl.intersects(rect)) {
+				return true;
 			}
-			alreadyTakenBlocks.add(rect);
-			return false;
+		}
+		return false;
+	}
+
+	@Override
+	void addCompleted() {
+		randomPlacementsLeft--;
+		if (randomPlacementsLeft < 0) {
+			System.out.println(randomPlacementsLeft);
 		}
 	}
 }
