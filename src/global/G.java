@@ -28,7 +28,6 @@ public class G {
 	
 	static boolean
 		preDraw = true,
-		postProcessing = true,
 		trueColor = false;
 	static int 
 		blocksWide = 10,
@@ -41,8 +40,7 @@ public class G {
 		randomBlockMult = 0;
 	static double
 		scale = 0.5,
-		postScale = 2.0,
-		finalScale = 1.0;
+		postScale = 2.0;
 	static boolean
 		sequential = false;
 	static int seqCount = 0;
@@ -63,7 +61,6 @@ public class G {
 	public static float getRandFloat()		{ return RANDOM.nextFloat(); }
 	public static int getRandInt(int i)		{ return RANDOM.nextInt(i); }
 	public static boolean getPreDraw()		{ return preDraw; }
-	public static boolean getPostProcessing()	{ return postProcessing; }
 	public static boolean getTrueColor()	{ return trueColor; }
 	public static int getBlocksWide()		{ return blocksWide; }
 	public static int getTriangles()		{ return triangles; }
@@ -74,8 +71,7 @@ public class G {
 	public static int getRandomBlocks()		{ return randomBlocks; }
 	public static double getScale()			{ return scale; }
 	public static double getPostScale()		{ return postScale; }
-	public static double getFinalScale()	{ return finalScale; }
-	public static double getTotalScale()	{ return scale * postScale * finalScale; }
+	public static double getTotalScale()	{ return scale * postScale; }
 	
 	public static String getTitle(int attempt) {
 		return  "TC Wi:" + G.blocksWide +
@@ -85,7 +81,6 @@ public class G {
         		" At:" + attempt + "/" + G.attempts +
         		" Sc:" + G.scale +
         		" > "  + G.postScale +
-        		" > "  + G.finalScale +
         		" RB:" + G.randomBlocks +
         		(G.trueColor ? " TruCol" : " LinCol");
 	}
@@ -96,7 +91,6 @@ public class G {
         		"_" + G.samples +
         		"_" + G.scale +
         		"_"  + G.postScale +
-        		"_"  + G.finalScale +
         		"_" + G.randomBlocks +
         		"_" + (G.trueColor ? "T" : "F");
 	}

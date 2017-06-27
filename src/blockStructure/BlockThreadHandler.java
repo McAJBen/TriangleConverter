@@ -68,7 +68,7 @@ public abstract class BlockThreadHandler {
 		ignoreAlpha = !hasAlpha(newImg);
 		BTArray = new BT[G.getThreadCount()];
 		for (int i = 0; i < BTArray.length; i++) {
-           	BTArray[i] = new BT("" + i);
+           	BTArray[i] = new BT(i);
         }
 		startTime = System.currentTimeMillis();
 	}
@@ -107,6 +107,7 @@ public abstract class BlockThreadHandler {
 	
 	private class BT extends Thread {
 
+		private final String index;
 		private BufferedImage currentTestImage;
 		private BlockLocation blockLocation;
 		private boolean active;
@@ -114,7 +115,6 @@ public abstract class BlockThreadHandler {
 		
 		public void run() {
 			while (!isDone()) {
-				Block bestBlock = null;
 				blockLocation = getNewBlockLocation();
 				currentTestImage = null;
 				active = true;
@@ -123,33 +123,36 @@ public abstract class BlockThreadHandler {
 					break;
 				}
 				BufferedImage compareImage = getSubImage(originalImg, blockLocation.original);
-				BufferedImage baseImg = getSubImage(newImg, blockLocation.third);
+				BufferedImage baseImg = getSubImage(newImg, blockLocation.post);
 				ignoreAlphaChunk = !hasAlpha(baseImg);
 				
 				double bestScore = 0;
+				Block bestBlock = null;
 				for (int sample = 0; sample < G.getMaxSamples(); sample++) {
-					Block block = new Block(compareImage, baseImg, blockLocation.first.getSize());
+					Block block = new Block(compareImage, baseImg, blockLocation.scaled.getSize());
 					compute(block);
 					if (bestScore < block.getMaxScore()) {
 						bestBlock = block;
 						bestScore = block.getMaxScore();
 					}
 				}
-				if (G.getPostProcessing()) {
-					Block block = new Block(compareImage, baseImg, blockLocation.second.getSize(), bestBlock.getTriangles());
+				if (G.getPostScale() != 1.0) {
+					Block block = new Block(compareImage, baseImg, blockLocation.post.getSize(), bestBlock.getTriangles());
 					compute(block);
 					bestBlock = block;
 				}
+				// if (first drawing || better than last drawing)
 				if (!ignoreAlpha || bestBlock.getMaxScore() >= TrianglesFile.compare(compareImage, baseImg)) {
-					paintTo(bestBlock.getImage(blockLocation.third.getSize()), blockLocation.third);
+					paintTo(bestBlock.getImage(blockLocation.post.getSize()), blockLocation.post);
 				}
 				active = false;
 				removeBlockLocation(blockLocation);
 			}
 		}
 
-		private BT(String string) {
-			super(string);
+		private BT(int index) {
+			super("BT:" + index);
+			this.index = "" + index;
 			currentTestImage = null;
 			active = false;
 		}
@@ -168,10 +171,10 @@ public abstract class BlockThreadHandler {
 			if (active) {
 				
 				Rectangle rect = new Rectangle(
-						(int)(blockLocation.third.x * xScale),
-						(int)(blockLocation.third.y * yScale),
-						(int)(blockLocation.third.width * xScale),
-						(int)(blockLocation.third.height * yScale));
+						(int)(blockLocation.post.x * xScale),
+						(int)(blockLocation.post.y * yScale),
+						(int)(blockLocation.post.width * xScale),
+						(int)(blockLocation.post.height * yScale));
 				
 				if (currentTestImage != null) {
 					g.drawImage(currentTestImage,
@@ -181,7 +184,7 @@ public abstract class BlockThreadHandler {
 				
 				g.setColor(PINK);
 				
-				g.drawString(getName(),
+				g.drawString(index,
 					rect.x + 1,
 					rect.y + 11);
 				

@@ -15,7 +15,7 @@ public class Settings {
 		COMENT_SYMB = "#";
 	
 	private static ArrayList<Integer> blocksWide, maxTriangles, samples, randomBlocks;
-	private static ArrayList<Double> scales, postScales, finalScales;
+	private static ArrayList<Double> scales, postScales;
 	
 	@SuppressWarnings("resource")
 	public static void load() {
@@ -40,7 +40,6 @@ public class Settings {
 		randomBlocks = new ArrayList<>();
 		scales = new ArrayList<>();
 		postScales = new ArrayList<>();
-		finalScales = new ArrayList<>();
 		
 		while (true) {
 			// read a line
@@ -74,9 +73,6 @@ public class Settings {
 		if (postScales.isEmpty()) {
 			postScales.add(G.postScale);
 		}
-		if (finalScales.isEmpty()) {
-			finalScales.add(G.finalScale);
-		}
 		
 		
 		blocksWide.trimToSize();
@@ -85,7 +81,6 @@ public class Settings {
 		randomBlocks.trimToSize();
 		scales.trimToSize();
 		postScales.trimToSize();
-		finalScales.trimToSize();
 		if (G.sequential) {
 			G.attempts = seqSize();
 		}
@@ -93,7 +88,7 @@ public class Settings {
 	
 	static int seqSize() {
 		return blocksWide.size() * maxTriangles.size() * samples.size() *
-			randomBlocks.size() * scales.size() * postScales.size() * finalScales.size();
+			randomBlocks.size() * scales.size() * postScales.size();
 	}
 
 	// return true if correctly dealt with line
@@ -108,9 +103,6 @@ public class Settings {
 				// BOOLEANS
 				case PREDRAW:
 					G.preDraw = Boolean.parseBoolean(split[1]);
-					break;
-				case POST_PROCESSING:
-					G.postProcessing = Boolean.parseBoolean(split[1]);
 					break;
 				case TRUE_COLOR:
 					G.trueColor = Boolean.parseBoolean(split[1]);
@@ -158,10 +150,6 @@ public class Settings {
 					G.postScale = Double.parseDouble(split[1]);
 					postScales.add(G.postScale);
 					break;
-				case FINAL_SCALE:
-					G.finalScale = Double.parseDouble(split[1]);
-					finalScales.add(G.finalScale);
-					break;
 				default: // any unknown ID is ignored
 					break;
 				}
@@ -181,7 +169,6 @@ public class Settings {
 				Setting.ATTEMPTS		+ ID_SYMB + G.attempts		+ "\n\n" +
 				
 				COMENT_SYMB + "Boolean variables\n" +
-				Setting.POST_PROCESSING	+ ID_SYMB + G.postProcessing+ "\n" +
 				Setting.PREDRAW			+ ID_SYMB + G.preDraw		+ "\n" +
 				Setting.TRUE_COLOR		+ ID_SYMB + G.trueColor		+ "\n" +
 				Setting.SEQUENTIAL		+ ID_SYMB + G.sequential	+ "\n\n" +
@@ -195,8 +182,7 @@ public class Settings {
 				Setting.RANDOM_BLOCKS	+ ID_SYMB + G.randomBlockMult+ "\n\n" +
 				
 				Setting.SCALE			+ ID_SYMB + G.scale			+ "\n" +
-				Setting.POST_SCALE		+ ID_SYMB + G.postScale		+ "\n" +
-				Setting.FINAL_SCALE		+ ID_SYMB + G.finalScale;
+				Setting.POST_SCALE		+ ID_SYMB + G.postScale;
 				
 		// write default settings to file
 		try {
@@ -214,8 +200,6 @@ public class Settings {
 		
 		G.randomBlockMult = randomBlocks.get(i % randomBlocks.size());
 		i /= randomBlocks.size();
-		G.finalScale = finalScales.get(i % finalScales.size());
-		i /= finalScales.size();
 		G.postScale = postScales.get(i % postScales.size());
 		i /= postScales.size();
 		G.scale = scales.get(i % scales.size());

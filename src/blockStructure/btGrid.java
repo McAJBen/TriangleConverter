@@ -8,31 +8,26 @@ import global.G;
 
 public class btGrid extends BlockThreadHandler {
 
-	private final D2D standardSize;
-	private final D2D midStandardSize;
-	private final D2D scaledStandardSize;
-	private final D2D finalStandardSize;
+	private final D2D originalSize;
+	private final D2D scaledSize;
+	private final D2D postSize;
 	
 	private Point nextPos;
 
 	public btGrid(BufferedImage originalImg, BufferedImage newImg) {
 		super(originalImg, newImg);
 		
-		standardSize = new D2D(
+		originalSize = new D2D(
 			(double)originalImg.getWidth() / G.getBlocksWide(),
 			(double)originalImg.getHeight() / G.getBlocksWide());
 		
-		midStandardSize = new D2D(
-			standardSize.getWidth() * G.getScale(),
-			standardSize.getHeight() * G.getScale());
+		scaledSize = new D2D(
+			originalSize.getWidth() * G.getScale(),
+			originalSize.getHeight() * G.getScale());
 		
-		scaledStandardSize = new D2D(
-			midStandardSize.getWidth() * G.getPostScale(),
-			midStandardSize.getHeight() * G.getPostScale());
-		
-		finalStandardSize = new D2D(
-			scaledStandardSize.getWidth() * G.getFinalScale(),
-			scaledStandardSize.getHeight() * G.getFinalScale());
+		postSize = new D2D(
+			scaledSize.getWidth() * G.getPostScale(),
+			scaledSize.getHeight() * G.getPostScale());
 		
 		nextPos = new Point(0, 0);
 	}
@@ -48,25 +43,22 @@ public class btGrid extends BlockThreadHandler {
 	BlockLocation getNewBlockLocation() {
 		
 		Rectangle orig;
-		Rectangle first;
-		Rectangle second;
-		Rectangle third;
+		Rectangle scaled;
+		Rectangle post;
 		
 		do {
 			Point position = getNextPos();
 			if (position == null || position.y >= G.getBlocksWide()) {
 				return null;
 			}
-			orig = toRectangle(position, standardSize);
-			first = toRectangle(position, midStandardSize);
-			second = toRectangle(position, scaledStandardSize);
-			third = toRectangle(position, finalStandardSize);
+			orig = toRectangle(position, originalSize);
+			scaled = toRectangle(position, scaledSize);
+			post = toRectangle(position, postSize);
 			
 		} while (orig.width <= 0 || orig.height <= 0 ||
-				 first.width <= 0 || first.height <= 0 ||
-				 second.width <= 0 || second.height <= 0 ||
-				 third.width <= 0 || third.height <= 0);
-		return new BlockLocation(orig, first, second, third);
+				 scaled.width <= 0 || scaled.height <= 0 ||
+				 post.width <= 0 || post.height <= 0);
+		return new BlockLocation(orig, scaled, post);
 	}
 	
 	void removeBlockLocation(BlockLocation blockLocation) {}

@@ -33,22 +33,19 @@ public class btRandom extends BlockThreadHandler {
 	BlockLocation getNewBlockLocation() {
 		randomPlacementsDone++;
 		Rectangle orig,
-				first,
-				second,
-				third;
+				scaled,
+				post;
 		BlockLocation bl;
 		do {
 			orig = getValidRect();
-			first = toRectangle(orig, G.getScale());
-			second = toRectangle(orig, G.getScale() * G.getPostScale());
-			third = toRectangle(orig, G.getScale() * G.getPostScale() * G.getFinalScale());
+			scaled = toRectangle(orig, G.getScale());
+			post = toRectangle(orig, G.getScale() * G.getPostScale());
 			
-			bl = new BlockLocation(orig, first, second, third);
+			bl = new BlockLocation(orig, scaled, post);
 			
 		} while (
-				first.width <= 0 || first.height <= 0 ||
-				second.width <= 0 || second.height <= 0 ||
-				third.width <= 0 || third.height <= 0);
+				scaled.width <= 0 || scaled.height <= 0 ||
+				post.width <= 0 || post.height <= 0);
 		
 		return bl;
 	}
