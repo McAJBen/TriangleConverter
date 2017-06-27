@@ -3,8 +3,8 @@ package global;
 public enum Setting {
 	// BOOLEANS
 	PREDRAW,
+	PREDRAW_OUTLINE,
 	ALLOW_COLLISION,
-	DISPLAY,
 	TRUE_COLOR,
 	SEQUENTIAL,
 	// INTEGERS
@@ -17,6 +17,5 @@ public enum Setting {
 	RANDOM_BLOCKS,
 	// DOUBLES
 	SCALE,
-	POST_SCALE,
-	FINAL_SCALE
+	POST_SCALE
 }

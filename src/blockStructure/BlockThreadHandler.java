@@ -183,16 +183,17 @@ public abstract class BlockThreadHandler {
 						rect.x, rect.y,
 						rect.width, rect.height, null);
 				}
-				
-				g.setColor(PINK);
-				
-				g.drawString(index,
-					rect.x + 1,
-					rect.y + 11);
-				
-				g.drawRect(
-					rect.x, rect.y,
-					rect.width - 1, rect.height - 1);
+				if (G.getPreDrawOutline()) {
+					g.setColor(PINK);
+					
+					g.drawString(index,
+						rect.x + 1,
+						rect.y + 11);
+					
+					g.drawRect(
+						rect.x, rect.y,
+						rect.width - 1, rect.height - 1);
+				}
 			}
 		}
 	}

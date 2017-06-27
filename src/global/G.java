@@ -28,6 +28,7 @@ public class G {
 	
 	static boolean
 		preDraw = true,
+		preDrawOutline = false,
 		allowCollision = true,
 		trueColor = false;
 	static int 
@@ -62,6 +63,7 @@ public class G {
 	public static float getRandFloat()		{ return RANDOM.nextFloat(); }
 	public static int getRandInt(int i)		{ return RANDOM.nextInt(i); }
 	public static boolean getPreDraw()		{ return preDraw; }
+	public static boolean getPreDrawOutline(){return preDrawOutline; }
 	public static boolean getAllowCollision(){return allowCollision; }
 	public static boolean getTrueColor()	{ return trueColor; }
 	public static int getBlocksWide()		{ return blocksWide; }
