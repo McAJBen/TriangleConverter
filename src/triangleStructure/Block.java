@@ -12,7 +12,7 @@ public class Block {
 	
 	private BufferedImage
 			compareChunk, // Image this Block is trying to solve
-			lastBestImgChunk; // Last best solved image from this block
+			lastImgChunk; // last tested image
 	private TrianglesFile 
 			bestTriFile; // Best set of triangles found so far
 	private double 
@@ -33,7 +33,7 @@ public class Block {
 		bestTriFile = new TrianglesFile(triangles, size, baseImg);
 		
 		maxScore = bestTriFile.compare(compareChunk);
-		lastBestImgChunk = bestTriFile.getImage();
+		lastImgChunk = bestTriFile.getImage();
 	}
 
 	// checks triangleMode to modify bestTriFile and see if it improves
@@ -59,6 +59,13 @@ public class Block {
 		}
 		double modifyScore = modifyTriFile.compare(compareChunk);
 		
+		if (G.getPreDrawShowBest()) {
+			lastImgChunk = bestTriFile.getImage();
+		}
+		else {
+			lastImgChunk = modifyTriFile.getImage();
+		}
+		
 		// checks if the modify improved
 		if (modifyScore >= maxScore) {
 			if (modifyScore > maxScore) {
@@ -69,7 +76,6 @@ public class Block {
 				stagnantCount++;
 			}
 			bestTriFile = modifyTriFile;
-			lastBestImgChunk = bestTriFile.getImage();
 		}
 		else {
 			stagnantCount++;
@@ -102,7 +108,7 @@ public class Block {
 	}
 	
 	public BufferedImage getImage() {
-		return lastBestImgChunk;
+		return lastImgChunk;
 	}
 	
 	public ArrayList<Triangle> getTriangles() {

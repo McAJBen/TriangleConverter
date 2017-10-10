@@ -166,7 +166,6 @@ public abstract class BlockThreadHandler {
 					currentTestImage = block.getImage();
 				}
 			}
-			currentTestImage = block.getImage();
 		}
 		
 		private void paint(Graphics2D g, double xScale, double yScale) {

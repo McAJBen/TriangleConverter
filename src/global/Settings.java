@@ -107,6 +107,9 @@ public class Settings {
 				case PREDRAW_OUTLINE:
 					G.preDrawOutline = Boolean.parseBoolean(split[1]);
 					break;
+				case PREDRAW_SHOW_BEST:
+					G.preDrawShowBest = Boolean.parseBoolean(split[1]);
+					break;
 				case ALLOW_COLLISION:
 					G.allowCollision = Boolean.parseBoolean(split[1]);
 					break;
@@ -175,6 +178,7 @@ public class Settings {
 				COMENT_SYMB + "Boolean variables\n" +
 				Setting.PREDRAW			+ ID_SYMB + G.preDraw		+ "\n" +
 				Setting.PREDRAW_OUTLINE + ID_SYMB + G.preDrawOutline+ "\n" +
+				Setting.PREDRAW_SHOW_BEST+ID_SYMB + G.preDrawShowBest+"\n" +
 				Setting.ALLOW_COLLISION	+ ID_SYMB + G.allowCollision+ "\n" +
 				Setting.TRUE_COLOR		+ ID_SYMB + G.trueColor		+ "\n" +
 				Setting.SEQUENTIAL		+ ID_SYMB + G.sequential	+ "\n\n" +
