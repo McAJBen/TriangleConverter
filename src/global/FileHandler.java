@@ -63,6 +63,8 @@ public class FileHandler {
 	}
 	
 	private static File toFile(File f, String folder, String append) {
-		return new File(f.getParent() + G.BK_SLASH + folder + G.BK_SLASH + f.getName().substring(0, f.getName().length() - 4) + append + G.DOT_PNG);
+		return new File(f.getParent() + File.separator +
+				folder + File.separator +
+				f.getName().substring(0, f.getName().length() - 4) + append + G.DOT_PNG);
 	}
 }

@@ -17,7 +17,12 @@ public class Triangle {
 			x[i] = G.getRandFloat();
 			y[i] = G.getRandFloat();
 		}
-		color = new Color(G.getRandInt(256), G.getRandInt(256), G.getRandInt(256));
+		if (G.getTransparentTriangles()) {
+			color = new Color(G.getRandInt(256), G.getRandInt(256), G.getRandInt(256), G.getRandInt(256));
+		}
+		else {
+			color = new Color(G.getRandInt(256), G.getRandInt(256), G.getRandInt(256));
+		}
 	}
 	
 	Triangle(float[] px, float[] py, Color c) {
@@ -51,10 +56,15 @@ public class Triangle {
 	}
 	
 	int[] getColorArray() {
-		return new int[] {color.getRed(), color.getGreen(), color.getBlue()};
+		if (G.getTransparentTriangles()) {
+			return new int[] {color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()};
+		}
+		else {
+			return new int[] {color.getRed(), color.getGreen(), color.getBlue()};
+		}
 	}
 	
 	protected Triangle clone() {
-		return new Triangle(getX(), getY(), new Color(color.getRed(), color.getGreen(), color.getBlue()));
+		return new Triangle(getX(), getY(), new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()));
 	}
 }

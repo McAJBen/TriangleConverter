@@ -22,7 +22,6 @@ public class G {
 		DOT_PNG = "." + PNG,
 		DOT_JPG = ".jpg",
 		DOT_BMP = ".bmp",
-		BK_SLASH = "\\",
 		SETTINGS_FILE = "TriangleConverter.settings",
 		NO_SETTINGS_FILE = "Settings File does not exist",
 		AUTO = "AUTO";
@@ -32,7 +31,8 @@ public class G {
 		preDrawOutline = false,
 		preDrawShowBest = true,
 		allowCollision = true,
-		trueColor = false;
+		trueColor = false,
+		transparentTriangles = true;
 	static int 
 		blocksWide = 10,
 		triangles = 2,
@@ -69,6 +69,7 @@ public class G {
 	public static boolean getPreDrawShowBest(){return preDrawShowBest; }
 	public static boolean getAllowCollision(){return allowCollision; }
 	public static boolean getTrueColor()	{ return trueColor; }
+	public static boolean getTransparentTriangles(){return transparentTriangles; }
 	public static int getBlocksWide()		{ return blocksWide; }
 	public static int getTriangles()		{ return triangles; }
 	public static int getMaxSamples()		{ return samples; }
@@ -81,24 +82,26 @@ public class G {
 	public static double getTotalScale()	{ return scale * postScale; }
 	
 	public static String getTitle(int attempt) {
-		return  "TC Wi:" + G.blocksWide +
-        		" Tr:" + G.triangles +
-        		" Sa:" + G.samples +
-        		" Th:" + G.threadCount +
-        		" At:" + attempt + "/" + G.attempts +
-        		" Sc:" + G.scale +
-        		" > "  + G.postScale +
-        		" RB:" + G.randomBlocks +
-        		(G.trueColor ? " TruCol" : " LinCol");
+		return  "TC Wi:" + blocksWide +
+        		" Tr:" + triangles +
+        		" Sa:" + samples +
+        		" Th:" + threadCount +
+        		" At:" + attempt + "/" + attempts +
+        		" Sc:" + scale +
+        		" > "  + postScale +
+        		" RB:" + randomBlocks +
+        		(trueColor ? " TruCol" : " LinCol") + 
+        		(transparentTriangles ? " Transp" : " Opaq");
 	}
 	
 	public static String getShortTitle() {
-		return  "_" + G.blocksWide +
-        		"_" + G.triangles +
-        		"_" + G.samples +
-        		"_" + G.scale +
-        		"_" + G.postScale +
-        		"_" + G.randomBlocks +
-        		"_" + (G.trueColor ? "T" : "F");
+		return  "_" + blocksWide +
+        		"_" + triangles +
+        		"_" + samples +
+        		"_" + scale +
+        		"_" + postScale +
+        		"_" + randomBlocks +
+        		"_" + (trueColor ? "T" : "F") +
+        		(transparentTriangles ? "T" : "F");
 	}
 }

@@ -21,7 +21,7 @@ public class Settings {
 	public static void load() {
 		BufferedReader br = null;
 		try {
-			File settingsFile = new File(G.USER_DIR + G.BK_SLASH + G.SETTINGS_FILE);
+			File settingsFile = new File(G.USER_DIR + File.separator + G.SETTINGS_FILE);
 			// check if settings exist and read first line
 			if (settingsFile.exists()) {
 				br = new BufferedReader(new FileReader(settingsFile));
@@ -116,6 +116,9 @@ public class Settings {
 				case TRUE_COLOR:
 					G.trueColor = Boolean.parseBoolean(split[1]);
 					break;
+				case TRANSPARENT_TRIANGLES:
+					G.transparentTriangles = Boolean.parseBoolean(split[1]);
+					break;
 				case SEQUENTIAL:
 					G.sequential = Boolean.parseBoolean(split[1]);
 					break;
@@ -181,6 +184,7 @@ public class Settings {
 				Setting.PREDRAW_SHOW_BEST+ID_SYMB + G.preDrawShowBest+"\n" +
 				Setting.ALLOW_COLLISION	+ ID_SYMB + G.allowCollision+ "\n" +
 				Setting.TRUE_COLOR		+ ID_SYMB + G.trueColor		+ "\n" +
+				Setting.TRANSPARENT_TRIANGLES+ID_SYMB+G.transparentTriangles+"\n" +
 				Setting.SEQUENTIAL		+ ID_SYMB + G.sequential	+ "\n\n" +
 				
 				COMENT_SYMB + "Start of sequential operations...\n\n" +
@@ -196,7 +200,7 @@ public class Settings {
 				
 		// write default settings to file
 		try {
-			final File settingsFile = new File(G.USER_DIR + G.BK_SLASH + G.SETTINGS_FILE);
+			final File settingsFile = new File(G.USER_DIR + File.separator + G.SETTINGS_FILE);
 			final BufferedWriter writer = new BufferedWriter(new FileWriter(settingsFile));
 			writer.write(settingsString);
 			writer.close();
@@ -219,7 +223,5 @@ public class Settings {
 		G.triangles = maxTriangles.get(i % maxTriangles.size());
 		i /= maxTriangles.size();
 		G.blocksWide = blocksWide.get(i % blocksWide.size());
-		//System.out.println(G.getShortTitle());
-		
 	}
 }
