@@ -1,6 +1,5 @@
 package triangleStructure
 
-import boundTo
 import global.Global
 import java.awt.Color
 import java.awt.Dimension
@@ -113,8 +112,8 @@ class TrianglesFile(
         for (j in 0..2) {
             xp[j] += (Global.randDouble / 5 - 0.1).toFloat()
             yp[j] += (Global.randDouble / 5 - 0.1).toFloat()
-            xp[j] = xp[j].boundTo(0F, 1F)
-            yp[j] = yp[j].boundTo(0F, 1F)
+            xp[j] = xp[j].coerceIn(0F, 1F)
+            yp[j] = yp[j].coerceIn(0F, 1F)
         }
         triangles[i] = Triangle(xp, yp, triangles[i].color)
     }
@@ -143,7 +142,7 @@ class TrianglesFile(
         val col = triangles[i].getColorArray()
         for (j in col.indices) {
             col[j] += Global.getRandInt(51) - 25
-            col[j] = col[j].boundTo(0, 255)
+            col[j] = col[j].coerceIn(0, 255)
         }
         triangles[i] = Triangle(
             triangles[i].getX(),

@@ -1,8 +1,8 @@
 package application
 
 import blockStructure.BlockThreadHandler
-import blockStructure.btGrid
-import blockStructure.btRandom
+import blockStructure.BTGrid
+import blockStructure.BTRandom
 import global.FileHandler
 import global.Global
 import java.awt.Color
@@ -93,10 +93,10 @@ class Conversion : JPanel() {
             (originalImg.height * Global.totalScale).toInt()
         )
 
-        blockThread = btGrid(originalImg, newImg)
-        blockThread?.start()
-        blockThread = btRandom(originalImg, newImg)
-        blockThread?.start()
+        blockThread = BTGrid(originalImg, newImg!!)
+        blockThread?.execute()
+        blockThread = BTRandom(originalImg, newImg!!)
+        blockThread?.execute()
 
         FileHandler.putImageInFile(file, Global.NEW, newImg, Global.shortTitle)
         blockThread = null
