@@ -8,6 +8,7 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
+import kotlin.random.Random
 
 class TrianglesFile(
     trArray: ArrayList<Triangle>,
@@ -110,8 +111,8 @@ class TrianglesFile(
         val xp = triangles[i].getX()
         val yp = triangles[i].getY()
         for (j in 0..2) {
-            xp[j] += (Global.randDouble / 5 - 0.1).toFloat()
-            yp[j] += (Global.randDouble / 5 - 0.1).toFloat()
+            xp[j] += (Random.nextDouble() / 5 - 0.1).toFloat()
+            yp[j] += (Random.nextDouble() / 5 - 0.1).toFloat()
             xp[j] = xp[j].coerceIn(0F, 1F)
             yp[j] = yp[j].coerceIn(0F, 1F)
         }
@@ -127,8 +128,8 @@ class TrianglesFile(
         val xp = triangles[i].getX()
         val yp = triangles[i].getY()
         for (j in 0..2) {
-            xp[j] = Global.randFloat
-            yp[j] = Global.randFloat
+            xp[j] = Random.nextFloat()
+            yp[j] = Random.nextFloat()
         }
         triangles[i] = Triangle(xp, yp, triangles[i].color)
     }
@@ -141,7 +142,7 @@ class TrianglesFile(
         val i = getRandomTri()
         val col = triangles[i].getColorArray()
         for (j in col.indices) {
-            col[j] += Global.getRandInt(51) - 25
+            col[j] += Random.nextInt(51) - 25
             col[j] = col[j].coerceIn(0, 255)
         }
         triangles[i] = Triangle(
@@ -154,13 +155,12 @@ class TrianglesFile(
     fun modifyRemove() {
         image = null
         if (triangles.size > 2) {
-            triangles.removeAt(Global.getRandInt(triangles.size))
+            triangles.removeAt(Random.nextInt(triangles.size))
         }
     }
 
     fun compare(img: BufferedImage): Double {
-        var score = compareTotal(img, createImg())
-        score /= totalPossibleScore
+        val score = compareTotal(img, createImg()) / totalPossibleScore
         return 1 - score
     }
 
@@ -189,21 +189,21 @@ class TrianglesFile(
     }
 
     private fun compareTotal(original: BufferedImage, newImg: BufferedImage): Double {
-        var score = 0.0
         val newImgCol = IntArray(newImg.width * newImg.height * 4)
         val originCol = IntArray(newImgCol.size)
         newImg.raster.getPixels(0, 0, newImg.width, newImg.height, newImgCol)
         original.raster.getPixels(0, 0, newImg.width, newImg.height, originCol)
-        var i = 0
-        while (i < newImgCol.size) {
-            score += if (newImgCol[i + 3] != 255) {
-                if (Global.trueColor) MAX_SCORE_TRUE else MAX_SCORE_FALSE
+
+        return (newImgCol.indices step 4).map {
+            if (newImgCol[it + 3] != 255) {
+                if (Global.trueColor)
+                    MAX_SCORE_TRUE
+                else
+                    MAX_SCORE_FALSE
             } else {
-                toScore(i, originCol, newImgCol)
+                toScore(it, originCol, newImgCol)
             }
-            i += 4
-        }
-        return score
+        }.sum()
     }
 
     private fun hasAlpha(b: BufferedImage): Boolean {
@@ -241,6 +241,6 @@ class TrianglesFile(
     }
 
     private fun getRandomTri(): Int {
-        return (Global.randDouble * triangles.size.toDouble().pow(FACT.toDouble())).pow(FACT_INVERSE).toInt()
+        return (Random.nextDouble() * triangles.size.toDouble().pow(FACT.toDouble())).pow(FACT_INVERSE).toInt()
     }
 }

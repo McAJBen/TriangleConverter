@@ -1,13 +1,11 @@
 package blockStructure
 
 import global.Global
-import global.Global.getRandInt
-import global.Global.randDouble
-import global.Global.randomBlocks
 import java.awt.Dimension
 import java.awt.Rectangle
 import java.awt.image.BufferedImage
 import java.util.*
+import kotlin.random.Random
 
 class BTRandom(
     originalImg: BufferedImage,
@@ -28,7 +26,7 @@ class BTRandom(
         }
     }
 
-    private var randomPlacementsLeft: Int = randomBlocks
+    private var randomPlacementsLeft = Global.randomBlocks
 
     private val imageSize: Dimension = Dimension(
         originalImg.width,
@@ -50,7 +48,7 @@ class BTRandom(
         }
 
     override val percent: Double
-        get() = 1.0 - randomPlacementsLeft.toDouble() / randomBlocks
+        get() = 1.0 - randomPlacementsLeft.toDouble() / Global.randomBlocks
 
     override val newBlockLocation: BlockLocation?
         get() {
@@ -96,8 +94,8 @@ class BTRandom(
 
     private fun getRandomRect(size: Dimension): Rectangle {
         return Rectangle(
-            getRandInt(imageSize.width - size.width),
-            getRandInt(imageSize.height - size.height),
+            Random.nextInt(imageSize.width - size.width),
+            Random.nextInt(imageSize.height - size.height),
             size.width,
             size.height
         )
@@ -106,8 +104,8 @@ class BTRandom(
     private val block: Dimension
         get() {
             return Dimension(
-                (defaultSize.width * (0.8 + randDouble * 0.2)).toInt().coerceAtLeast(1),
-                (defaultSize.height * (0.8 + randDouble * 0.2)).toInt().coerceAtLeast(1)
+                (defaultSize.width * (0.8 + Random.nextDouble() * 0.2)).toInt().coerceAtLeast(1),
+                (defaultSize.height * (0.8 + Random.nextDouble() * 0.2)).toInt().coerceAtLeast(1)
             )
         }
 

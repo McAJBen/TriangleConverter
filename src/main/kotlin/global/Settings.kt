@@ -1,9 +1,5 @@
 package global
 
-import global.Global.maxAttempts
-import global.Global.maxSamples
-import global.Global.paintWait
-import java.io.*
 import java.util.*
 
 object Settings {
@@ -19,27 +15,16 @@ object Settings {
     private var postScales = ArrayList<Double>()
 
     fun load() {
-        val br: BufferedReader
-        br = try {
-            val settingsFile =
-                File(Global.USER_DIR + File.separator + Global.SETTINGS_FILE)
-            // check if settings exist and read first line
-            if (settingsFile.exists()) {
-                BufferedReader(FileReader(settingsFile))
-            } else throw IOException(Global.NO_SETTINGS_FILE)
-        } catch (e1: IOException) {
+        if (!Global.SETTINGS_FILE.exists()) {
             createSettingsFile()
-            return
         }
 
-        while (true) { // read a line
-            try {
-                val settingsString = br.readLine() ?: throw IOException()
-                setVar(settingsString)
-            } catch (e: IOException) { // can't read another line, the file must be done
-                break
-            }
+        Global.SETTINGS_FILE.readLines().filter { line ->
+            !line.startsWith(COMMENT_SYMBOL)
+        }.forEach { line ->
+            setVar(line)
         }
+
         if (blocksWide.isEmpty()) {
             blocksWide.add(Global.blocksWide)
         }
@@ -47,7 +32,7 @@ object Settings {
             maxTriangles.add(Global.triangles)
         }
         if (samples.isEmpty()) {
-            samples.add(maxSamples)
+            samples.add(Global.maxSamples)
         }
         if (randomBlocks.isEmpty()) {
             randomBlocks.add(Global.randomBlockMult)
@@ -58,14 +43,16 @@ object Settings {
         if (postScales.isEmpty()) {
             postScales.add(Global.postScale)
         }
+
         blocksWide.trimToSize()
         maxTriangles.trimToSize()
         samples.trimToSize()
         randomBlocks.trimToSize()
         scales.trimToSize()
         postScales.trimToSize()
+
         if (Global.sequential) {
-            maxAttempts = seqSize()
+            Global.maxAttempts = seqSize()
         }
     }
 
@@ -74,104 +61,106 @@ object Settings {
                 randomBlocks.size * scales.size * postScales.size
     }
 
-    // return true if correctly dealt with line
-// return false if sequential is starting
-    private fun setVar(line: String) {
-        if (!line.startsWith(COMMENT_SYMBOL)) {
-            val split = line.split(ID_SYMBOL.toRegex()).toTypedArray()
-            // if line does not have identifier ignore it
-            if (split.size == 2) {
-                when (Setting.valueOf(split[0])) {
-                    Setting.PREDRAW -> Global.preDraw = split[1].toBoolean()
-                    Setting.PREDRAW_OUTLINE -> Global.preDrawOutline = split[1].toBoolean()
-                    Setting.PREDRAW_SHOW_BEST -> Global.preDrawShowBest = split[1].toBoolean()
-                    Setting.ALLOW_COLLISION -> Global.allowCollision = split[1].toBoolean()
-                    Setting.TRUE_COLOR -> Global.trueColor = split[1].toBoolean()
-                    Setting.TRANSPARENT_TRIANGLES -> Global.transparentTriangles = split[1].toBoolean()
-                    Setting.SEQUENTIAL -> Global.sequential = split[1].toBoolean()
-                    Setting.BLOCKS_WIDE -> {
-                        Global.blocksWide = split[1].toInt()
-                        blocksWide.add(Global.blocksWide)
-                    }
-                    Setting.MAX_TRIANGLES -> {
-                        Global.triangles = split[1].toInt()
-                        maxTriangles.add(Global.triangles)
-                    }
-                    Setting.SAMPLES -> {
-                        maxSamples = split[1].toInt()
-                        samples.add(maxSamples)
-                    }
-                    Setting.THREAD_COUNT -> if (split[1].equals(Global.AUTO, ignoreCase = true)) {
-                        Global.threadCount = Runtime.getRuntime().availableProcessors()
-                    } else {
-                        Global.threadCount = split[1].toInt()
-                    }
-                    Setting.RANDOM_BLOCKS -> {
-                        Global.randomBlockMult = split[1].toInt()
-                        randomBlocks.add(Global.randomBlockMult)
-                    }
-                    Setting.REPAINT_WAIT_MS -> paintWait = split[1].toInt()
-                    Setting.ATTEMPTS -> maxAttempts = split[1].toInt()
-                    Setting.SCALE -> {
-                        Global.scale = split[1].toDouble()
-                        scales.add(Global.scale)
-                    }
-                    Setting.POST_SCALE -> {
-                        Global.postScale = split[1].toDouble()
-                        postScales.add(Global.postScale)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun createSettingsFile() { // create default settings strings
-        val settingsString =
-            COMMENT_SYMBOL + "All Comments must begin with " + COMMENT_SYMBOL + "\n\n" +
-                    COMMENT_SYMBOL + "Thread count can be set to 'AUTO'\n" +
-                    Setting.THREAD_COUNT + ID_SYMBOL + "AUTO" + "\n\n" +
-                    Setting.REPAINT_WAIT_MS + ID_SYMBOL + paintWait + "\n" +
-                    Setting.ATTEMPTS + ID_SYMBOL + maxAttempts + "\n\n" +
-                    COMMENT_SYMBOL + "Boolean variables\n" +
-                    Setting.PREDRAW + ID_SYMBOL + Global.preDraw + "\n" +
-                    Setting.PREDRAW_OUTLINE + ID_SYMBOL + Global.preDrawOutline + "\n" +
-                    Setting.PREDRAW_SHOW_BEST + ID_SYMBOL + Global.preDrawShowBest + "\n" +
-                    Setting.ALLOW_COLLISION + ID_SYMBOL + Global.allowCollision + "\n" +
-                    Setting.TRUE_COLOR + ID_SYMBOL + Global.trueColor + "\n" +
-                    Setting.TRANSPARENT_TRIANGLES + ID_SYMBOL + Global.transparentTriangles + "\n" +
-                    Setting.SEQUENTIAL + ID_SYMBOL + Global.sequential + "\n\n" +
-                    COMMENT_SYMBOL + "Start of sequential operations...\n\n" +
-                    Setting.BLOCKS_WIDE + ID_SYMBOL + Global.blocksWide + "\n" +
-                    Setting.MAX_TRIANGLES + ID_SYMBOL + Global.triangles + "\n" +
-                    Setting.SAMPLES + ID_SYMBOL + maxSamples + "\n\n" +
-                    Setting.RANDOM_BLOCKS + ID_SYMBOL + Global.randomBlockMult + "\n\n" +
-                    Setting.SCALE + ID_SYMBOL + Global.scale + "\n" +
-                    Setting.POST_SCALE + ID_SYMBOL + Global.postScale
-        // write default settings to file
-        try {
-            val settingsFile =
-                File(Global.USER_DIR + File.separator + Global.SETTINGS_FILE)
-            val writer = BufferedWriter(FileWriter(settingsFile))
-            writer.write(settingsString)
-            writer.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-            // can't create the settings file?
-        }
-    }
-
-    fun reset(i: Int) {
-        var i = i
+    fun reset(n: Int) {
+        var i = n
         Global.randomBlockMult = randomBlocks[i % randomBlocks.size]
         i /= randomBlocks.size
         Global.postScale = postScales[i % postScales.size]
         i /= postScales.size
         Global.scale = scales[i % scales.size]
         i /= scales.size
-        maxSamples = samples[i % samples.size]
+        Global.maxSamples = samples[i % samples.size]
         i /= samples.size
         Global.triangles = maxTriangles[i % maxTriangles.size]
         i /= maxTriangles.size
         Global.blocksWide = blocksWide[i % blocksWide.size]
+    }
+
+    private fun setVar(line: String) {
+        val split = line.split(ID_SYMBOL.toRegex())
+
+        // if line does not have identifier ignore it
+        if (split.size == 2) {
+
+            val key = Setting.valueOf(split[0])
+            val value = split[1]
+
+            when (key) {
+                Setting.PREDRAW -> Global.preDraw = value.toBoolean()
+                Setting.PREDRAW_OUTLINE -> Global.preDrawOutline = value.toBoolean()
+                Setting.PREDRAW_SHOW_BEST -> Global.preDrawShowBest = value.toBoolean()
+                Setting.ALLOW_COLLISION -> Global.allowCollision = value.toBoolean()
+                Setting.TRUE_COLOR -> Global.trueColor = value.toBoolean()
+                Setting.TRANSPARENT_TRIANGLES -> Global.transparentTriangles = value.toBoolean()
+                Setting.SEQUENTIAL -> Global.sequential = value.toBoolean()
+                Setting.BLOCKS_WIDE -> {
+                    Global.blocksWide = value.toInt()
+                    blocksWide.add(Global.blocksWide)
+                }
+                Setting.MAX_TRIANGLES -> {
+                    Global.triangles = value.toInt()
+                    maxTriangles.add(Global.triangles)
+                }
+                Setting.SAMPLES -> {
+                    Global.maxSamples = value.toInt()
+                    samples.add(Global.maxSamples)
+                }
+                Setting.THREAD_COUNT -> {
+                    Global.threadCount = if (value.equals(Global.AUTO, ignoreCase = true)) {
+                        Runtime.getRuntime().availableProcessors()
+                    } else {
+                        value.toInt()
+                    }
+                }
+                Setting.RANDOM_BLOCKS -> {
+                    Global.randomBlockMult = value.toInt()
+                    randomBlocks.add(Global.randomBlockMult)
+                }
+                Setting.REPAINT_WAIT_MS -> Global.paintWait = value.toInt()
+                Setting.ATTEMPTS -> Global.maxAttempts = value.toInt()
+                Setting.SCALE -> {
+                    Global.scale = value.toDouble()
+                    scales.add(Global.scale)
+                }
+                Setting.POST_SCALE -> {
+                    Global.postScale = value.toDouble()
+                    postScales.add(Global.postScale)
+                }
+            }
+        }
+    }
+
+    private fun createSettingsFile() { // create default settings strings
+        Global.SETTINGS_FILE.writeText("""
+            ${COMMENT_SYMBOL}All Comments must begin with $COMMENT_SYMBOL
+
+            ${COMMENT_SYMBOL}Thread count can be set to 'AUTO'
+            ${Setting.THREAD_COUNT}${ID_SYMBOL}AUTO
+
+            ${Setting.REPAINT_WAIT_MS}$ID_SYMBOL${Global.paintWait}
+            ${Setting.ATTEMPTS}$ID_SYMBOL${Global.maxAttempts}
+
+            ${COMMENT_SYMBOL}Boolean variables
+            ${Setting.PREDRAW}$ID_SYMBOL${Global.preDraw}
+            ${Setting.PREDRAW_OUTLINE}$ID_SYMBOL${Global.preDrawOutline}
+            ${Setting.PREDRAW_SHOW_BEST}$ID_SYMBOL${Global.preDrawShowBest}
+            ${Setting.ALLOW_COLLISION}$ID_SYMBOL${Global.allowCollision}
+            ${Setting.TRUE_COLOR}$ID_SYMBOL${Global.trueColor}
+            ${Setting.TRANSPARENT_TRIANGLES}$ID_SYMBOL${Global.transparentTriangles}
+            ${Setting.SEQUENTIAL}$ID_SYMBOL${Global.sequential}
+
+            ${COMMENT_SYMBOL}Start of sequential operations...
+
+            ${Setting.BLOCKS_WIDE}$ID_SYMBOL${Global.blocksWide}
+            ${Setting.MAX_TRIANGLES}$ID_SYMBOL${Global.triangles}
+            ${Setting.SAMPLES}$ID_SYMBOL${Global.maxSamples}
+
+            ${Setting.RANDOM_BLOCKS}$ID_SYMBOL${Global.randomBlockMult}
+
+            ${Setting.SCALE}$ID_SYMBOL${Global.scale}
+            ${Setting.POST_SCALE}$ID_SYMBOL${Global.postScale}
+
+            """.trimIndent()
+        )
     }
 }

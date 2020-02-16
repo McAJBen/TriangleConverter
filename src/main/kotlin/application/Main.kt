@@ -10,8 +10,10 @@ import kotlinx.coroutines.launch
 fun main() {
 
     Settings.load()
-    val conversion = Conversion()
-    val mainWindow = MainWindow(conversion)
+
+    val converter = Converter()
+
+    val mainWindow = MainWindow(converter)
 
     GlobalScope.launch {
         while (true) {
@@ -22,13 +24,16 @@ fun main() {
                 for (attempt in 1..Global.maxAttempts) {
                     Global.reset()
                     mainWindow.title = Global.getTitle(attempt)
-                    conversion.startConversion(file)
+
+                    mainWindow.startDrawing()
+                    converter.startConversion(file)
+                    mainWindow.stopDrawing()
                 }
                 val originalImg = FileHandler.getImage(file)
                 file.delete()
                 FileHandler.putImageInFile(file, Global.ORIGINAL, originalImg, Global.BLANK)
             } else {
-                delay(1_000)
+                delay(1000)
             }
         }
     }

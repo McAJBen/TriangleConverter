@@ -6,7 +6,7 @@ import java.awt.Graphics
 import javax.swing.JPanel
 
 class LoadingBar(
-    private val conversion: Conversion
+    private val converter: ConverterInterface
 ) : JPanel() {
 
     init {
@@ -19,8 +19,8 @@ class LoadingBar(
         g.color = Color.WHITE
         g.fillRect(0, size.height - 14, size.width, 14)
         g.color = Color.GREEN
-        g.fillRect(0, size.height - 14, conversion.getPercent(size.width), 14)
+        g.fillRect(0, size.height - 14, (converter.getPercent() * size.width).toInt(), 14)
         g.color = Color.BLACK
-        g.drawString(conversion.info, 1, size.height - 3)
+        g.drawString(converter.getInfo(), 1, size.height - 3)
     }
 }

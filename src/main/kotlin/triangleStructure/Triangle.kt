@@ -3,6 +3,7 @@ package triangleStructure
 import global.Global
 import java.awt.Color
 import java.awt.Polygon
+import kotlin.random.Random
 
 class Triangle {
 
@@ -18,21 +19,21 @@ class Triangle {
 
     internal constructor() {
         for (i in 0 until SIDES) {
-            x[i] = Global.randFloat
-            y[i] = Global.randFloat
+            x[i] = Random.nextFloat()
+            y[i] = Random.nextFloat()
         }
         color = if (Global.transparentTriangles) {
             Color(
-                Global.getRandInt(256),
-                Global.getRandInt(256),
-                Global.getRandInt(256),
-                Global.getRandInt(256)
+                Random.nextInt(256),
+                Random.nextInt(256),
+                Random.nextInt(256),
+                Random.nextInt(256)
             )
         } else {
             Color(
-                Global.getRandInt(256),
-                Global.getRandInt(256),
-                Global.getRandInt(256)
+                Random.nextInt(256),
+                Random.nextInt(256),
+                Random.nextInt(256)
             )
         }
     }
@@ -76,15 +77,4 @@ class Triangle {
             color.blue
         )
     }
-
-    fun clone() = Triangle(
-        getX(),
-        getY(),
-        Color(
-            color.red,
-            color.green,
-            color.blue,
-            color.alpha
-        )
-    )
 }

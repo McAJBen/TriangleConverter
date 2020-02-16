@@ -1,7 +1,7 @@
 package blockStructure
 
 import global.Global
-import global.Global.maxSamples
+import toTimeString
 import triangleStructure.Block
 import triangleStructure.TrianglesFile.Companion.compare
 import java.awt.Color
@@ -17,6 +17,7 @@ abstract class BlockThreadHandler internal constructor(
 
     companion object {
         private val PINK = Color(255, 0, 255)
+
         private fun getSubImage(b: BufferedImage, r: Rectangle): BufferedImage {
             return b.getSubimage(r.x, r.y, r.width, r.height)
         }
@@ -34,20 +35,16 @@ abstract class BlockThreadHandler internal constructor(
 
     abstract val newBlockLocation: BlockLocation?
 
-    val percentDone: String
-        get() = String.format("%03.0f%%", percent * 100)
-
     val runTime: String
         get() {
-            val time = secondsFromStart
-            return String.format("%01d:%02d:%02d", time / 3600, time / 60 % 60, time % 60)
+            return secondsFromStart.toTimeString()
         }
 
     val estimatedEndTime: String
         get() {
             val runtime = secondsFromStart
             val endTime = (runtime / percent).toLong() - runtime
-            return String.format("%01d:%02d:%02d", endTime / 3600, endTime / 60 % 60, endTime % 60)
+            return endTime.toTimeString()
         }
 
     fun paint(g2d: Graphics2D, size: Dimension) {
@@ -162,7 +159,7 @@ abstract class BlockThreadHandler internal constructor(
                 ignoreAlphaChunk = !hasAlpha(baseImg)
                 var bestScore = 0.0
                 var bestBlock: Block? = null
-                for (sample in 0 until maxSamples) {
+                for (sample in 0 until Global.maxSamples) {
                     val block =
                         Block(compareImage, baseImg, blockLocation!!.scaled.size)
                     compute(block)
