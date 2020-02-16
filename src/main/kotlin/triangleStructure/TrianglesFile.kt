@@ -1,7 +1,7 @@
 package triangleStructure
 
 import boundTo
-import global.G
+import global.Global
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.image.BufferedImage
@@ -53,7 +53,7 @@ class TrianglesFile(
         }
 
         private fun getTotalPossibleScore(width: Int, height: Int): Double {
-            return width * height * if (G.getTrueColor()) MAX_SCORE_TRUE else MAX_SCORE_FALSE
+            return width * height * if (Global.trueColor) MAX_SCORE_TRUE else MAX_SCORE_FALSE
         }
 
         private fun toScore(i: Int, a: IntArray, b: IntArray): Double {
@@ -62,7 +62,7 @@ class TrianglesFile(
             val deltaG = a[i + 1] - b[i + 1]
             val deltaB = a[i + 2] - b[i + 2]
 
-            return if (G.getTrueColor()) {
+            return if (Global.trueColor) {
                 sqrt(deltaR.toDouble().pow(2) + deltaG.toDouble().pow(2) + deltaB.toDouble().pow(2))
             } else {
                 (abs(deltaR) + abs(deltaG) + abs(deltaB)).toDouble()
@@ -72,7 +72,7 @@ class TrianglesFile(
 
     private val imageSize: Dimension
 
-    val triangles: ArrayList<Triangle> = ArrayList(G.getTriangles())
+    val triangles: ArrayList<Triangle> = ArrayList(Global.triangles)
 
     private var image: BufferedImage? = null
 
@@ -111,8 +111,8 @@ class TrianglesFile(
         val xp = triangles[i].getX()
         val yp = triangles[i].getY()
         for (j in 0..2) {
-            xp[j] += (G.getRandDouble() / 5 - 0.1).toFloat()
-            yp[j] += (G.getRandDouble() / 5 - 0.1).toFloat()
+            xp[j] += (Global.randDouble / 5 - 0.1).toFloat()
+            yp[j] += (Global.randDouble / 5 - 0.1).toFloat()
             xp[j] = xp[j].boundTo(0F, 1F)
             yp[j] = yp[j].boundTo(0F, 1F)
         }
@@ -128,8 +128,8 @@ class TrianglesFile(
         val xp = triangles[i].getX()
         val yp = triangles[i].getY()
         for (j in 0..2) {
-            xp[j] = G.getRandFloat()
-            yp[j] = G.getRandFloat()
+            xp[j] = Global.randFloat
+            yp[j] = Global.randFloat
         }
         triangles[i] = Triangle(xp, yp, triangles[i].color)
     }
@@ -142,7 +142,7 @@ class TrianglesFile(
         val i = getRandomTri()
         val col = triangles[i].getColorArray()
         for (j in col.indices) {
-            col[j] += G.getRandInt(51) - 25
+            col[j] += Global.getRandInt(51) - 25
             col[j] = col[j].boundTo(0, 255)
         }
         triangles[i] = Triangle(
@@ -155,7 +155,7 @@ class TrianglesFile(
     fun modifyRemove() {
         image = null
         if (triangles.size > 2) {
-            triangles.removeAt(G.getRandInt(triangles.size))
+            triangles.removeAt(Global.getRandInt(triangles.size))
         }
     }
 
@@ -198,7 +198,7 @@ class TrianglesFile(
         var i = 0
         while (i < newImgCol.size) {
             score += if (newImgCol[i + 3] != 255) {
-                if (G.getTrueColor()) MAX_SCORE_TRUE else MAX_SCORE_FALSE
+                if (Global.trueColor) MAX_SCORE_TRUE else MAX_SCORE_FALSE
             } else {
                 toScore(i, originCol, newImgCol)
             }
@@ -242,6 +242,6 @@ class TrianglesFile(
     }
 
     private fun getRandomTri(): Int {
-        return (G.getRandDouble() * triangles.size.toDouble().pow(FACT.toDouble())).pow(FACT_INVERSE).toInt()
+        return (Global.randDouble * triangles.size.toDouble().pow(FACT.toDouble())).pow(FACT_INVERSE).toInt()
     }
 }

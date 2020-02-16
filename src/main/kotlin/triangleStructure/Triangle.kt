@@ -1,6 +1,6 @@
 package triangleStructure
 
-import global.G
+import global.Global
 import java.awt.Color
 import java.awt.Polygon
 
@@ -18,21 +18,21 @@ class Triangle {
 
     internal constructor() {
         for (i in 0 until SIDES) {
-            x[i] = G.getRandFloat()
-            y[i] = G.getRandFloat()
+            x[i] = Global.randFloat
+            y[i] = Global.randFloat
         }
-        color = if (G.getTransparentTriangles()) {
+        color = if (Global.transparentTriangles) {
             Color(
-                G.getRandInt(256),
-                G.getRandInt(256),
-                G.getRandInt(256),
-                G.getRandInt(256)
+                Global.getRandInt(256),
+                Global.getRandInt(256),
+                Global.getRandInt(256),
+                Global.getRandInt(256)
             )
         } else {
             Color(
-                G.getRandInt(256),
-                G.getRandInt(256),
-                G.getRandInt(256)
+                Global.getRandInt(256),
+                Global.getRandInt(256),
+                Global.getRandInt(256)
             )
         }
     }
@@ -63,7 +63,7 @@ class Triangle {
     fun getY() = y.clone()
 
     fun getColorArray() = when {
-        G.getTransparentTriangles() ->
+        Global.transparentTriangles ->
             intArrayOf(
                 color.red,
                 color.green,

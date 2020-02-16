@@ -1,12 +1,11 @@
 package application
 
 import global.FileHandler
-import global.G
+import global.Global
 import global.Settings
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
 
 fun main() {
 
@@ -16,18 +15,18 @@ fun main() {
 
     GlobalScope.launch {
         while (true) {
-            mainWindow.title = G.FINDING_FILE
+            mainWindow.title = Global.FINDING_FILE
 
-            val file: File? = FileHandler.getFile()
+            val file = FileHandler.getImageFile()
             if (file != null) {
-                for (attempt in 1..G.getMaxAttempts()) {
-                    G.reset()
-                    mainWindow.title = G.getTitle(attempt)
+                for (attempt in 1..Global.maxAttempts) {
+                    Global.reset()
+                    mainWindow.title = Global.getTitle(attempt)
                     conversion.startConversion(file)
                 }
                 val originalImg = FileHandler.getImage(file)
                 file.delete()
-                FileHandler.putImageInFile(file, G.ORIGINAL, originalImg, G.BLANK)
+                FileHandler.putImageInFile(file, Global.ORIGINAL, originalImg, Global.BLANK)
             } else {
                 delay(1_000)
             }

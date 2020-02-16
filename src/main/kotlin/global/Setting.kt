@@ -1,6 +1,7 @@
-package global;
+package global
 
-public enum Setting {
+enum class Setting {
+
     // BOOLEANS
     PREDRAW,
     PREDRAW_OUTLINE,
@@ -9,6 +10,7 @@ public enum Setting {
     TRUE_COLOR,
     TRANSPARENT_TRIANGLES,
     SEQUENTIAL,
+
     // INTEGERS
     BLOCKS_WIDE,
     MAX_TRIANGLES,
@@ -17,6 +19,7 @@ public enum Setting {
     REPAINT_WAIT_MS,
     ATTEMPTS,
     RANDOM_BLOCKS,
+
     // DOUBLES
     SCALE,
     POST_SCALE

@@ -4,7 +4,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import global.G;
+import global.Global;
 
 public class btGrid extends BlockThreadHandler {
 
@@ -18,27 +18,27 @@ public class btGrid extends BlockThreadHandler {
         super(originalImg, newImg);
 
         originalSize = new D2D(
-                (double)originalImg.getWidth() / G.getBlocksWide(),
-                (double)originalImg.getHeight() / G.getBlocksWide());
+                (double)originalImg.getWidth() / Global.blocksWide,
+                (double)originalImg.getHeight() / Global.blocksWide);
 
         scaledSize = new D2D(
-                originalSize.getWidth() * G.getScale(),
-                originalSize.getHeight() * G.getScale());
+                originalSize.getWidth() * Global.scale,
+                originalSize.getHeight() * Global.scale);
 
         postSize = new D2D(
-                scaledSize.getWidth() * G.getPostScale(),
-                scaledSize.getHeight() * G.getPostScale());
+                scaledSize.getWidth() * Global.postScale,
+                scaledSize.getHeight() * Global.postScale);
 
         nextPos = new Point(0, 0);
     }
 
     public double getPercent() {
-        return (nextPos.getX() / G.getBlocksWide() + nextPos.y) / G.getBlocksWide();
+        return (nextPos.getX() / Global.blocksWide + nextPos.y) / Global.blocksWide;
     }
 
     boolean isDone() {
         synchronized (nextPos) {
-            return nextPos.y >= G.getBlocksWide();
+            return nextPos.y >= Global.blocksWide;
         }
     }
 
@@ -50,7 +50,7 @@ public class btGrid extends BlockThreadHandler {
 
         do {
             Point position = getNextPos();
-            if (position == null || position.y >= G.getBlocksWide()) {
+            if (position == null || position.y >= Global.blocksWide) {
                 return null;
             }
             orig = toRectangle(position, originalSize);
@@ -82,7 +82,7 @@ public class btGrid extends BlockThreadHandler {
         synchronized (nextPos) {
             Point p = (Point) nextPos.clone();
             nextPos.x++;
-            if (nextPos.x >= G.getBlocksWide()) {
+            if (nextPos.x >= Global.blocksWide) {
                 nextPos.y++;
                 nextPos.x = 0;
             }

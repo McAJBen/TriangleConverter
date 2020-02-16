@@ -1,6 +1,6 @@
 package triangleStructure
 
-import global.G
+import global.Global
 import java.awt.Dimension
 import java.awt.image.BufferedImage
 import java.util.*
@@ -65,7 +65,7 @@ class Block(
 
         val modifyScore = modifyTriFile.compare(compareChunk)
 
-        lastImgChunk = if (G.getPreDrawShowBest()) {
+        lastImgChunk = if (Global.preDrawShowBest) {
             bestTriFile.getImage()
         } else {
             modifyTriFile.getImage()
@@ -91,7 +91,7 @@ class Block(
             // if triangleMode is at the end try adding another triangle
             if (triangleMode == TriangleMode.RANDOM) {
                 bestTriFile.addTriangle()
-                while (bestTriFile.size > G.getTriangles()) {
+                while (bestTriFile.size > Global.triangles) {
                     bestTriFile.removeBackTriangle()
                 }
                 maxScore = bestTriFile.compare(compareChunk)
@@ -100,7 +100,7 @@ class Block(
     }
 
     fun isDone(ignoreAlpha: Boolean) = if (ignoreAlpha || !bestTriFile.hasAlpha()) {
-        maxScore > 0.99 || (triangleMode == TriangleMode.REMOVE && bestTriFile.size == G.getTriangles())
+        maxScore > 0.99 || (triangleMode == TriangleMode.REMOVE && bestTriFile.size == Global.triangles)
     } else {
         false
     }

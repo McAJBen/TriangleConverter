@@ -4,7 +4,7 @@ import blockStructure.BlockThreadHandler
 import blockStructure.btGrid
 import blockStructure.btRandom
 import global.FileHandler
-import global.G
+import global.Global
 import java.awt.Color
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -44,20 +44,20 @@ class Conversion : JPanel() {
     val info: String
         get() = try {
             blockThread!!.percentDone +
-                    G.RUN_TIME + blockThread!!.runTime +
-                    G.END + blockThread!!.estimatedEndTime +
-                    G.SPACE + file!!.name
+                    Global.RUN_TIME + blockThread!!.runTime +
+                    Global.END + blockThread!!.estimatedEndTime +
+                    Global.SPACE + file!!.name
         } catch (e: NullPointerException) {
             "No Info"
         }
 
     private val paintThread: Thread
-        get() = object : Thread(G.PAINT_THREAD) {
+        get() = object : Thread(Global.PAINT_THREAD) {
             override fun run() {
                 while (!isInterrupted) {
                     repaint()
                     try {
-                        sleep(G.getPaintWait().toLong())
+                        sleep(Global.paintWait.toLong())
                     } catch (e: InterruptedException) {
                         break
                     }
@@ -66,7 +66,7 @@ class Conversion : JPanel() {
         }
 
     private val loadThread: Thread
-        get() = object : Thread(G.LOAD_THREAD) {
+        get() = object : Thread(Global.LOAD_THREAD) {
             override fun run() {
                 while (!isInterrupted) {
                     loadingBar.repaint()
@@ -79,7 +79,7 @@ class Conversion : JPanel() {
             }
         }
 
-    fun startConversion(file: File?) {
+    fun startConversion(file: File) {
         val repaintThread = paintThread
         val loadThread = loadThread
         this.file = file
@@ -87,10 +87,10 @@ class Conversion : JPanel() {
         repaintThread.start()
         loadThread.start()
 
-        val originalImg = to4Byte(FileHandler.getImage(file))
+        val originalImg = to4Byte(FileHandler.getImage(file)!!)
         newImg = getNew4Byte(
-            (originalImg.width * G.getTotalScale()).toInt(),
-            (originalImg.height * G.getTotalScale()).toInt()
+            (originalImg.width * Global.totalScale).toInt(),
+            (originalImg.height * Global.totalScale).toInt()
         )
 
         blockThread = btGrid(originalImg, newImg)
@@ -98,7 +98,7 @@ class Conversion : JPanel() {
         blockThread = btRandom(originalImg, newImg)
         blockThread?.start()
 
-        FileHandler.putImageInFile(file, G.NEW, newImg, G.getShortTitle())
+        FileHandler.putImageInFile(file, Global.NEW, newImg, Global.shortTitle)
         blockThread = null
         this.file = null
         repaintThread.interrupt()
@@ -122,19 +122,19 @@ class Conversion : JPanel() {
                 val g2d = g as Graphics2D
                 g2d.drawImage(newImg, 0, 0, size.width, size.height, null)
                 try {
-                    if (G.getPreDraw()) {
+                    if (Global.preDraw) {
                         blockThread!!.paint(g2d, size)
                         g2d.color = Color.BLACK
                     }
                 } catch (e: NullPointerException) { // blockThread not created
                 }
             } catch (e: OutOfMemoryError) {
-                g.drawString(G.OUT_OF_MEMORY, 5, 15)
+                g.drawString(Global.OUT_OF_MEMORY, 5, 15)
                 g.drawString(blockThread!!.percentDone, 5, 30)
             }
         } else {
             g.color = Color.BLACK
-            g.drawString(G.FINDING_FILE, 1, size.height - 3)
+            g.drawString(Global.FINDING_FILE, 1, size.height - 3)
         }
     }
 }

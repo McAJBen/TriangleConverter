@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import global.G;
+import global.Global;
 import triangleStructure.Block;
 import triangleStructure.TrianglesFile;
 
@@ -66,7 +66,7 @@ public abstract class BlockThreadHandler {
         this.originalImg = originalImg;
         this.newImg = newImg;
         ignoreAlpha = !hasAlpha(newImg);
-        BTArray = new BT[G.getThreadCount()];
+        BTArray = new BT[Global.threadCount];
         for (int i = 0; i < BTArray.length; i++) {
             BTArray[i] = new BT(i);
         }
@@ -129,7 +129,7 @@ public abstract class BlockThreadHandler {
 
                 double bestScore = 0;
                 Block bestBlock = null;
-                for (int sample = 0; sample < G.getMaxSamples(); sample++) {
+                for (int sample = 0; sample < Global.getMaxSamples(); sample++) {
                     Block block = new Block(compareImage, baseImg, blockLocation.getScaled().getSize());
                     compute(block);
                     if (bestScore < block.getMaxScore()) {
@@ -137,7 +137,7 @@ public abstract class BlockThreadHandler {
                         bestScore = block.getMaxScore();
                     }
                 }
-                if (G.getPostScale() != 1.0) {
+                if (Global.postScale != 1.0) {
                     Block block = new Block(compareImage, baseImg, blockLocation.getPost().getSize(), bestBlock.getTriangles());
                     compute(block);
                     bestBlock = block;
@@ -162,7 +162,7 @@ public abstract class BlockThreadHandler {
         private void compute(Block block) {
             while (!block.isDone(ignoreAlphaChunk)) {
                 block.move();
-                if (G.getPreDraw()) {
+                if (Global.preDraw) {
                     currentTestImage = block.getImage();
                 }
             }
@@ -182,7 +182,7 @@ public abstract class BlockThreadHandler {
                             rect.x, rect.y,
                             rect.width, rect.height, null);
                 }
-                if (G.getPreDrawOutline()) {
+                if (Global.preDrawOutline) {
                     g.setColor(PINK);
 
                     g.drawString(index,
