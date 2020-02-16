@@ -8,19 +8,14 @@ import javax.imageio.ImageIO;
 public class FileHandler {
 
     public static File getFile() {
-        while (true) {
-            try {
-                for (File file: (new File(G.USER_DIR)).listFiles()) {
-                    if (isValidFile(file)) {
-                        return file;
-                    }
+        try {
+            for (File file: (new File(G.USER_DIR)).listFiles()) {
+                if (isValidFile(file)) {
+                    return file;
                 }
-            } catch (NullPointerException e) { }
-
-            try {
-                Thread.sleep(10_000);
-            } catch (InterruptedException e) { }
-        }
+            }
+        } catch (NullPointerException e) { }
+        return null;
     }
 
     public static BufferedImage getImage(File file) {
@@ -48,7 +43,7 @@ public class FileHandler {
     }
 
     private static boolean isValidFile(File f) {
-        if (f.isFile()) {
+        if (f.isFile() && f.getName().indexOf('.') != -1) {
 
             final String ending = f.getName().substring(f.getName().lastIndexOf('.'));
 
