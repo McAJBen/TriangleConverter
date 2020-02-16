@@ -8,7 +8,7 @@ class MainWindow(conversion: Conversion) : JFrame() {
 
     companion object {
         val SCREEN_SIZE = Dimension(600, 600)
-        val SCREEN_OFFSET = Dimension(16, 53);
+        val SCREEN_OFFSET = Dimension(16, 53)
     }
 
     init {

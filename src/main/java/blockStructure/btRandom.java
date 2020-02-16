@@ -78,7 +78,7 @@ public class btRandom extends BlockThreadHandler {
 
     void removeBlockLocation(BlockLocation blockLocation) {
         synchronized(alreadyTakenBlocks) {
-            alreadyTakenBlocks.remove(blockLocation.original);
+            alreadyTakenBlocks.remove(blockLocation.getOriginal());
         }
     }
 
